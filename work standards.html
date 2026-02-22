@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GSCS 업무 표준 변환기</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <style>
+        :root {
+            --lg-red: #ec455a;
+            --lg-dark: #333;
+            --bg-light: #f8f9fa;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #eee;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            width: 100%;
+            margin: 0;
+            height: 100vh;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        /* Tabs for Mobile */
+        .mobile-tabs {
+            display: none;
+            width: 100%;
+            background: #fff;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .mobile-tabs button {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: none;
+            font-size: 16px;
+            font-weight: bold;
+            color: #666;
+        }
+
+        .mobile-tabs button.active {
+            color: var(--lg-red);
+            border-bottom: 3px solid var(--lg-red);
+        }
+
+        /* Left Panel - Editor */
+        .editor-panel {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            border-right: 1px solid var(--border-color);
+        }
+
+        /* Right Panel - Preview */
+        .preview-panel {
+            flex: 1;
+            padding: 30px;
+            background-color: var(--bg-light);
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--lg-dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .panel-title i {
+            margin-right: 10px;
+            color: var(--lg-red);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        input[type="text"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        /* Custom Editor */
+        .editor-container {
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        .editor-toolbar {
+            padding: 8px;
+            border-bottom: 1px solid var(--border-color);
+            background: #fdfdfd;
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+        }
+
+        .editor-toolbar button {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+
+        .editor-toolbar button:hover {
+            background: #eee;
+        }
+
+        .editor-content-view {
+            min-height: 150px;
+            padding: 15px;
+            outline: none;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .editor-content-view:empty:before {
+            content: attr(placeholder);
+            color: #999;
+        }
+
+        .btn-convert {
+            background-color: var(--lg-red);
+            color: #fff;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 20px;
+            transition: background 0.3s;
+        }
+
+        .btn-convert:hover {
+            background-color: #d43448;
+        }
+
+        .btn-add-section {
+            background-color: #fff;
+            color: var(--lg-red);
+            border: 1px dashed var(--lg-red);
+            padding: 10px;
+            width: 100%;
+            margin-bottom: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 4px;
+        }
+
+        .dynamic-section {
+            position: relative;
+            padding: 20px;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            background: #fafafa;
+        }
+
+        .btn-remove-section {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: #999;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .btn-remove-section:hover {
+            color: var(--lg-red);
+        }
+
+        /* Preview Area */
+        .preview-frame {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            min-height: 500px;
+            flex: 1;
+            padding: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            overflow-x: hidden;
+        }
+
+        .code-area {
+            margin-top: 20px;
+        }
+
+        #codeOutput {
+            height: 150px;
+            min-height: 100px;
+            font-family: monospace;
+            background: #2d2d2d;
+            color: #ccc;
+            padding: 15px;
+            resize: none;
+            /* Disable default resize */
+        }
+
+        /* Top Resize Handle Style */
+        .resize-handle-top {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            background: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 11px;
+            color: #555;
+            cursor: ns-resize;
+            user-select: none;
+            transition: background 0.2s;
+        }
+
+        .resize-handle-top:hover {
+            background: #e5e5e5;
+            border-color: #ccc;
+        }
+
+        .btn-primary {
+            background: var(--lg-red);
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-secondary {
+            background: #666;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            width: 80%;
+            max-width: 800px;
+            border-radius: 8px;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .visual-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .visual-table th,
+        .visual-table td {
+            border: 1px solid #ccc;
+            padding: 5px;
+        }
+
+        .visual-table input {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        /* Textarea for info table */
+        #infoTable textarea {
+            width: 100%;
+            border: none;
+            outline: none;
+            padding: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: vertical;
+            min-height: 40px;
+            display: block;
+            background: transparent;
+        }
+
+        #infoTable td {
+            padding: 0 !important;
+        }
+
+        @media screen and (max-width: 1024px) {
+            .container {
+                flex-direction: column;
+                height: auto;
+            }
+
+            .editor-panel,
+            .preview-panel {
+                flex: none;
+                width: 100%;
+                box-sizing: border-box;
+            }
+
+            .mobile-tabs {
+                display: flex;
+            }
+
+            .preview-panel {
+                display: none;
+            }
+        }
+
+        /* Result HTML CSS */
+        .content-service-view {
+            font-family: 'Noto Sans KR', sans-serif;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .sub-tit {
+            position: relative;
+            padding-left: 25px;
+            margin: 30px 0 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .sub-tit .num {
+            position: absolute;
+            left: 0;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            background: #999;
+            color: #fff;
+            border-radius: 50%;
+            text-align: center;
+            font-size: 12px;
+            line-height: 20px;
+        }
+
+        .sub-tit.no-content {
+            margin-top: 15px;
+        }
+
+        .tbl-scroll {
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+
+        .tbl-scroll table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .tbl-scroll th,
+        .tbl-scroll td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .tbl-scroll th {
+            background: #eee;
+            font-weight: bold;
+        }
+
+        .img-only {
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .img-only img {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mobile-tabs">
+        <button id="btnTabEdit" class="active" onclick="switchTab('edit')">입력</button>
+        <button id="btnTabPreview" onclick="switchTab('preview')">미리보기</button>
+    </div>
+
+    <div class="container">
+        <!-- Editor Panel -->
+        <div class="editor-panel">
+            <div class="panel-title"><i class="fas fa-edit"></i> 업무 표준 콘텐츠 작성</div>
+            <p style="font-size: 13px; color: #666; margin: -15px 0 20px 28px;">제목, 제품군, 제품, 모델등은 상단 부분에 정확히 입력하세요.</p>
+
+            <!-- Modification Information Table -->
+            <div style="margin-bottom: 20px; border-bottom: 2px solid var(--lg-red); padding-bottom: 10px;">
+                <h3 style="color: var(--lg-red); margin: 0; font-size: 18px;">수정 정보</h3>
+            </div>
+            <div class="form-group" style="margin-bottom: 30px;">
+                <table id="infoTable" style="width:100%; border-collapse:collapse; font-size:14px;">
+                    <colgroup>
+                        <col style="width: 140px;">
+                        <col>
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th
+                                style="border:1px solid #ccc; padding:8px 10px; background:#f0f0f0; text-align:center; font-weight:600;">
+                                구분</th>
+                            <th
+                                style="border:1px solid #ccc; padding:8px 10px; background:#f0f0f0; text-align:center; font-weight:600;">
+                                내용</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                배경 <span style="color:var(--lg-red);">*</span></td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_bg"
+                                    placeholder="품질 문제 해결 등"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                변경 전</td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_before"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                변경 후</td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_after"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                적용 일시</td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_date"
+                                    placeholder="'26.02.21 생산분 부터"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                적용 제번</td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_serial"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                증상</td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_symptom"></textarea></td>
+                        </tr>
+                        <tr>
+                            <td
+                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
+                                부품 정보</td>
+                            <td style="border:1px solid #ccc;"><textarea id="info_partInfo"></textarea></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Content Area -->
+            <div
+                style="margin-top: 10px; margin-bottom: 20px; border-bottom: 2px solid var(--lg-red); padding-bottom: 10px;">
+                <h3 style="color: var(--lg-red); margin: 0; font-size: 18px;">내용 입력</h3>
+            </div>
+
+            <!-- Fixed Sections -->
+            <div id="fixedSections">
+                <!-- Content (Previously Symptom) -->
+                <div class="form-group">
+                    <label>1. 내용 (제목 수정 가능)</label>
+                    <input type="text" id="inSymptomTitle" value="내용" style="margin-bottom:5px;">
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <div class="editor-toolbar">
+                                <button onclick="insertFormat('bold')" title="굵게"><i class="fas fa-bold"></i></button>
+                                <button onclick="insertFormat('italic')" title="기울임"><i
+                                        class="fas fa-italic"></i></button>
+                                <button onclick="insertFormat('insertUnorderedList')" title="글머리 기호"><i
+                                        class="fas fa-list-ul"></i></button>
+                                <button onclick="insertFormat('insertOrderedList')" title="숫자 목록"><i
+                                        class="fas fa-list-ol"></i></button>
+                                <button onclick="openTableModal(event)" title="표 삽입"><i
+                                        class="fas fa-table"></i></button>
+                                <button onclick="clearEditor(this)" style="margin-left:auto;"><i
+                                        class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <div id="inSymptom" class="editor-content-view paste-area" contenteditable="true"
+                            placeholder="상세 내용을 입력하세요..."></div>
+                    </div>
+                </div>
+                <!-- Standard (Previously Cause) -->
+                <div class="form-group">
+                    <label>2. 기준 (제목 수정 가능)</label>
+                    <input type="text" id="inCauseTitle" value="기준" style="margin-bottom:5px;">
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <div class="editor-toolbar">
+                                <button onclick="insertFormat('bold')" title="굵게"><i class="fas fa-bold"></i></button>
+                                <button onclick="insertFormat('italic')" title="기울임"><i
+                                        class="fas fa-italic"></i></button>
+                                <button onclick="insertFormat('insertUnorderedList')" title="글머리 기호"><i
+                                        class="fas fa-list-ul"></i></button>
+                                <button onclick="insertFormat('insertOrderedList')" title="숫자 목록"><i
+                                        class="fas fa-list-ol"></i></button>
+                                <button onclick="openTableModal(event)" title="표 삽입"><i
+                                        class="fas fa-table"></i></button>
+                                <button onclick="clearEditor(this)" style="margin-left:auto;"><i
+                                        class="fas fa-trash-alt"></i></button>
+                            </div>
+                        </div>
+                        <div id="inCause" class="editor-content-view paste-area" contenteditable="true"
+                            placeholder="기준 내용을 입력하세요..."></div>
+                    </div>
+                </div>
+                <!-- Details (Previously Repair Method) -->
+                <div class="form-group">
+                    <label>3. 상세 (제목 수정 가능)</label>
+                    <input type="text" id="inRepairTitle" value="상세" style="margin-bottom:5px;">
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <button onclick="insertFormat('bold')" title="굵게"><i class="fas fa-bold"></i></button>
+                            <button onclick="insertFormat('italic')" title="기울임"><i class="fas fa-italic"></i></button>
+                            <button onclick="insertFormat('insertUnorderedList')" title="글머리 기호"><i
+                                    class="fas fa-list-ul"></i></button>
+                            <button onclick="insertFormat('insertOrderedList')" title="숫자 목록"><i
+                                    class="fas fa-list-ol"></i></button>
+                            <button onclick="openTableModal(event)" title="표 삽입"><i class="fas fa-table"></i></button>
+                            <button onclick="clearEditor(this)" style="margin-left:auto;"><i
+                                    class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div id="inRepairMethod" class="editor-content-view paste-area" contenteditable="true"
+                            placeholder="상세 서비스 방법을 입력하세요..."></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic Sections -->
+            <div id="dynamicSections"></div>
+            <button class="btn-add-section" onclick="addDynamicSection()">+ 섹션 추가</button>
+            <button class="btn-convert" onclick="generateHTML()">HTML 변환 생성</button>
+        </div>
+
+        <!-- Preview Panel -->
+        <div class="preview-panel">
+            <div class="panel-title"><i class="fas fa-mobile-alt"></i> 기기 미리보기</div>
+            <div class="preview-frame" id="previewContainer">
+                <div style="padding: 40px; text-align: center; color: #999;">
+                    <i class="fas fa-magic" style="font-size: 48px; margin-bottom: 20px; display: block;"></i>
+                    내용을 입력하고 <b>HTML 변환</b> 버튼을 누르세요.
+                </div>
+            </div>
+
+            <div class="code-area">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <h3 style="font-size: 16px; margin: 0;">HTML 소스 코드</h3>
+                        <div id="codeResizeHandle" class="resize-handle-top" title="위로 올리면 커지고 내리면 작아집니다">
+                            <i class="fas fa-arrows-alt-v"></i> <b>높이 조절 (Drag)</b>
+                        </div>
+                    </div>
+                    <button class="btn-primary" onclick="copyCode()"
+                        style="padding: 5px 15px; font-size: 13px;">복사</button>
+                </div>
+                <textarea id="codeOutput" readonly placeholder="변환된 코드가 이곳에 표시됩니다..."></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Editor Modal -->
+    <div id="tableModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeTableModal()">&times;</span>
+            <h2 style="margin-top: 0; color: var(--lg-red);">표 삽입</h2>
+            <div style="margin-bottom: 15px; display:flex; gap:15px; align-items:center;">
+                <label>행: <input type="number" id="tblRows" value="3" min="1" style="width: 50px;"></label>
+                <label>열: <input type="number" id="tblCols" value="2" min="1" style="width: 50px;"></label>
+                <button class="btn-secondary" onclick="generateVisualTable()">초기화</button>
+            </div>
+            <div id="visualTableContainer"></div>
+            <div style="text-align: right; margin-top: 20px;">
+                <button class="btn-secondary" onclick="closeTableModal()">취소</button>
+                <button class="btn-primary" onclick="insertTableFromModal()">삽입</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Markdown & Renderer ---
+        const renderer = new marked.Renderer();
+        renderer.table = (header, body) => `<div class="tbl-scroll"><table class="xfe_just_info"><thead>${header}</thead><tbody>${body}</tbody></table></div>`;
+        renderer.image = (href, title, text) => `<div class="img-only"><img src="${href}" alt="${text || ''}" class="xfe_just_info"/></div>`;
+        marked.setOptions({ breaks: true, gfm: true, renderer });
+
+        // --- Basic Editor Tools ---
+        function insertFormat(command, value = null) { document.execCommand(command, false, value); }
+        function insertHTML(html) { document.execCommand('insertHTML', false, html); }
+        function clearEditor(btn) {
+            const editor = btn.closest('.editor-container').querySelector('.editor-content-view');
+            if (editor) { editor.innerHTML = ''; editor.focus(); }
+        }
+
+        // --- Table Modal ---
+        let lastFocusedEditor = null;
+        function openTableModal(e) {
+            const container = e.target.closest('.editor-container');
+            if (container) lastFocusedEditor = container.querySelector('.editor-content-view');
+            document.getElementById('tableModal').style.display = 'block';
+            generateVisualTable();
+        }
+        function closeTableModal() { document.getElementById('tableModal').style.display = 'none'; }
+        function generateVisualTable() {
+            const rows = document.getElementById('tblRows').value;
+            const cols = document.getElementById('tblCols').value;
+            let html = '<table class="visual-table"><thead><tr>';
+            for (let c = 0; c < cols; c++) html += `<th><input type="text" placeholder="제목"></th>`;
+            html += '</tr></thead><tbody>';
+            for (let r = 0; r < rows; r++) {
+                html += '<tr>';
+                for (let c = 0; c < cols; c++) html += `<td><input type="text" placeholder="내용"></td>`;
+                html += '</tr>';
+            }
+            html += '</tbody></table>';
+            document.getElementById('visualTableContainer').innerHTML = html;
+        }
+        function insertTableFromModal() {
+            if (!lastFocusedEditor) return;
+            const modalTable = document.querySelector('.visual-table');
+            let tableHtml = '<div class="tbl-scroll"><table style="width: 600px; border-collapse: collapse;" class="xfe_just_info"><thead><tr>';
+            modalTable.querySelectorAll('thead input').forEach(input => {
+                tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd;">${input.value || '&nbsp;'}</th>`;
+            });
+            tableHtml += '</tr></thead><tbody>';
+            modalTable.querySelectorAll('tbody tr').forEach(row => {
+                tableHtml += '<tr>';
+                row.querySelectorAll('input').forEach(input => {
+                    tableHtml += `<td style="border:1px solid #ccc; padding:8px;">${input.value || '&nbsp;'}</td>`;
+                });
+                tableHtml += '</tr>';
+            });
+            tableHtml += '</tbody></table></div><p><br></p>';
+            lastFocusedEditor.focus();
+            insertHTML(tableHtml);
+            closeTableModal();
+        }
+
+        // --- Section Management ---
+        function addDynamicSection() {
+            const id = 'dyn_' + Date.now();
+            const html = `
+                <div class="dynamic-section" id="${id}">
+                    <button class="btn-remove-section" onclick="removeSection('${id}')"><i class="fas fa-trash-alt"></i></button>
+                    <div class="form-group">
+                        <label>추가 섹션 제목</label>
+                        <input type="text" class="dyn-title" placeholder="소제목 입력">
+                    </div>
+                    <div class="editor-container">
+                        <div class="editor-toolbar">
+                            <button onclick="insertFormat('bold')"><i class="fas fa-bold"></i></button>
+                            <button onclick="insertFormat('italic')"><i class="fas fa-italic"></i></button>
+                            <button onclick="insertFormat('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
+                            <button onclick="insertFormat('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+                            <button onclick="openTableModal(event)"><i class="fas fa-table"></i></button>
+                            <button onclick="clearEditor(this)" style="margin-left:auto;"><i class="fas fa-trash-alt"></i></button>
+                        </div>
+                        <div class="editor-content-view paste-area dyn-content" contenteditable="true" placeholder="내용을 입력하세요..."></div>
+                    </div>
+                </div>`;
+            document.getElementById('dynamicSections').insertAdjacentHTML('beforeend', html);
+            document.getElementById(id).querySelector('.paste-area').addEventListener('paste', handlePaste);
+        }
+        function removeSection(id) { const el = document.getElementById(id); if (el) el.remove(); }
+
+        // --- Paste Handling ---
+        function handlePaste(e) {
+            const data = e.clipboardData;
+            const text = data.getData('text');
+            // Excel paste
+            if (text && text.indexOf('\t') !== -1) {
+                e.preventDefault();
+                const lines = text.trim().split(/\r\n|\n|\r/);
+                let maxCols = 0;
+                const rows = lines.map(line => {
+                    const cols = line.split('\t');
+                    if (cols.length > maxCols) maxCols = cols.length;
+                    return cols;
+                });
+                let tableHtml = '<div class="tbl-scroll"><table style="width:600px; border-collapse:collapse;" class="xfe_just_info"><thead><tr>';
+                rows[0].forEach(cell => tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd;">${cell}</th>`);
+                for (let i = rows[0].length; i < maxCols; i++) tableHtml += '<th style="border:1px solid #ccc; padding:8px; background:#ddd;">&nbsp;</th>';
+                tableHtml += '</tr></thead><tbody>';
+                for (let i = 1; i < rows.length; i++) {
+                    tableHtml += '<tr>';
+                    rows[i].forEach(cell => tableHtml += `<td style="border:1px solid #ccc; padding:8px;">${cell}</td>`);
+                    for (let j = rows[i].length; j < maxCols; j++) tableHtml += '<td style="border:1px solid #ccc; padding:8px;">&nbsp;</td>';
+                    tableHtml += '</tr>';
+                }
+                tableHtml += '</tbody></table></div><p><br></p>';
+                insertHTML(tableHtml);
+                return;
+            }
+            // Image paste
+            for (let item of data.items) {
+                if (item.type.startsWith('image/')) {
+                    e.preventDefault();
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        insertHTML(`<div class="img-only"><img src="${event.target.result}" class="xfe_just_info"></div><p><br></p>`);
+                    };
+                    reader.readAsDataURL(item.getAsFile());
+                }
+            }
+        }
+        document.querySelectorAll('.paste-area').forEach(el => el.addEventListener('paste', handlePaste));
+
+        // --- HTML Generation ---
+        function generateHTML() {
+            // Modification Table Data
+            const infoData = [
+                ['배경', document.getElementById('info_bg').value],
+                ['변경 전', document.getElementById('info_before').value],
+                ['변경 후', document.getElementById('info_after').value],
+                ['적용 일시', document.getElementById('info_date').value],
+                ['적용 제번', document.getElementById('info_serial').value],
+                ['증상', document.getElementById('info_symptom').value],
+                ['부품 정보', document.getElementById('info_partInfo').value]
+            ];
+
+            let infoTableHtml = '';
+            const validRows = infoData.filter(([label, val]) => val && val.trim().length > 0);
+
+            if (validRows.length > 0) {
+                infoTableHtml = '<div class="tbl-scroll"><table style="width: 600px; border-collapse: collapse;" class="xfe_just_info"><thead><tr><th style="border:1px solid #ccc; padding:8px; background:#ddd; width:140px;">구분</th><th style="border:1px solid #ccc; padding:8px; background:#ddd;">내용</th></tr></thead><tbody>';
+                validRows.forEach(([label, val]) => {
+                    const formattedVal = (val || '').replace(/\n/g, '<br>');
+                    infoTableHtml += `<tr><td style="border:1px solid #ccc; padding:8px; background:#eee; font-weight:bold;">${label}</td><td style="border:1px solid #ccc; padding:8px; text-align: left;">${formattedVal || '&nbsp;'}</td></tr>`;
+                });
+                infoTableHtml += '</tbody></table></div>';
+            }
+
+            // Sections
+            let contentHtml = infoTableHtml;
+            let idx = 1;
+            const addSec = (title, html) => {
+                const hasHtml = html.replace(/<[^>]*>?/gm, '').trim().length > 0 || html.includes('<img') || html.includes('<table');
+                contentHtml += `<h3 class="sub-tit ${hasHtml ? '' : 'no-content'}"><span class="num">${idx++}</span>${title}</h3>${hasHtml ? html : ''}`;
+            };
+
+            addSec(document.getElementById('inSymptomTitle').value, document.getElementById('inSymptom').innerHTML);
+            addSec(document.getElementById('inCauseTitle').value, document.getElementById('inCause').innerHTML);
+            addSec(document.getElementById('inRepairTitle').value, document.getElementById('inRepairMethod').innerHTML);
+
+            document.querySelectorAll('.dynamic-section').forEach(sec => {
+                addSec(sec.querySelector('.dyn-title').value || '추가 섹션', sec.querySelector('.dyn-content').innerHTML);
+            });
+
+            // Preview
+            document.getElementById('previewContainer').innerHTML = `<div class="content-service-view" style="padding:15px;">${contentHtml}</div>`;
+
+            // Code Output
+            const fullOutput = `
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        .content-service-view { font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0; padding: 20px; text-align: left; }
+        .sub-tit { position: relative; padding-left: 25px; margin: 30px 0 10px; font-size: 18px; font-weight: bold; }
+        .sub-tit .num { position: absolute; left: 0; top: 2px; width: 20px; height: 20px; background: #999; color: #fff; border-radius: 50%; text-align: center; font-size: 12px; line-height: 20px; display: inline-block; }
+        .sub-tit.no-content { margin-top: 15px; }
+        .tbl-scroll { overflow-x: auto; margin: 15px 0; }
+        .tbl-scroll table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        .tbl-scroll th, .tbl-scroll td { border: 1px solid #ccc; padding: 12px; text-align: center; }
+        .tbl-scroll th { background: #f4f4f4; font-weight: bold; }
+        .img-only { margin: 20px 0; text-align: center; }
+        .img-only img { max-width: 100%; height: auto; border: 1px solid #eee; }
+        p { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="content-service-view">
+        ${contentHtml}
+    </div>
+</body>
+</html>`.trim();
+            document.getElementById('codeOutput').value = fullOutput;
+        }
+
+        function copyCode() {
+            const code = document.getElementById('codeOutput').value;
+            if (!code) return alert('먼저 변환 버튼을 눌러주세요.');
+            navigator.clipboard.writeText(code).then(() => alert('코드가 복사되었습니다.'));
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.mobile-tabs button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btnTab' + tabId.charAt(0).toUpperCase() + tabId.slice(1)).classList.add('active');
+            document.querySelector('.editor-panel').style.display = (tabId === 'edit' ? 'block' : 'none');
+            document.querySelector('.preview-panel').style.display = (tabId === 'preview' ? 'block' : 'none');
+        }
+
+        window.onclick = (e) => { if (e.target.className === 'modal') closeTableModal(); };
+
+        // --- Custom Resize Logic ---
+        (function () {
+            const handle = document.getElementById('codeResizeHandle');
+            const target = document.getElementById('codeOutput');
+            let isResizing = false;
+            let startY, startHeight;
+
+            handle.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startY = e.clientY;
+                startHeight = target.offsetHeight;
+                document.body.style.cursor = 'ns-resize';
+                e.preventDefault();
+            });
+
+            window.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                // 올리면(위로 가면 clientY가 작아짐) 시작높이 + (시작Y - 현재Y) -> 높이가 늘어남
+                // 내리면(아래로 가면 clientY가 커짐) 시작높이 - (현재Y - 시작Y) -> 높이가 줄어듦
+                const diff = startY - e.clientY;
+                const newHeight = Math.max(100, startHeight + diff);
+                target.style.height = newHeight + 'px';
+            });
+
+            window.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.style.cursor = 'default';
+                }
+            });
+        })();
+    </script>
+</body>
+
+</html>
