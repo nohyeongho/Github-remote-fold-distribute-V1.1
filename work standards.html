@@ -428,7 +428,7 @@
 
         .img-only {
             margin: 15px 0;
-            text-align: center;
+            text-align: left;
         }
 
         .img-only img {
@@ -747,14 +747,14 @@
                     if (cols.length > maxCols) maxCols = cols.length;
                     return cols;
                 });
-                let tableHtml = '<div class="tbl-scroll"><table style="width:600px; border-collapse:collapse;" class="xfe_just_info"><thead><tr>';
-                rows[0].forEach(cell => tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd;">${cell}</th>`);
-                for (let i = rows[0].length; i < maxCols; i++) tableHtml += '<th style="border:1px solid #ccc; padding:8px; background:#ddd;">&nbsp;</th>';
+                let tableHtml = '<div class="tbl-scroll"><table style="width:auto; border-collapse:collapse;" class="xfe_just_info"><thead><tr>';
+                rows[0].forEach(cell => tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd; white-space:nowrap;">${cell}</th>`);
+                for (let i = rows[0].length; i < maxCols; i++) tableHtml += '<th style="border:1px solid #ccc; padding:8px; background:#ddd; white-space:nowrap;">&nbsp;</th>';
                 tableHtml += '</tr></thead><tbody>';
                 for (let i = 1; i < rows.length; i++) {
                     tableHtml += '<tr>';
-                    rows[i].forEach(cell => tableHtml += `<td style="border:1px solid #ccc; padding:8px;">${cell}</td>`);
-                    for (let j = rows[i].length; j < maxCols; j++) tableHtml += '<td style="border:1px solid #ccc; padding:8px;">&nbsp;</td>';
+                    rows[i].forEach(cell => tableHtml += `<td style="border:1px solid #ccc; padding:8px; white-space:nowrap;">${cell}</td>`);
+                    for (let j = rows[i].length; j < maxCols; j++) tableHtml += '<td style="border:1px solid #ccc; padding:8px; white-space:nowrap;">&nbsp;</td>';
                     tableHtml += '</tr>';
                 }
                 tableHtml += '</tbody></table></div><p><br></p>';
@@ -767,7 +767,7 @@
                     e.preventDefault();
                     const reader = new FileReader();
                     reader.onload = (event) => {
-                        insertHTML(`<div class="img-only"><img src="${event.target.result}" class="xfe_just_info"></div><p><br></p>`);
+                        insertHTML(`<div class="img-only" style="text-align:left;"><img src="${event.target.result}" class="xfe_just_info"></div><p><br></p>`);
                     };
                     reader.readAsDataURL(item.getAsFile());
                 }
@@ -835,7 +835,7 @@
         .tbl-scroll table { width: 100%; border-collapse: collapse; min-width: 600px; }
         .tbl-scroll th, .tbl-scroll td { border: 1px solid #ccc; padding: 12px; text-align: center; }
         .tbl-scroll th { background: #f4f4f4; font-weight: bold; }
-        .img-only { margin: 20px 0; text-align: center; }
+        .img-only { margin: 20px 0; text-align: left; }
         .img-only img { max-width: 100%; height: auto; border: 1px solid #eee; }
         p { margin: 10px 0; }
     </style>
