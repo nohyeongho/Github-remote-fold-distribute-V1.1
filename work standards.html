@@ -435,6 +435,64 @@
             max-width: 100%;
             height: auto;
         }
+
+        .table-width-controls {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            background: #f0f4ff;
+            border: 1px solid #b8c9e8;
+            border-bottom: none;
+            border-radius: 6px 6px 0 0;
+            flex-wrap: wrap;
+            user-select: none;
+        }
+
+        .table-width-controls .tw-label {
+            font-size: 11px;
+            color: #4a6fa5;
+            font-weight: 600;
+            margin-right: 4px;
+            white-space: nowrap;
+        }
+
+        .table-width-controls .tw-col-group {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            background: #fff;
+            border: 1px solid #ccd5e4;
+            border-radius: 4px;
+            padding: 2px 5px;
+        }
+
+        .table-width-controls .tw-col-label {
+            font-size: 10px;
+            color: #888;
+            min-width: 14px;
+            text-align: center;
+        }
+
+        .table-width-controls input[type="number"] {
+            width: 52px;
+            padding: 2px 4px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            text-align: center;
+            outline: none;
+        }
+
+        .table-width-controls input[type="number"]:focus {
+            border-color: #4a6fa5;
+            box-shadow: 0 0 3px rgba(74, 111, 165, 0.3);
+        }
+
+        .table-width-controls .tw-unit {
+            font-size: 10px;
+            color: #999;
+        }
     </style>
 </head>
 
@@ -747,18 +805,40 @@
                     if (cols.length > maxCols) maxCols = cols.length;
                     return cols;
                 });
-                let tableHtml = '<div class="tbl-scroll"><table style="width:auto; border-collapse:collapse;" class="xfe_just_info"><thead><tr>';
-                rows[0].forEach(cell => tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd; white-space:nowrap;">${cell}</th>`);
-                for (let i = rows[0].length; i < maxCols; i++) tableHtml += '<th style="border:1px solid #ccc; padding:8px; background:#ddd; white-space:nowrap;">&nbsp;</th>';
+                const tableId = 'extbl_' + Date.now();
+                const defaultWidth = 100;
+
+                // 열 너비 조절 컨트롤
+                let controlsHtml = `<div class="table-width-controls" contenteditable="false">`;
+                controlsHtml += '<span class="tw-label">📏 열 너비:</span>';
+                for (let c = 0; c < maxCols; c++) {
+                    controlsHtml += `<div class="tw-col-group">`;
+                    controlsHtml += `<span class="tw-col-label">${c + 1}</span>`;
+                    controlsHtml += `<input type="number" value="${defaultWidth}" min="30" max="800" step="10"`;
+                    controlsHtml += ` onchange="updateColWidth('${tableId}', ${c}, this.value)"`;
+                    controlsHtml += ` oninput="updateColWidth('${tableId}', ${c}, this.value)"`;
+                    controlsHtml += ` onclick="event.stopPropagation()" />`;
+                    controlsHtml += `<span class="tw-unit">px</span></div>`;
+                }
+                controlsHtml += '</div>';
+
+                // colgroup 기반 테이블
+                let tableHtml = `<div class="tbl-scroll" data-table-id="${tableId}"><table style="border-collapse:collapse;" class="xfe_just_info"><colgroup>`;
+                for (let c = 0; c < maxCols; c++) {
+                    tableHtml += `<col style="width:${defaultWidth}px;">`;
+                }
+                tableHtml += '</colgroup><thead><tr>';
+                rows[0].forEach(cell => tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd;">${cell}</th>`);
+                for (let i = rows[0].length; i < maxCols; i++) tableHtml += '<th style="border:1px solid #ccc; padding:8px; background:#ddd;">&nbsp;</th>';
                 tableHtml += '</tr></thead><tbody>';
                 for (let i = 1; i < rows.length; i++) {
                     tableHtml += '<tr>';
-                    rows[i].forEach(cell => tableHtml += `<td style="border:1px solid #ccc; padding:8px; white-space:nowrap;">${cell}</td>`);
-                    for (let j = rows[i].length; j < maxCols; j++) tableHtml += '<td style="border:1px solid #ccc; padding:8px; white-space:nowrap;">&nbsp;</td>';
+                    rows[i].forEach(cell => tableHtml += `<td style="border:1px solid #ccc; padding:8px;">${cell}</td>`);
+                    for (let j = rows[i].length; j < maxCols; j++) tableHtml += '<td style="border:1px solid #ccc; padding:8px;">&nbsp;</td>';
                     tableHtml += '</tr>';
                 }
                 tableHtml += '</tbody></table></div><p><br></p>';
-                insertHTML(tableHtml);
+                insertHTML(controlsHtml + tableHtml);
                 return;
             }
             // Image paste
@@ -774,6 +854,16 @@
             }
         }
         document.querySelectorAll('.paste-area').forEach(el => el.addEventListener('paste', handlePaste));
+
+        // --- Column Width Update ---
+        function updateColWidth(tableId, colIndex, value) {
+            const wrapper = document.querySelector(`[data-table-id="${tableId}"]`);
+            if (!wrapper) return;
+            const cols = wrapper.querySelectorAll('colgroup col');
+            if (cols[colIndex]) {
+                cols[colIndex].style.width = value + 'px';
+            }
+        }
 
         // --- HTML Generation ---
         function generateHTML() {
@@ -804,8 +894,10 @@
             let contentHtml = infoTableHtml;
             let idx = 1;
             const addSec = (title, html) => {
-                const hasHtml = html.replace(/<[^>]*>?/gm, '').trim().length > 0 || html.includes('<img') || html.includes('<table');
-                contentHtml += `<h3 class="sub-tit ${hasHtml ? '' : 'no-content'}"><span class="num">${idx++}</span>${title}</h3>${hasHtml ? html : ''}`;
+                // 열 너비 조절 컨트롤 제거 (출력에서 제외)
+                const cleanHtml = html.replace(/<div class="table-width-controls"[^>]*>[\s\S]*?<\/div>(?=\s*<div class="tbl-scroll")/gi, '');
+                const hasHtml = cleanHtml.replace(/<[^>]*>?/gm, '').trim().length > 0 || cleanHtml.includes('<img') || cleanHtml.includes('<table');
+                contentHtml += `<h3 class="sub-tit ${hasHtml ? '' : 'no-content'}"><span class="num">${idx++}</span>${title}</h3>${hasHtml ? cleanHtml : ''}`;
             };
 
             addSec(document.getElementById('inSymptomTitle').value, document.getElementById('inSymptom').innerHTML);
