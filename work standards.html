@@ -493,6 +493,33 @@
             font-size: 10px;
             color: #999;
         }
+
+        /* Column Drag Resize */
+        .resizable-th {
+            position: relative;
+        }
+
+        .col-resize-handle {
+            position: absolute;
+            right: -3px;
+            top: 0;
+            bottom: 0;
+            width: 6px;
+            cursor: col-resize;
+            z-index: 10;
+            background: transparent;
+            transition: background 0.15s;
+        }
+
+        .col-resize-handle:hover,
+        .col-resize-handle.active {
+            background: rgba(74, 111, 165, 0.5);
+        }
+
+        .col-resizing {
+            cursor: col-resize !important;
+            user-select: none !important;
+        }
     </style>
 </head>
 
@@ -822,14 +849,20 @@
                 }
                 controlsHtml += '</div>';
 
-                // colgroup 기반 테이블
-                let tableHtml = `<div class="tbl-scroll" data-table-id="${tableId}"><table style="border-collapse:collapse;" class="xfe_just_info"><colgroup>`;
+                // colgroup 기반 테이블 (드래그 리사이즈 핸들 포함)
+                let tableHtml = `<div class="tbl-scroll" data-table-id="${tableId}"><table style="border-collapse:collapse; table-layout:fixed;" class="xfe_just_info"><colgroup>`;
                 for (let c = 0; c < maxCols; c++) {
                     tableHtml += `<col style="width:${defaultWidth}px;">`;
                 }
                 tableHtml += '</colgroup><thead><tr>';
-                rows[0].forEach(cell => tableHtml += `<th style="border:1px solid #ccc; padding:8px; background:#ddd;">${cell}</th>`);
-                for (let i = rows[0].length; i < maxCols; i++) tableHtml += '<th style="border:1px solid #ccc; padding:8px; background:#ddd;">&nbsp;</th>';
+                rows[0].forEach((cell, ci) => {
+                    tableHtml += `<th class="resizable-th" style="border:1px solid #ccc; padding:8px; background:#ddd;">${cell}`;
+                    tableHtml += `<div class="col-resize-handle" data-table="${tableId}" data-col="${ci}" contenteditable="false"></div></th>`;
+                });
+                for (let i = rows[0].length; i < maxCols; i++) {
+                    tableHtml += `<th class="resizable-th" style="border:1px solid #ccc; padding:8px; background:#ddd;">&nbsp;`;
+                    tableHtml += `<div class="col-resize-handle" data-table="${tableId}" data-col="${i}" contenteditable="false"></div></th>`;
+                }
                 tableHtml += '</tr></thead><tbody>';
                 for (let i = 1; i < rows.length; i++) {
                     tableHtml += '<tr>';
@@ -839,6 +872,8 @@
                 }
                 tableHtml += '</tbody></table></div><p><br></p>';
                 insertHTML(controlsHtml + tableHtml);
+                // 드래그 리사이즈 핸들 초기화
+                setTimeout(() => initColResize(tableId), 50);
                 return;
             }
             // Image paste
@@ -863,7 +898,59 @@
             if (cols[colIndex]) {
                 cols[colIndex].style.width = value + 'px';
             }
+            // 숫자 입력 필드도 동기화
+            const controls = wrapper.previousElementSibling;
+            if (controls && controls.classList.contains('table-width-controls')) {
+                const inputs = controls.querySelectorAll('input[type="number"]');
+                if (inputs[colIndex]) {
+                    inputs[colIndex].value = Math.round(value);
+                }
+            }
         }
+
+        // --- Column Drag Resize ---
+        let colResizeState = null;
+
+        function initColResize(tableId) {
+            const handles = document.querySelectorAll(`.col-resize-handle[data-table="${tableId}"]`);
+            handles.forEach(handle => {
+                handle.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const colIdx = parseInt(handle.dataset.col);
+                    const wrapper = document.querySelector(`[data-table-id="${tableId}"]`);
+                    if (!wrapper) return;
+                    const col = wrapper.querySelectorAll('colgroup col')[colIdx];
+                    if (!col) return;
+                    const startWidth = col.offsetWidth || parseInt(col.style.width) || 100;
+                    colResizeState = {
+                        tableId: tableId,
+                        colIndex: colIdx,
+                        startX: e.clientX,
+                        startWidth: startWidth,
+                        handle: handle
+                    };
+                    handle.classList.add('active');
+                    document.body.classList.add('col-resizing');
+                });
+            });
+        }
+
+        window.addEventListener('mousemove', (e) => {
+            if (!colResizeState) return;
+            e.preventDefault();
+            const diff = e.clientX - colResizeState.startX;
+            const newWidth = Math.max(30, colResizeState.startWidth + diff);
+            updateColWidth(colResizeState.tableId, colResizeState.colIndex, newWidth);
+        });
+
+        window.addEventListener('mouseup', () => {
+            if (colResizeState) {
+                colResizeState.handle.classList.remove('active');
+                document.body.classList.remove('col-resizing');
+                colResizeState = null;
+            }
+        });
 
         // --- HTML Generation ---
         function generateHTML() {
