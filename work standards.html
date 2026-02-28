@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GSCS 업무 표준 변환기</title>
+    <title>GSCS업무 표준 콘텐츠 작성 Editor </title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
         rel="stylesheet">
@@ -161,6 +161,20 @@
             border-color: var(--lg-red);
             background: #fff;
             outline: none;
+        }
+
+        .btn-clear-title {
+            background: none;
+            border: none;
+            color: #bbb;
+            cursor: pointer;
+            padding: 0 4px;
+            font-size: 13px;
+            transition: color 0.2s;
+        }
+
+        .btn-clear-title:hover {
+            color: #ff4d4d;
         }
 
         .btn-clear-section {
@@ -363,7 +377,7 @@
         }
 
         .editor-content-view {
-            min-height: 120px;
+            min-height: 60px;
             padding: 18px;
             outline: none;
             font-size: 14px;
@@ -371,7 +385,17 @@
             word-break: break-all;
             background-color: #fff;
             position: relative;
+            resize: vertical;
+            overflow: auto;
             /* For absolute child placement */
+        }
+
+        .editor-content-view[contenteditable]:empty:before {
+            content: attr(placeholder);
+            color: #999;
+            pointer-events: none;
+            display: block;
+            white-space: pre-wrap;
         }
 
         .editor-content-view table {
@@ -459,7 +483,8 @@
             flex: 1;
             padding: 0;
             box-shadow: var(--primary-shadow);
-            overflow: hidden;
+            overflow-y: auto;
+            overflow-x: hidden;
         }
 
         .code-area {
@@ -671,7 +696,7 @@
     <div class="container">
         <div class="editor-panel">
             <div class="sticky-header"
-                style="margin: -25px -30px 25px -30px; border-radius: 10px 10px 0 0; padding-bottom: 15px;">
+                style="margin: -25px -30px 35px -30px; border-radius: 10px 10px 0 0; padding-bottom: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <div class="panel-title" style="margin-bottom:0;"><i class="fas fa-file-alt"></i> 업무 표준 변환기</div>
                     <button class="btn-primary" onclick="generateHTML()"
@@ -683,90 +708,130 @@
                     style="top: 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; position: static; box-shadow: none;">
                     <!-- JS에서 TOOLBAR_HTML 주입 -->
                 </div>
+                <div style="margin-top: 15px; font-size: 13px; color: #666; display: flex; align-items: center;">
+                    <span style="color: #e91b5c; font-size: 14px; margin-right: 4px;">★</span>필수 항목입니다
+                    <span style="color: #999; margin-left: 15px;">(제목 수정 가능_X버튼을 누르고 새로운 제목을 입력하세요)</span>
+                </div>
             </div>
 
             <!-- Sections: Background, Product, Symptom Summary, Part Info -->
 
             <div class="form-group">
                 <div class="label-row">
-                    <input class="editable-label" type="text" value="배경" title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('info_bg')" title="내용 지우기"><i
+                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <span
+                            style="color: #e91b5c; font-size: 15px; margin-right: -4px; position: relative; z-index: 1; pointer-events: none;">★</span>
+                        <input class="editable-label" type="text" value="배경" title="클릭하여 소제목 수정 가능"
+                            style="flex: 0 0 auto; width: 55px;" />
+                    </div>
+                    <button type="button" class="btn-clear-title"
+                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
+                        title="소제목 지우기"><i class="fas fa-times"></i></button>
+                    <span style="flex: 1;"></span>
+                    <button type="button" class="btn-clear-section" onclick="clearSection('info_bg')" title="내용 지우기"><i
                             class="fas fa-times"></i> 지우기</button>
                 </div>
                 <div class="editor-container">
                     <div id="info_bg" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="배경 내용을 입력하세요..."></div>
+                        placeholder="예시) - 배송 중 파손/분실건에 대한 처리방법 명확화로 현장 혼선 최소화&#10;- 파손/분실건 즉시 처리로 고객 불만 해소"></div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <input class="editable-label" type="text" value="제품" title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('info_product')" title="내용 지우기"><i
-                            class="fas fa-times"></i> 지우기</button>
+                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <input class="editable-label" type="text" id="inApplyDateTitle" value="적용일시"
+                            title="클릭하여 소제목 수정 가능" style="flex: 0 0 auto; width: 70px;" />
+                    </div>
+                    <button type="button" class="btn-clear-title"
+                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
+                        title="소제목 지우기"><i class="fas fa-times"></i></button>
+                    <span style="flex: 1;"></span>
+                    <button type="button" class="btn-clear-section" onclick="clearSection('inApplyDate')"
+                        title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="inApplyDate" class="editor-content-view paste-area" contenteditable="true"
+                        style="min-height: 24px; padding: 10px 18px;" placeholder="예시) 24년 3월 25일 이후부터 지속 적용"></div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="label-row">
+                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <span
+                            style="color: #e91b5c; font-size: 15px; margin-right: -4px; position: relative; z-index: 1; pointer-events: none;">★</span>
+                        <input class="editable-label" type="text" value="제품" title="클릭하여 소제목 수정 가능"
+                            style="flex: 0 0 auto; width: 55px;" />
+                    </div>
+                    <button type="button" class="btn-clear-title"
+                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
+                        title="소제목 지우기"><i class="fas fa-times"></i></button>
+                    <span style="flex: 1;"></span>
+                    <button type="button" class="btn-clear-section" onclick="clearSection('info_product')"
+                        title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
                 </div>
                 <div class="editor-container">
                     <div id="info_product" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="제품 정보를 입력하세요..."></div>
+                        style="min-height: 24px; padding: 10px 18px;" placeholder="예시)4도어 냉장고"></div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <input class="editable-label" type="text" value="증상" title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('info_symptom')" title="내용 지우기"><i
-                            class="fas fa-times"></i> 지우기</button>
+                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <input class="editable-label" type="text" value="증상" title="클릭하여 소제목 수정 가능"
+                            style="flex: 0 0 auto; width: 55px;" />
+                    </div>
+                    <button type="button" class="btn-clear-title"
+                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
+                        title="소제목 지우기"><i class="fas fa-times"></i></button>
+                    <span style="flex: 1;"></span>
+                    <button type="button" class="btn-clear-section" onclick="clearSection('info_symptom')"
+                        title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
                 </div>
                 <div class="editor-container">
                     <div id="info_symptom" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="증상을 입력하세요..."></div>
+                        placeholder="예시) 냉장실 홈바 도어파손"></div>
                 </div>
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <input class="editable-label" type="text" value="부품 정보" title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('info_partInfo')" title="내용 지우기"><i
-                            class="fas fa-times"></i> 지우기</button>
+                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <input class="editable-label" type="text" value="부품 정보" title="클릭하여 소제목 수정 가능"
+                            style="flex: 0 0 auto; width: 80px;" />
+                    </div>
+                    <button type="button" class="btn-clear-title"
+                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
+                        title="소제목 지우기"><i class="fas fa-times"></i></button>
+                    <span style="flex: 1;"></span>
+                    <button type="button" class="btn-clear-section" onclick="clearSection('info_partInfo')"
+                        title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
                 </div>
                 <div class="editor-container">
                     <div id="info_partInfo" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="부품 정보를 입력하세요..."></div>
+                        style="min-height: 24px; padding: 10px 18px;" placeholder="예시) DOOR handle 교체  P/N"></div>
                 </div>
             </div>
 
             <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
 
-            <!-- Main Sections: Symptom, Cause, Repair -->
+            <!-- Main Sections: Content, Apply Date, Apply Example, Caution -->
             <div class="form-group">
                 <div class="label-row">
-                    <input class="editable-label" type="text" id="inSymptomTitle" value="현상 및 증상"
-                        title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('inSymptom')" title="내용 지우기"><i
-                            class="fas fa-times"></i> 지우기</button>
+                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <span
+                            style="color: #e91b5c; font-size: 15px; margin-right: -4px; position: relative; z-index: 1; pointer-events: none;">★</span>
+                        <input class="editable-label" type="text" id="inContentTitle" value="내용" title="클릭하여 소제목 수정 가능"
+                            style="flex: 0 0 auto; width: 55px;" />
+                    </div>
+                    <button type="button" class="btn-clear-title"
+                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
+                        title="소제목 지우기"><i class="fas fa-times"></i></button>
+                    <span style="flex: 1;"></span>
+                    <button type="button" class="btn-clear-section" onclick="clearSection('inContent')"
+                        title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
                 </div>
                 <div class="editor-container">
-                    <div id="inSymptom" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="현상을 입력하세요..."></div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="label-row">
-                    <input class="editable-label" type="text" id="inCauseTitle" value="원인" title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('inCause')" title="내용 지우기"><i
-                            class="fas fa-times"></i> 지우기</button>
-                </div>
-                <div class="editor-container">
-                    <div id="inCause" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="원인을 입력하세요..."></div>
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="label-row">
-                    <input class="editable-label" type="text" id="inRepairTitle" value="조치 방법" title="클릭하여 소제목 수정 가능" />
-                    <button class="btn-clear-section" onclick="clearSection('inRepairMethod')" title="내용 지우기"><i
-                            class="fas fa-times"></i> 지우기</button>
-                </div>
-                <div class="editor-container">
-                    <div id="inRepairMethod" class="editor-content-view paste-area" contenteditable="true"
-                        placeholder="조치 방법을 입력하세요..."></div>
+                    <div id="inContent" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="예시) 비용 징구 : 출장비 + 수리비 +부품비 할인(고객은 소비자가 3-%만 부담)"></div>
                 </div>
             </div>
 
@@ -775,7 +840,12 @@
         </div>
 
         <div class="preview-panel">
-            <div class="panel-title"><i class="fas fa-eye"></i> 결과 데이터 미리보기</div>
+            <div class="panel-title" style="justify-content: space-between;">
+                <div style="margin-bottom:0;"><i class="fas fa-eye"></i> 결과 데이터 미리보기</div>
+                <button class="btn-primary" onclick="copyPreview(this)"
+                    style="background:#4ec9b0; color:#fff; border:none; padding:8px 16px; border-radius:6px; font-weight:700; font-size:14px; transition:all 0.2s;"><i
+                        class="fas fa-copy" style="margin-right:4px;"></i> 화면 복사</button>
+            </div>
             <div id="previewContainer" class="preview-frame">
                 <div style="padding: 100px; text-align: center; color: #999;">
                     <i class="fas fa-code"
@@ -876,9 +946,17 @@
         function insertHTML(html) { restoreSelectionState(); document.execCommand('insertHTML', false, html); }
         function insertImage(input) {
             if (!input.files || input.files.length === 0) return;
+            const file = input.files[0];
             const reader = new FileReader();
-            reader.onload = e => { insertHTML(`<div class="img-only"><img src="${e.target.result}" style="max-width:100%; height:auto; border:1px solid #eee;"></div><p><br></p>`); };
-            reader.readAsDataURL(input.files[0]);
+            reader.onload = e => {
+                const img = new Image();
+                img.onload = () => {
+                    const w = img.width > 800 ? 800 : img.width;
+                    insertHTML(`<div class="img-only"><img src="${e.target.result}" width="${w}" style="max-width:100%; height:auto;"></div><p><br></p>`);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
             input.value = '';
         }
         function changeFontFamily(s) { restoreSelectionState(); document.execCommand('fontName', false, s.value); }
@@ -973,16 +1051,30 @@
             const wrapper = document.createElement('div'); wrapper.className = 'dynamic-section'; wrapper.id = id;
             wrapper.innerHTML = `
                 <button class="btn-remove-section" onclick="document.getElementById('${id}').remove()"><i class="fas fa-times"></i></button>
-                <div class="form-group"><label>추가 섹션 제목</label><input type="text" class="dyn-title" placeholder="소제목 입력"></div>
+                <div class="form-group">
+                    <div class="label-row" style="margin-bottom:8px;">
+                        <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                            <input type="text" class="editable-label dyn-title" value="추가 섹션" placeholder="소제목 입력" style="flex: 0 0 auto; width: 80px;" title="클릭하여 소제목 수정 가능">
+                        </div>
+                        <button type="button" class="btn-clear-title" onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();" title="소제목 지우기"><i class="fas fa-times"></i></button>
+                        <span style="flex: 1;"></span>
+                    </div>
                 <div class="editor-container">
                     <div class="editor-content-view paste-area dyn-content" contenteditable="true" placeholder="내용을 입력하세요..."></div>
-                </div>`;
+                </div></div>`;
             document.getElementById('dynamicSections').appendChild(wrapper);
             const ed = wrapper.querySelector('.paste-area');
             ed.addEventListener('paste', handlePaste);
             ed.addEventListener('focus', () => { lastFocusedEditor = ed; saveSelectionState(); });
             ed.addEventListener('mouseup', saveSelectionState);
             ed.addEventListener('keyup', saveSelectionState);
+
+            const titleInput = wrapper.querySelector('.dyn-title');
+            titleInput.addEventListener('input', () => adjustTitleWidth(titleInput));
+            wrapper.querySelector('.btn-clear-title').addEventListener('click', function () {
+                setTimeout(() => adjustTitleWidth(titleInput), 10);
+            });
+            adjustTitleWidth(titleInput);
         }
 
         // --- Table ---
@@ -1037,50 +1129,122 @@
 
         // --- Paste & HTML ---
         function handlePaste(e) {
-            const d = e.clipboardData, t = d.getData('text/plain');
+            const d = e.clipboardData;
+            const t = d.getData('text/plain');
+            const h = d.getData('text/html');
+
+            // 1. 엑셀 형태의 탭 구분 텍스트인 경우 (표 변환 우선)
             if (t && t.indexOf('\t') !== -1) {
                 e.preventDefault();
                 const lines = t.trim().split(/\r\n|\n|\r/), rows = lines.map(line => line.split('\t')), max = Math.max(...rows.map(r => r.length));
-
-                let h = `<div class="tbl-scroll">\n<table style="width: auto;" class="xfe_just_info">\n<thead>\n<tr>\n`;
-                rows[0].forEach(c => h += `<th style="padding: 8px;">${c || '&nbsp;'}</th>\n`);
-                for (let j = rows[0].length; j < max; j++) h += `<th style="padding: 8px;">&nbsp;</th>\n`;
-                h += '</tr>\n</thead>\n<tbody>\n';
+                let tableHtml = `<div class="tbl-scroll">\n<table style="width: auto;" class="xfe_just_info">\n<thead>\n<tr>\n`;
+                rows[0].forEach(c => tableHtml += `<th style="padding: 8px;">${c || '&nbsp;'}</th>\n`);
+                for (let j = rows[0].length; j < max; j++) tableHtml += `<th style="padding: 8px;">&nbsp;</th>\n`;
+                tableHtml += '</tr>\n</thead>\n<tbody>\n';
                 for (let i = 1; i < rows.length; i++) {
-                    h += '<tr>\n';
-                    rows[i].forEach(c => h += `<td style="padding: 8px;">${c || '&nbsp;'}</td>\n`);
-                    for (let j = rows[i].length; j < max; j++) h += `<td style="padding: 8px;">&nbsp;</td>\n`;
-                    h += '</tr>\n';
+                    tableHtml += '<tr>\n';
+                    rows[i].forEach(c => tableHtml += `<td style="padding: 8px;">${c || '&nbsp;'}</td>\n`);
+                    for (let j = rows[i].length; j < max; j++) tableHtml += `<td style="padding: 8px;">&nbsp;</td>\n`;
+                    tableHtml += '</tr>\n';
                 }
-                h += '</tbody>\n</table>\n</div>\n<p><br></p>\n';
-                insertHTML(h); return;
+                tableHtml += '</tbody>\n</table>\n</div>\n<p><br></p>\n';
+                insertHTML(tableHtml);
+                return;
             }
-            if (t && t.trim().length > 0) { e.preventDefault(); insertHTML(t.replace(/\n/g, '<br>')); return; }
+
+            // 2. HTML 내용이 있는 경우 (웹페이지, 에디터 미리보기 등에서 복사)
+            if (h) {
+                // 브라우저의 기본 붙여넣기 기능을 사용하여 이미지 주소와 서식을 그대로 유지 (preventDefault 미사용)
+                return;
+            }
+
+            // 3. 파일 형태의 이미지인 경우 (캡처 도구, 탐색기 파일 복사 등)
             for (let item of d.items) {
                 if (item.type.startsWith('image/')) {
-                    e.preventDefault(); const reader = new FileReader();
-                    reader.onload = ev => insertHTML(`<div class="img-only"><img src="${ev.target.result}" style="max-width:100%; height:auto; border:1px solid #eee;"></div><p><br></p>`);
-                    reader.readAsDataURL(item.getAsFile()); break;
+                    e.preventDefault();
+                    const reader = new FileReader();
+                    reader.onload = ev => {
+                        const img = new Image();
+                        img.onload = () => {
+                            const w = img.width > 800 ? 800 : img.width;
+                            insertHTML(`<div class="img-only"><img src="${ev.target.result}" width="${w}" style="max-width:100%; height:auto;"></div><p><br></p>`);
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(item.getAsFile());
+                    return;
                 }
+            }
+
+            // 4. 일반 평문 텍스트인 경우 공백 처리 후 삽입
+            if (t && t.trim().length > 0) {
+                e.preventDefault();
+                insertHTML(t.replace(/\n/g, '<br>'));
             }
         }
 
         function generateHTML() {
-            const infoIds = [['배경', 'info_bg'], ['제품', 'info_product'], ['증상', 'info_symptom'], ['부품 정보', 'info_partInfo']];
+            const getTitle = (id, def) => {
+                const el = document.getElementById(id);
+                if (el && el.closest('.form-group')) {
+                    const input = el.closest('.form-group').querySelector('.editable-label');
+                    if (input) return input.value.trim() || def;
+                }
+                return def;
+            };
+            const infoIds = [
+                [getTitle('info_bg', '배경'), 'info_bg'],
+                [getTitle('inApplyDate', '적용일시'), 'inApplyDate'],
+                [getTitle('info_product', '제품'), 'info_product'],
+                [getTitle('info_symptom', '증상'), 'info_symptom'],
+                [getTitle('info_partInfo', '부품 정보'), 'info_partInfo']
+            ];
+            const cleanContent = (html) => {
+                const temp = document.createElement('div');
+                // GSCS 서버 오타(lge.com:/gscs) 사전에 전역 교정
+                html = html.replace(/https:\/\/gscs\.lge\.com:\/gscs/gi, 'https://gscs.lge.com/gscs');
+                temp.innerHTML = html;
+                // 사각 박스 버그 발생원인인 div 껍데기를 모두 p로 부드럽게 변환
+                temp.querySelectorAll('div').forEach(el => {
+                    // p 태그 변환 시 발생하는 내부 table 블록 깨짐 방지를 위해 속성만 무효화
+                    el.style.margin = '0';
+                    el.style.padding = '0';
+                    el.style.border = 'none';
+                });
+                // GSCS 에디터 내 이미지 업로더 오작동 방지 및 중복 URL 정화
+                temp.querySelectorAll('img').forEach(img => {
+                    img.style.border = 'none';
+                    img.style.display = 'inline-block';
+                    img.style.margin = '10px 0';
+                    let src = img.getAttribute('src');
+                    if (src && (src.includes('gscs/') || src.startsWith('/gscs/'))) {
+                        // 모든 GSCS 경로(/upload/, /support/ 등)를 감지하여 절대 주소로 강제 재조립
+                        let domain = 'https://gscs.lge.com/';
+                        let pathPart = src;
+                        if (src.includes('gscs/')) {
+                            pathPart = 'gscs/' + src.split('gscs/').pop();
+                        } else if (src.startsWith('/')) {
+                            pathPart = src.substring(1);
+                        }
+                        img.setAttribute('src', domain + pathPart);
+                    }
+                });
+                return temp.innerHTML;
+            };
+
             let ih = '';
             infoIds.filter(([l, id]) => document.getElementById(id).innerText.trim().length > 0 || document.getElementById(id).querySelector('img, table')).forEach(([l, id]) => {
-                ih += `<div style="margin-bottom:15px;"><div style="margin-bottom:6px;"><span style="background-color:#e2e2e2; padding:3px 12px; border-radius:4px; font-weight:bold; font-size:14px;">※ ${l}</span></div><div style="font-size:14px; padding-left:10px;">${document.getElementById(id).innerHTML}</div></div>`;
+                let content = cleanContent(document.getElementById(id).innerHTML);
+                ih += `<table cellpadding="0" cellspacing="0" style="margin-bottom:6px; border-collapse:collapse; width:auto; border:none;"><tr><td style="background-color:#e2e2e2; padding:6px 14px; border-radius:4px; font-weight:bold; font-size:14px; color:#333; border:none;">● ${l}</td></tr></table>\n<span style="font-size:14px; color:#333;">${content}</span>\n<br><br>\n`;
             });
-            if (ih) ih = `<div style="margin-bottom: 20px;">${ih}</div>`;
 
             let ch = ih;
             const add = (t, c) => {
-                const has = c.trim().replace(/<br>/g, '').length > 0 || c.includes('<img') || c.includes('<table');
-                if (has) ch += `<div style="margin-bottom: 20px;">${c}</div>`;
+                let content = cleanContent(c);
+                const has = content.trim().replace(/<br>|<p[^>]*>|<\/p>|&nbsp;/gi, '').length > 0 || content.includes('<img') || content.includes('<table');
+                if (has) ch += `<span style="font-size:14px; color:#333;">${content}</span><br><br>\n`;
             };
-            add(document.getElementById('inSymptomTitle').value, document.getElementById('inSymptom').innerHTML);
-            add(document.getElementById('inCauseTitle').value, document.getElementById('inCause').innerHTML);
-            add(document.getElementById('inRepairTitle').value, document.getElementById('inRepairMethod').innerHTML);
+            add(document.getElementById('inContentTitle').value || '내용', document.getElementById('inContent').innerHTML);
             document.querySelectorAll('.dynamic-section').forEach(s => add(s.querySelector('.dyn-title').value || '섹션', s.querySelector('.dyn-content').innerHTML));
 
             // Wrap result to handle absolute children positioning in the container
@@ -1117,11 +1281,64 @@ ${formattedCh}
         }
 
         function copyCode() { const v = document.getElementById('codeOutput').value; if (!v) return alert('변환 버튼을 먼저 눌러주세요.'); navigator.clipboard.writeText(v).then(() => alert('코드가 복사되었습니다.')); }
+        function copyPreview(btn) {
+            const container = document.getElementById('previewContainer');
+            if (container.innerText.trim() === '변환 버튼을 누르면 이 곳에 결과가 표시됩니다.') {
+                return alert('변환 버튼을 먼저 눌러주세요.');
+            }
+            // 테두리 복사 방지를 위해 알맹이 내용만 추출할 임시 영역 생성
+            const tempDiv = document.createElement('div');
+            const innerLayer = container.querySelector('.content-service-view > div');
+            if (innerLayer) {
+                tempDiv.innerHTML = innerLayer.innerHTML;
+            } else {
+                tempDiv.innerHTML = container.innerHTML;
+            }
+
+            // 안전한 기본 복사 레이어 (바깥 테두리/박스 그림자 등 제외하고 GSCS 스타일 상속 유도)
+            tempDiv.style.position = 'absolute';
+            tempDiv.style.left = '-99999px';
+            document.body.appendChild(tempDiv);
+
+            const range = document.createRange();
+            range.selectNodeContents(tempDiv);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            try {
+                document.execCommand('copy');
+                if (btn) {
+                    const originalHtml = btn.innerHTML;
+                    const originalBg = btn.style.background || '#4ec9b0';
+                    btn.innerHTML = '<i class="fas fa-check" style="margin-right:4px;"></i> 복사 완료!';
+                    btn.style.background = '#3ba28a';
+                    btn.style.transform = 'scale(0.96)';
+                    setTimeout(() => {
+                        btn.style.transform = 'scale(1)';
+                    }, 100);
+                    setTimeout(() => {
+                        btn.innerHTML = originalHtml;
+                        btn.style.background = originalBg;
+                    }, 1500);
+                }
+            } catch (err) {
+                alert('복사에 실패했습니다.');
+            }
+            sel.removeAllRanges();
+            document.body.removeChild(tempDiv);
+        }
         function switchTab(t) {
             document.querySelectorAll('.mobile-tabs button').forEach(b => b.classList.remove('active'));
             document.getElementById('btnTab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.add('active');
             document.querySelector('.editor-panel').style.display = (t === 'edit' ? 'block' : 'none');
             document.querySelector('.preview-panel').style.display = (t === 'preview' ? 'block' : 'none');
+        }
+        function clearSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.innerHTML = '';
+                el.focus();
+            }
         }
 
         // --- Init ---
@@ -1278,6 +1495,36 @@ ${formattedCh}
                 isR = false;
                 document.body.style.cursor = '';
                 document.body.style.userSelect = '';
+            });
+        });
+
+        function adjustTitleWidth(el) {
+            let span = document.getElementById('title-measurer');
+            if (!span) {
+                span = document.createElement('span');
+                span.id = 'title-measurer';
+                span.style.cssText = 'position:absolute; visibility:hidden; font-family:"Noto Sans KR", sans-serif; font-size:15px; font-weight:700; padding:4px 8px; white-space:pre;';
+                document.body.appendChild(span);
+            }
+            span.textContent = el.value || el.placeholder || ' ';
+            el.style.width = (span.offsetWidth + 12) + 'px';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.editable-label').forEach(el => {
+                el.addEventListener('input', () => adjustTitleWidth(el));
+                adjustTitleWidth(el);
+            });
+            document.querySelectorAll('.btn-clear-title').forEach(btn => {
+                btn.addEventListener('click', function () {
+                    let input = this.previousElementSibling;
+                    if (input && !input.classList.contains('editable-label')) {
+                        input = input.querySelector('.editable-label');
+                    }
+                    if (input && input.classList.contains('editable-label')) {
+                        setTimeout(() => adjustTitleWidth(input), 10);
+                    }
+                });
             });
         });
 
