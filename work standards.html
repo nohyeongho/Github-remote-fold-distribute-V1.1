@@ -34,6 +34,34 @@
             overflow: hidden;
         }
 
+        /* 표 일괄 적용 스타일 (에디터/미리보기 동시 적용) */
+        .xfe_just_info {
+            width: auto;
+            border-collapse: collapse;
+            border-spacing: 0;
+            table-layout: auto;
+        }
+
+        .xfe_just_info th,
+        .xfe_just_info td {
+            border: 1px solid #ccc;
+            padding: 8px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            text-align: left;
+        }
+
+        .img-only {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .img-only img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #eee;
+        }
+
         .mobile-tabs {
             display: none;
             width: 100%;
@@ -103,7 +131,60 @@
             color: #444;
         }
 
-        input[type="text"],
+        .label-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .editable-label {
+            flex: 1;
+            font-weight: 700;
+            font-size: 15px;
+            color: #444;
+            border: 1px dashed transparent;
+            background: transparent;
+            padding: 4px 8px;
+            border-radius: 4px;
+            width: auto;
+            cursor: text;
+            transition: border-color 0.2s, background 0.2s;
+        }
+
+        .editable-label:hover {
+            border-color: #bbb;
+            background: #f5f5f5;
+        }
+
+        .editable-label:focus {
+            border-color: var(--lg-red);
+            background: #fff;
+            outline: none;
+        }
+
+        .btn-clear-section {
+            background: none;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 3px 10px;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-clear-section:hover {
+            background: #fff0f0;
+            border-color: var(--lg-red);
+            color: var(--lg-red);
+        }
+
+        input[type="text"]:not(.editable-label),
         textarea,
         select {
             width: 100%;
@@ -115,7 +196,7 @@
             transition: border-color 0.2s;
         }
 
-        input[type="text"]:focus,
+        input[type="text"]:not(.editable-label):focus,
         select:focus {
             border-color: var(--lg-red);
             outline: none;
@@ -155,7 +236,8 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
         }
 
-        .editor-toolbar button {
+        .editor-toolbar button,
+        .custom-file-upload {
             background: #fff;
             border: 1px solid #ddd;
             padding: 5px 10px;
@@ -168,9 +250,20 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            margin: 0;
+            box-sizing: border-box;
         }
 
-        .editor-toolbar button:hover {
+        .custom-file-upload input[type="file"] {
+            display: none;
+        }
+
+        .custom-file-upload i {
+            margin-right: 5px;
+        }
+
+        .editor-toolbar button:hover,
+        .custom-file-upload:hover {
             background: #f0f0f0;
             border-color: #ccc;
         }
@@ -455,25 +548,34 @@
         }
 
         .visual-table {
-            width: 100%;
+            width: auto;
             border-collapse: collapse;
-            margin-top: 15px;
-            border-radius: 8px;
-            overflow: hidden;
+            margin-top: 10px;
         }
 
         .visual-table th,
         .visual-table td {
-            border: 1px solid #eee;
-            padding: 8px;
+            padding: 6px;
         }
 
-        .visual-table input {
-            width: 100%;
-            border: none;
-            outline: none;
-            padding: 6px;
+        .visual-table .cell-input {
+            min-width: 50px;
+            min-height: 24px;
+            outline: none !important;
+            padding: 4px 6px;
             font-size: 14px;
+            box-sizing: border-box;
+            font-family: inherit;
+            line-height: 1.4;
+            background: transparent;
+            word-break: break-all;
+            white-space: pre-wrap;
+        }
+
+        .visual-table .cell-input:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+            pointer-events: none;
         }
 
         .color-picker-popup {
@@ -568,66 +670,108 @@
 
     <div class="container">
         <div class="editor-panel">
-            <div class="sticky-header" style="margin: -25px -30px 25px -30px; border-radius: 10px 10px 0 0;">
-                <div class="panel-title" style="margin-bottom:0;"><i class="fas fa-file-alt"></i> 업무 표준 변환기</div>
-            </div>
-
-            <div
-                style="margin-bottom: 25px; padding: 20px; background: #fff5f6; border-radius: 10px; border-left: 5px solid var(--lg-red);">
-                <h3 style="margin: 0 0 5px 0; color: var(--lg-red); font-size: 18px;">공통 정보</h3>
-                <p style="margin: 0; font-size: 13px; color: #666;">배경, 제품명, 증상 요약 등을 작성하세요.</p>
+            <div class="sticky-header"
+                style="margin: -25px -30px 25px -30px; border-radius: 10px 10px 0 0; padding-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div class="panel-title" style="margin-bottom:0;"><i class="fas fa-file-alt"></i> 업무 표준 변환기</div>
+                    <button class="btn-primary" onclick="generateHTML()"
+                        style="background:var(--lg-red); color:#fff; border:none; padding:8px 20px; border-radius:6px; font-weight:700;"><i
+                            class="fas fa-magic"></i> 변환하기</button>
+                </div>
+                <!-- 단일 고정 툴바 -->
+                <div id="mainToolbar" class="editor-toolbar"
+                    style="top: 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; position: static; box-shadow: none;">
+                    <!-- JS에서 TOOLBAR_HTML 주입 -->
+                </div>
             </div>
 
             <!-- Sections: Background, Product, Symptom Summary, Part Info -->
-            <div class="form-group"><label>배경</label>
-                <div id="toolbar_bg" class="toolbar-placeholder"></div>
-                <div id="info_bg" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="배경 내용을 입력하세요..."></div>
+
+            <div class="form-group">
+                <div class="label-row">
+                    <input class="editable-label" type="text" value="배경" title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('info_bg')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="info_bg" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="배경 내용을 입력하세요..."></div>
+                </div>
             </div>
-            <div class="form-group"><label>제품</label>
-                <div id="toolbar_product" class="toolbar-placeholder"></div>
-                <div id="info_product" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="제품 정보를 입력하세요..."></div>
+            <div class="form-group">
+                <div class="label-row">
+                    <input class="editable-label" type="text" value="제품" title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('info_product')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="info_product" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="제품 정보를 입력하세요..."></div>
+                </div>
             </div>
-            <div class="form-group"><label>증상</label>
-                <div id="toolbar_symptom" class="toolbar-placeholder"></div>
-                <div id="info_symptom" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="증상을 입력하세요..."></div>
+            <div class="form-group">
+                <div class="label-row">
+                    <input class="editable-label" type="text" value="증상" title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('info_symptom')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="info_symptom" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="증상을 입력하세요..."></div>
+                </div>
             </div>
-            <div class="form-group"><label>부품 정보</label>
-                <div id="toolbar_partInfo" class="toolbar-placeholder"></div>
-                <div id="info_partInfo" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="부품 정보를 입력하세요..."></div>
+            <div class="form-group">
+                <div class="label-row">
+                    <input class="editable-label" type="text" value="부품 정보" title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('info_partInfo')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="info_partInfo" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="부품 정보를 입력하세요..."></div>
+                </div>
             </div>
 
             <hr style="border: none; border-top: 1px solid #eee; margin: 40px 0;">
 
             <!-- Main Sections: Symptom, Cause, Repair -->
             <div class="form-group">
-                <input type="text" id="inSymptomTitle" value="현상 및 증상"
-                    style="font-weight:700; background:#f9fbff; margin-bottom:8px;">
-                <div id="toolbar_1" class="toolbar-placeholder"></div>
-                <div id="inSymptom" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="현상을 입력하세요..."></div>
+                <div class="label-row">
+                    <input class="editable-label" type="text" id="inSymptomTitle" value="현상 및 증상"
+                        title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('inSymptom')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="inSymptom" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="현상을 입력하세요..."></div>
+                </div>
             </div>
             <div class="form-group">
-                <input type="text" id="inCauseTitle" value="원인"
-                    style="font-weight:700; background:#f9fbff; margin-bottom:8px;">
-                <div id="toolbar_2" class="toolbar-placeholder"></div>
-                <div id="inCause" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="원인을 입력하세요..."></div>
+                <div class="label-row">
+                    <input class="editable-label" type="text" id="inCauseTitle" value="원인" title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('inCause')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="inCause" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="원인을 입력하세요..."></div>
+                </div>
             </div>
             <div class="form-group">
-                <input type="text" id="inRepairTitle" value="조치 방법"
-                    style="font-weight:700; background:#f9fbff; margin-bottom:8px;">
-                <div id="toolbar_3" class="toolbar-placeholder"></div>
-                <div id="inRepairMethod" class="editor-content-view paste-area" contenteditable="true"
-                    placeholder="조치 방법을 입력하세요..."></div>
+                <div class="label-row">
+                    <input class="editable-label" type="text" id="inRepairTitle" value="조치 방법" title="클릭하여 소제목 수정 가능" />
+                    <button class="btn-clear-section" onclick="clearSection('inRepairMethod')" title="내용 지우기"><i
+                            class="fas fa-times"></i> 지우기</button>
+                </div>
+                <div class="editor-container">
+                    <div id="inRepairMethod" class="editor-content-view paste-area" contenteditable="true"
+                        placeholder="조치 방법을 입력하세요..."></div>
+                </div>
             </div>
 
             <div id="dynamicSections"></div>
             <button class="btn-add-section" onclick="addDynamicSection()"><i class="fas fa-plus"></i> 추가 섹션 삽입</button>
-            <button class="btn-convert" onclick="generateHTML()"><i class="fas fa-magic"></i> HTML 변환하기</button>
         </div>
 
         <div class="preview-panel">
@@ -665,8 +809,7 @@
                 <label>열 <input type="number" id="tblCols" value="2" min="1" style="width: 60px;"></label>
                 <button class="btn-secondary" onclick="generateVisualTable()">표 구성 초기화</button>
             </div>
-            <div id="visualTableContainer"
-                style="max-height: 400px; overflow: auto; border: 1px solid #eee; border-radius: 8px;"></div>
+            <div id="visualTableContainer" style="max-height: 400px; overflow: auto; padding: 2px;"></div>
             <div style="text-align: right; margin-top: 25px; display:flex; gap:10px; justify-content: flex-end;">
                 <button class="btn-secondary" onclick="closeTableModal()">취소</button>
                 <button class="btn-primary" onclick="insertTableFromModal()">에디터에 삽입</button>
@@ -674,7 +817,7 @@
         </div>
     </div>
 
-    <div id="customColorPicker" class="color-picker-popup">
+    <div id="customColorPicker" class="color-picker-popup" onmousedown="event.preventDefault()">
         <div class="cp-section-title">테마 색상</div>
         <div id="themeColorsGrid" class="cp-grid"></div>
         <div class="cp-section-title">표준 색상</div>
@@ -687,31 +830,29 @@
     <script>
         // --- Shared Toolbar HTML ---
         const TOOLBAR_HTML = `
-            <div class="editor-toolbar">
-                <select onchange="changeFontFamily(this)" class="font-family-select">
-                    <option value="맑은 고딕" selected>맑은 고딕</option>
-                    <option value="돋움">돋움</option>
-                    <option value="굴림">굴림</option>
-                    <option value="바탕">바탕</option>
-                    <option value="Arial">Arial</option>
-                </select>
-                <select onchange="changeFontSize(this)" class="font-size-select">
-                    <option value="1">8</option><option value="2">10</option><option value="3" selected>11</option>
-                    <option value="4">14</option><option value="5">18</option><option value="6">24</option><option value="7">36</option>
-                </select>
-                <button onclick="stepFontSize(1)" class="btn-font-step">가<span>+</span></button>
-                <button onclick="stepFontSize(-1)" class="btn-font-step">가<span>-</span></button>
-                <div class="color-tool-split">
-                    <button class="color-btn-main" onclick="applyLastColor('foreColor', event)"><div class="color-icon-wrapper"><b>가</b><div class="color-bar" style="background-color: red;"></div></div></button>
-                    <button class="color-btn-arrow" onclick="openColorTool('foreColor', event)"><i class="fas fa-caret-down"></i></button>
-                </div>
-                <button onclick="insertFormat('bold')"><i class="fas fa-bold"></i></button>
-                <button onclick="insertFormat('italic')"><i class="fas fa-italic"></i></button>
-                <button onclick="insertFormat('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-                <button onclick="insertFormat('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
-                <button onclick="openTableModal(event)"><i class="fas fa-table"></i></button>
-                <button onclick="clearEditor(this)" style="margin-left:auto;"><i class="fas fa-trash-alt"></i></button>
-            </div>`;
+            <select onchange="changeFontFamily(this)" class="font-family-select">
+                <option value="맑은 고딕" selected>맑은 고딕</option>
+                <option value="돋움">돋움</option>
+                <option value="굴림">굴림</option>
+                <option value="바탕">바탕</option>
+                <option value="Arial">Arial</option>
+            </select>
+            <select onchange="changeFontSize(this)" class="font-size-select">
+                <option value="1">8</option><option value="2">10</option><option value="3" selected>11</option>
+                <option value="4">14</option><option value="5">18</option><option value="6">24</option><option value="7">36</option>
+            </select>
+            <button onclick="stepFontSize(1)" class="btn-font-step">가<span>+</span></button>
+            <button onclick="stepFontSize(-1)" class="btn-font-step">가<span>-</span></button>
+            <div class="color-tool-split">
+                <button class="color-btn-main" onclick="applyLastColor('foreColor', event)"><div class="color-icon-wrapper"><b>가</b><div class="color-bar" style="background-color: red;"></div></div></button>
+                <button class="color-btn-arrow" onclick="openColorTool('foreColor', event)"><i class="fas fa-caret-down"></i></button>
+            </div>
+            <button onclick="insertFormat('bold')"><i class="fas fa-bold"></i></button>
+            <button onclick="insertFormat('italic')"><i class="fas fa-italic"></i></button>
+            <button onclick="insertFormat('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
+            <button onclick="insertFormat('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
+            <button onclick="openTableModal(event)"><i class="fas fa-table"></i></button>
+        `;
 
         // --- Editor Core ---
         let lastFocusedEditor = null, selectionRange = null, activeToolbar = null, activeColorType = 'foreColor';
@@ -733,6 +874,13 @@
 
         function insertFormat(cmd, val = null) { restoreSelectionState(); document.execCommand(cmd, false, val); }
         function insertHTML(html) { restoreSelectionState(); document.execCommand('insertHTML', false, html); }
+        function insertImage(input) {
+            if (!input.files || input.files.length === 0) return;
+            const reader = new FileReader();
+            reader.onload = e => { insertHTML(`<div class="img-only"><img src="${e.target.result}" style="max-width:100%; height:auto; border:1px solid #eee;"></div><p><br></p>`); };
+            reader.readAsDataURL(input.files[0]);
+            input.value = '';
+        }
         function changeFontFamily(s) { restoreSelectionState(); document.execCommand('fontName', false, s.value); }
         function changeFontSize(s) { restoreSelectionState(); document.execCommand('fontSize', false, s.value); }
         function stepFontSize(d) {
@@ -740,36 +888,68 @@
             let cur = parseInt(document.queryCommandValue('fontSize')) || 3;
             document.execCommand('fontSize', false, Math.max(1, Math.min(7, cur + d)));
         }
+
         function clearEditor(btn) {
-            const ed = btn.closest('.editor-container, .form-group').querySelector('.editor-content-view');
-            if (ed && confirm('정말 내용을 지우시겠습니까?')) ed.innerHTML = '';
+            if (lastFocusedEditor && confirm('정말 내용을 지우시겠습니까?')) {
+                lastFocusedEditor.innerHTML = '';
+            }
+        }
+        function clearSection(id) {
+            const el = document.getElementById(id);
+            if (el && confirm('내용을 지우시겠습니까?')) el.innerHTML = '';
         }
 
 
         // --- Colors ---
         function applyLastColor(type, e) {
             e.stopPropagation(); activeColorType = type;
-            const container = e.currentTarget.closest('.editor-container, .form-group');
-            if (container) lastFocusedEditor = container.querySelector('.editor-content-view');
-            const color = e.currentTarget.querySelector('.color-bar').style.backgroundColor;
+            const color = e.currentTarget.querySelector('.color-bar').style.backgroundColor || 'red';
             if (type === 'foreColor') changeColor(color); else changeBgColor(color);
         }
         function openColorTool(type, e) {
             e.stopPropagation(); activeColorType = type;
             activeToolbar = e.currentTarget.closest('.color-tool-split');
-            const container = e.currentTarget.closest('.editor-container, .form-group');
-            if (container) { lastFocusedEditor = container.querySelector('.editor-content-view'); saveSelectionState(); }
             const p = document.getElementById('customColorPicker'), r = e.currentTarget.getBoundingClientRect();
             p.style.display = 'block'; p.style.top = (window.scrollY + r.bottom + 5) + 'px';
             p.style.left = Math.min(r.left, window.innerWidth - 275) + 'px';
         }
         function changeColor(c) {
-            restoreSelectionState(); document.execCommand('foreColor', false, c);
-            if (activeToolbar) activeToolbar.querySelector('.color-bar').style.backgroundColor = c;
+            restoreSelectionState();
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0 && sel.getRangeAt(0).collapsed && lastFocusedEditor) {
+                const span = document.createElement('span');
+                span.style.color = c;
+                span.appendChild(document.createTextNode('\u200B'));
+                const range = sel.getRangeAt(0);
+                range.insertNode(span);
+                range.setStart(span.firstChild, 1);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('foreColor', false, c);
+            }
+            document.querySelectorAll('.color-bar').forEach(b => b.style.backgroundColor = c);
         }
         function changeBgColor(c) {
-            restoreSelectionState(); document.execCommand('hiliteColor', false, c);
-            if (activeToolbar) activeToolbar.querySelector('.color-bar').style.backgroundColor = c;
+            restoreSelectionState();
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0 && sel.getRangeAt(0).collapsed && lastFocusedEditor) {
+                const span = document.createElement('span');
+                span.style.backgroundColor = c;
+                span.appendChild(document.createTextNode('\u200B'));
+                const range = sel.getRangeAt(0);
+                range.insertNode(span);
+                range.setStart(span.firstChild, 1);
+                range.collapse(true);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            } else {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('hiliteColor', false, c);
+            }
+            document.querySelectorAll('.color-bar').forEach(b => b.style.backgroundColor = c);
         }
         function selectQuickColor(c) {
             if (activeColorType === 'foreColor') changeColor(c); else changeBgColor(c);
@@ -795,42 +975,64 @@
                 <button class="btn-remove-section" onclick="document.getElementById('${id}').remove()"><i class="fas fa-times"></i></button>
                 <div class="form-group"><label>추가 섹션 제목</label><input type="text" class="dyn-title" placeholder="소제목 입력"></div>
                 <div class="editor-container">
-                    ${TOOLBAR_HTML}
                     <div class="editor-content-view paste-area dyn-content" contenteditable="true" placeholder="내용을 입력하세요..."></div>
                 </div>`;
             document.getElementById('dynamicSections').appendChild(wrapper);
-            wrapper.querySelector('.paste-area').addEventListener('paste', handlePaste);
+            const ed = wrapper.querySelector('.paste-area');
+            ed.addEventListener('paste', handlePaste);
+            ed.addEventListener('focus', () => { lastFocusedEditor = ed; saveSelectionState(); });
+            ed.addEventListener('mouseup', saveSelectionState);
+            ed.addEventListener('keyup', saveSelectionState);
         }
 
         // --- Table ---
         function openTableModal(e) {
-            const c = e.target.closest('.editor-container, .form-group'); if (c) lastFocusedEditor = c.querySelector('.editor-content-view');
+            if (!lastFocusedEditor) { alert('표를 삽입할 위치를 먼저 클릭해주세요.'); return; }
             document.getElementById('tableModal').style.display = 'block'; generateVisualTable();
         }
         function closeTableModal() { document.getElementById('tableModal').style.display = 'none'; }
         function generateVisualTable() {
-            const r = document.getElementById('tblRows').value, c = document.getElementById('tblCols').value;
-            let h = '<table class="visual-table"><thead><tr>';
-            for (let i = 0; i < c; i++) h += `<th><input type="text" placeholder="헤더"></th>`;
-            h += '</tr></thead><tbody>';
-            for (let i = 0; i < r; i++) { h += '<tr>'; for (let j = 0; j < c; j++) h += `<td><input type="text" placeholder="값"></td>`; h += '</tr>'; }
-            h += '</tbody></table>'; document.getElementById('visualTableContainer').innerHTML = h;
+            const r = parseInt(document.getElementById('tblRows').value);
+            const c = parseInt(document.getElementById('tblCols').value);
+            let h = '<table class="visual-table" cellspacing="0" cellpadding="0" style="border-collapse:collapse; border-spacing:0; width:auto;"><tbody>';
+            for (let i = 0; i < r; i++) {
+                h += '<tr>';
+                for (let j = 0; j < c; j++) h += `<td style="border:1px solid #999; padding:6px 8px;"><div class="cell-input" contenteditable="true" data-placeholder="내용"></div></td>`;
+                h += '</tr>';
+            }
+            h += '</tbody></table>';
+            document.getElementById('visualTableContainer').innerHTML = h;
+        }
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
         }
         function insertTableFromModal() {
             if (!lastFocusedEditor) return;
             const mt = document.querySelector('.visual-table');
-            const editorWidth = lastFocusedEditor.getBoundingClientRect().width - 40;
-            const colCount = document.getElementById('tblCols').value;
-            const colWidth = (editorWidth / colCount).toFixed(2);
+            const toHtml = v => v ? v.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\n/g, '<br>') : '&nbsp;';
 
-            let th = `<div class="tbl-scroll"><table style="width:${editorWidth.toFixed(2)}px; table-layout:fixed; border-collapse:collapse;" class="xfe_just_info"><thead><tr>`;
-            mt.querySelectorAll('thead input').forEach(i => th += `<th style="border:1px solid #ccc; padding:10px; background:#f4f4f4; font-weight:bold; width:${colWidth}px;">${i.value || '&nbsp;'}</th>`);
-            th += '</tr></thead><tbody>';
-            mt.querySelectorAll('tbody tr').forEach(row => {
-                th += '<tr>'; row.querySelectorAll('input').forEach(i => th += `<td style="border:1px solid #ccc; padding:10px; text-align:center;">${i.value || '&nbsp;'}</td>`); th += '</tr>';
-            });
-            th += '</tbody></table></div><p><br></p>';
-            lastFocusedEditor.focus(); insertHTML(th); closeTableModal();
+            let out = `<div class="tbl-scroll">\n<table style="width: auto;" class="xfe_just_info">\n`;
+            const rows = Array.from(mt.querySelectorAll('tbody tr'));
+            if (rows.length > 0) {
+                out += '<thead>\n<tr>\n';
+                rows[0].querySelectorAll('.cell-input').forEach(i => {
+                    out += `<th style="padding: 8px;">${toHtml(i.innerText)}</th>\n`;
+                });
+                out += '</tr>\n</thead>\n<tbody>\n';
+                for (let i = 1; i < rows.length; i++) {
+                    out += '<tr>\n';
+                    rows[i].querySelectorAll('.cell-input').forEach(cell => {
+                        out += `<td style="padding: 8px;">${toHtml(cell.innerText)}</td>\n`;
+                    });
+                    out += '</tr>\n';
+                }
+                out += '</tbody>\n';
+            } else {
+                out += '<tbody>\n</tbody>\n';
+            }
+            out += '</table>\n</div>\n<p><br></p>\n';
+            lastFocusedEditor.focus(); insertHTML(out); closeTableModal();
         }
 
         // --- Paste & HTML ---
@@ -839,16 +1041,19 @@
             if (t && t.indexOf('\t') !== -1) {
                 e.preventDefault();
                 const lines = t.trim().split(/\r\n|\n|\r/), rows = lines.map(line => line.split('\t')), max = Math.max(...rows.map(r => r.length));
-                const editorRect = e.currentTarget.getBoundingClientRect();
-                const editorWidth = editorRect.width - 40;
-                const colWidth = (editorWidth / max).toFixed(2);
 
-                let h = `<div class="tbl-scroll"><table style="width:${editorWidth.toFixed(2)}px; table-layout:fixed; border-collapse:collapse;" class="xfe_just_info"><thead><tr>`;
-                rows[0].forEach(c => h += `<th style="border:1px solid #ccc; padding:10px; background:#f4f4f4; font-weight:bold; width:${colWidth}px;">${c}</th>`);
-                for (let i = rows[0].length; i < max; i++) h += `<th style="border:1px solid #ccc; padding:10px; background:#f4f4f4; width:${colWidth}px;">&nbsp;</th>`;
-                h += '</tr></thead><tbody>';
-                for (let i = 1; i < rows.length; i++) { h += '<tr>'; rows[i].forEach(c => h += `<td style="border:1px solid #ccc; padding:10px; text-align:center;">${c}</td>`); for (let j = rows[i].length; j < max; j++) h += '<td style="border:1px solid #ccc; padding:10px;">&nbsp;</td>'; h += '</tr>'; }
-                h += '</tbody></table></div><p><br></p>'; insertHTML(h); return;
+                let h = `<div class="tbl-scroll">\n<table style="width: auto;" class="xfe_just_info">\n<thead>\n<tr>\n`;
+                rows[0].forEach(c => h += `<th style="padding: 8px;">${c || '&nbsp;'}</th>\n`);
+                for (let j = rows[0].length; j < max; j++) h += `<th style="padding: 8px;">&nbsp;</th>\n`;
+                h += '</tr>\n</thead>\n<tbody>\n';
+                for (let i = 1; i < rows.length; i++) {
+                    h += '<tr>\n';
+                    rows[i].forEach(c => h += `<td style="padding: 8px;">${c || '&nbsp;'}</td>\n`);
+                    for (let j = rows[i].length; j < max; j++) h += `<td style="padding: 8px;">&nbsp;</td>\n`;
+                    h += '</tr>\n';
+                }
+                h += '</tbody>\n</table>\n</div>\n<p><br></p>\n';
+                insertHTML(h); return;
             }
             if (t && t.trim().length > 0) { e.preventDefault(); insertHTML(t.replace(/\n/g, '<br>')); return; }
             for (let item of d.items) {
@@ -866,12 +1071,12 @@
             infoIds.filter(([l, id]) => document.getElementById(id).innerText.trim().length > 0 || document.getElementById(id).querySelector('img, table')).forEach(([l, id]) => {
                 ih += `<div style="margin-bottom:15px;"><div style="margin-bottom:6px;"><span style="background-color:#e2e2e2; padding:3px 12px; border-radius:4px; font-weight:bold; font-size:14px;">※ ${l}</span></div><div style="font-size:14px; padding-left:10px;">${document.getElementById(id).innerHTML}</div></div>`;
             });
-            if (ih) ih = `<div style="margin:20px 0; border:1px solid #eee; padding:20px; border-radius:10px; background-color:#fafafa;">${ih}</div>`;
+            if (ih) ih = `<div style="margin-bottom: 20px;">${ih}</div>`;
 
-            let idx = 1, ch = ih;
+            let ch = ih;
             const add = (t, c) => {
                 const has = c.trim().replace(/<br>/g, '').length > 0 || c.includes('<img') || c.includes('<table');
-                ch += `<h3 class="sub-tit ${has ? '' : 'no-content'}"><span class="num">${idx++}</span>${t}</h3>${has ? c : ''}`;
+                if (has) ch += `<div style="margin-bottom: 20px;">${c}</div>`;
             };
             add(document.getElementById('inSymptomTitle').value, document.getElementById('inSymptom').innerHTML);
             add(document.getElementById('inCauseTitle').value, document.getElementById('inCause').innerHTML);
@@ -879,10 +1084,34 @@
             document.querySelectorAll('.dynamic-section').forEach(s => add(s.querySelector('.dyn-title').value || '섹션', s.querySelector('.dyn-content').innerHTML));
 
             // Wrap result to handle absolute children positioning in the container
-            const finalCh = `<div style="position:relative; min-height:400px; width:100%;">${ch}</div>`;
-            document.getElementById('previewContainer').innerHTML = `<div class="content-service-view" style="padding:20px;">${finalCh}</div>`;
+            const finalCh = `<div style="position:relative; min-height:400px; width:100%;">\n${ch}\n</div>`;
+            document.getElementById('previewContainer').innerHTML = `<div class="content-service-view" style="padding:20px;">\n${finalCh}\n</div>`;
 
-            const out = `<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><style>.content-service-view{font-family:'Noto Sans KR',sans-serif;line-height:1.6;color:#333;max-width:800px;margin:0 auto;padding:20px;text-align:left;}.sub-tit{position:relative;padding-left:25px;margin:30px 0 10px;font-size:18px;font-weight:bold}.sub-tit .num{position:absolute;left:0;top:2px;width:20px;height:20px;background:#999;color:#fff;border-radius:50%;text-align:center;font-size:12px;line-height:20px;display:inline-block}.tbl-scroll{overflow-x:auto;margin:15px 0}.tbl-scroll table{width:100%;border-collapse:collapse;min-width:600px}.tbl-scroll th,.tbl-scroll td{border:1px solid #ccc;padding:12px;text-align:center}.tbl-scroll th{background:#f4f4f4}.img-only{margin:20px 0;text-align:left}.img-only img{max-width:100%;height:auto;border:1px solid #eee} p{margin:10px 0}</style></head><body><div class="content-service-view" style="position:relative; min-height:600px;">${ch}</div></body></html>`;
+            // HTML 포맷팅 (줄바꿈 추가)
+            const formattedCh = ch.replace(/(<div|<h3|<p|<table|<tbody|<thead|<tr)/g, '\n        $1').replace(/(<\/div>|<\/table>)/g, '$1\n');
+
+            const out = `<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="utf-8">
+    <style>
+        .content-service-view { font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; text-align: left; }
+        .sub-tit { position: relative; padding-left: 25px; margin: 30px 0 10px; font-size: 18px; font-weight: bold; }
+        .sub-tit .num { position: absolute; left: 0; top: 2px; width: 20px; height: 20px; background: #999; color: #fff; border-radius: 50%; text-align: center; font-size: 12px; line-height: 20px; display: inline-block; }
+        .tbl-scroll { overflow-x: auto; margin: 15px 0; }
+        .xfe_just_info { width: auto; border-collapse: collapse; table-layout: auto; }
+        .xfe_just_info th, .xfe_just_info td { border: 1px solid #ccc; padding: 8px; white-space: pre-wrap; word-break: break-all; text-align: left; }
+        .img-only { margin: 20px 0; text-align: left; }
+        .img-only img { max-width: 100%; height: auto; border: 1px solid #eee; }
+        p { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="content-service-view" style="position:relative; min-height:600px;">
+${formattedCh}
+    </div>
+</body>
+</html>`;
             document.getElementById('codeOutput').value = out;
             if (window.innerWidth <= 1024) switchTab('preview');
         }
@@ -898,20 +1127,26 @@
         // --- Init ---
         window.addEventListener('DOMContentLoaded', () => {
             initColorPicker();
-            // Assign toolbar and editor events
+            // Assign single toolbar
             const tb = document.getElementById('mainToolbar');
             if (tb) {
-                tb.innerHTML = TOOLBAR_HTML + `<button class="btn-primary" onclick="generateHTML()" style="margin-left:auto; background:var(--lg-red); color:#fff; border:none; padding:8px 20px; border-radius:6px; font-weight:700;"><i class="fas fa-magic"></i> 변환하기</button>`;
+                tb.innerHTML = TOOLBAR_HTML;
+                // Prevent toolbar from stealing focus from editor on ALL clicks
+                tb.addEventListener('mousedown', e => { e.preventDefault(); });
             }
 
-            const ed = document.getElementById('mainInfo');
-            if (ed) {
+            // Bind events for all scattered editors
+            document.querySelectorAll('.editor-content-view').forEach(ed => {
                 ed.addEventListener('paste', handlePaste);
                 ed.addEventListener('focus', () => { lastFocusedEditor = ed; saveSelectionState(); });
                 ed.addEventListener('mouseup', saveSelectionState);
                 ed.addEventListener('keyup', saveSelectionState);
-                lastFocusedEditor = ed;
-            }
+            });
+
+            // Set default focus safely
+            const firstEd = document.getElementById('info_bg');
+            if (firstEd) lastFocusedEditor = firstEd;
+
             // Resize handle logic
             const h = document.getElementById('codeResizeHandle'), t = document.getElementById('codeOutput');
             if (h && t) {
