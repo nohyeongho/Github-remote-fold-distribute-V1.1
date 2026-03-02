@@ -19,7 +19,7 @@
         }
 
         body {
-            font-family: 'Noto Sans KR', sans-serif;
+            font-family: 'LG Smart UI Regular', 'LG Smart UI', 'Noto Sans KR', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f0f2f5;
@@ -45,7 +45,7 @@
         .xfe_just_info th,
         .xfe_just_info td {
             border: 1px solid #ccc;
-            padding: 8px;
+            padding: 2px 8px;
             white-space: pre-wrap;
             word-break: break-all;
             text-align: left;
@@ -380,7 +380,7 @@
             min-height: 60px;
             padding: 18px;
             outline: none;
-            font-size: 14px;
+            font-size: 12px;
             line-height: 1.6;
             word-break: break-all;
             background-color: #fff;
@@ -698,7 +698,8 @@
             <div class="sticky-header"
                 style="margin: -25px -30px 35px -30px; border-radius: 10px 10px 0 0; padding-bottom: 25px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <div class="panel-title" style="margin-bottom:0;"><i class="fas fa-file-alt"></i> 업무 표준 변환기</div>
+                    <div class="panel-title" style="margin-bottom:0;"><i class="fas fa-file-alt"></i> GSCS 업무 표준 Editor
+                    </div>
                     <button class="btn-primary" onclick="generateHTML()"
                         style="background:var(--lg-red); color:#fff; border:none; padding:8px 20px; border-radius:6px; font-weight:700;"><i
                             class="fas fa-magic"></i> 변환하기</button>
@@ -708,9 +709,22 @@
                     style="top: 0; padding: 10px; border: 1px solid #ddd; border-radius: 8px; position: static; box-shadow: none;">
                     <!-- JS에서 TOOLBAR_HTML 주입 -->
                 </div>
-                <div style="margin-top: 15px; font-size: 13px; color: #666; display: flex; align-items: center;">
-                    <span style="color: #e91b5c; font-size: 14px; margin-right: 4px;">★</span>필수 항목입니다
-                    <span style="color: #999; margin-left: 15px;">(제목 수정 가능_X버튼을 누르고 새로운 제목을 입력하세요)</span>
+                <div style="margin-top: 15px; font-size: 13px; color: #666;">
+                    <div style="display: flex; align-items: center; margin-bottom: 5px;">
+                        <span style="color: #e91b5c; font-size: 14px; margin-right: 4px;">★</span>필수 항목입니다
+                        <span style="color: #999; margin-left: 15px;">(제목 수정 가능_<i class="fas fa-pencil-alt"
+                                style="font-size: 11px;"></i> 버튼을 누르고 새로운 제목을 입력하세요)</span>
+                    </div>
+                    <div
+                        style="display: flex; align-items: center; color: var(--lg-red); font-size: 12px; margin-top: 3px; font-weight: 500;">
+                        <i class="fas fa-bell" style="color: #ffb100; margin-right: 6px; font-size: 13px;"></i>
+                        아래 내용 중 필요한 항목만 입력하세요. 빈칸은 변환 버튼을 눌러도 결과물에 나타나지 않습니다.
+                    </div>
+                    <div
+                        style="display: flex; align-items: center; color: #21a0a0; font-size: 12px; margin-top: 5px; padding-left: 19px;">
+                        <i class="fas fa-check-circle" style="margin-right: 6px; font-size: 12px; opacity: 0.8;"></i>
+                        표 만들기, 엑셀 표 붙여넣기, 이미지 붙여넣기가 가능합니다.
+                    </div>
                 </div>
             </div>
 
@@ -718,15 +732,18 @@
 
             <div class="form-group">
                 <div class="label-row">
-                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                    <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                        <button type="button" class="btn-clear-title"
+                            onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정"
+                            style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i
+                                class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;"
+                                onmouseover="this.style.color='#ec455a'"
+                                onmouseout="this.style.color='#888'"></i></button>
                         <span
-                            style="color: #e91b5c; font-size: 15px; margin-right: -4px; position: relative; z-index: 1; pointer-events: none;">★</span>
+                            style="color: #e91b5c; font-size: 15px; margin-right: -2px; position: relative; z-index: 1; pointer-events: none;">★</span>
                         <input class="editable-label" type="text" value="배경" title="클릭하여 소제목 수정 가능"
-                            style="flex: 0 0 auto; width: 55px;" />
+                            style="flex: 0 0 auto; width: 70px;" />
                     </div>
-                    <button type="button" class="btn-clear-title"
-                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
-                        title="소제목 지우기"><i class="fas fa-times"></i></button>
                     <span style="flex: 1;"></span>
                     <button type="button" class="btn-clear-section" onclick="clearSection('info_bg')" title="내용 지우기"><i
                             class="fas fa-times"></i> 지우기</button>
@@ -738,13 +755,16 @@
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                    <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                        <button type="button" class="btn-clear-title"
+                            onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정"
+                            style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i
+                                class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;"
+                                onmouseover="this.style.color='#ec455a'"
+                                onmouseout="this.style.color='#888'"></i></button>
                         <input class="editable-label" type="text" id="inApplyDateTitle" value="적용일시"
                             title="클릭하여 소제목 수정 가능" style="flex: 0 0 auto; width: 70px;" />
                     </div>
-                    <button type="button" class="btn-clear-title"
-                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
-                        title="소제목 지우기"><i class="fas fa-times"></i></button>
                     <span style="flex: 1;"></span>
                     <button type="button" class="btn-clear-section" onclick="clearSection('inApplyDate')"
                         title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
@@ -756,15 +776,18 @@
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                    <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                        <button type="button" class="btn-clear-title"
+                            onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정"
+                            style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i
+                                class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;"
+                                onmouseover="this.style.color='#ec455a'"
+                                onmouseout="this.style.color='#888'"></i></button>
                         <span
-                            style="color: #e91b5c; font-size: 15px; margin-right: -4px; position: relative; z-index: 1; pointer-events: none;">★</span>
+                            style="color: #e91b5c; font-size: 15px; margin-right: -2px; position: relative; z-index: 1; pointer-events: none;">★</span>
                         <input class="editable-label" type="text" value="제품" title="클릭하여 소제목 수정 가능"
-                            style="flex: 0 0 auto; width: 55px;" />
+                            style="flex: 0 0 auto; width: 70px;" />
                     </div>
-                    <button type="button" class="btn-clear-title"
-                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
-                        title="소제목 지우기"><i class="fas fa-times"></i></button>
                     <span style="flex: 1;"></span>
                     <button type="button" class="btn-clear-section" onclick="clearSection('info_product')"
                         title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
@@ -776,13 +799,16 @@
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                    <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                        <button type="button" class="btn-clear-title"
+                            onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정"
+                            style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i
+                                class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;"
+                                onmouseover="this.style.color='#ec455a'"
+                                onmouseout="this.style.color='#888'"></i></button>
                         <input class="editable-label" type="text" value="증상" title="클릭하여 소제목 수정 가능"
-                            style="flex: 0 0 auto; width: 55px;" />
+                            style="flex: 0 0 auto; width: 70px;" />
                     </div>
-                    <button type="button" class="btn-clear-title"
-                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
-                        title="소제목 지우기"><i class="fas fa-times"></i></button>
                     <span style="flex: 1;"></span>
                     <button type="button" class="btn-clear-section" onclick="clearSection('info_symptom')"
                         title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
@@ -794,13 +820,16 @@
             </div>
             <div class="form-group">
                 <div class="label-row">
-                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                    <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                        <button type="button" class="btn-clear-title"
+                            onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정"
+                            style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i
+                                class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;"
+                                onmouseover="this.style.color='#ec455a'"
+                                onmouseout="this.style.color='#888'"></i></button>
                         <input class="editable-label" type="text" value="부품 정보" title="클릭하여 소제목 수정 가능"
                             style="flex: 0 0 auto; width: 80px;" />
                     </div>
-                    <button type="button" class="btn-clear-title"
-                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
-                        title="소제목 지우기"><i class="fas fa-times"></i></button>
                     <span style="flex: 1;"></span>
                     <button type="button" class="btn-clear-section" onclick="clearSection('info_partInfo')"
                         title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
@@ -816,15 +845,18 @@
             <!-- Main Sections: Content, Apply Date, Apply Example, Caution -->
             <div class="form-group">
                 <div class="label-row">
-                    <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                    <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                        <button type="button" class="btn-clear-title"
+                            onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정"
+                            style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i
+                                class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;"
+                                onmouseover="this.style.color='#ec455a'"
+                                onmouseout="this.style.color='#888'"></i></button>
                         <span
-                            style="color: #e91b5c; font-size: 15px; margin-right: -4px; position: relative; z-index: 1; pointer-events: none;">★</span>
+                            style="color: #e91b5c; font-size: 15px; margin-right: -2px; position: relative; z-index: 1; pointer-events: none;">★</span>
                         <input class="editable-label" type="text" id="inContentTitle" value="내용" title="클릭하여 소제목 수정 가능"
-                            style="flex: 0 0 auto; width: 55px;" />
+                            style="flex: 0 0 auto; width: 70px;" />
                     </div>
-                    <button type="button" class="btn-clear-title"
-                        onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();"
-                        title="소제목 지우기"><i class="fas fa-times"></i></button>
                     <span style="flex: 1;"></span>
                     <button type="button" class="btn-clear-section" onclick="clearSection('inContent')"
                         title="내용 지우기"><i class="fas fa-times"></i> 지우기</button>
@@ -900,28 +932,33 @@
     <script>
         // --- Shared Toolbar HTML ---
         const TOOLBAR_HTML = `
-            <select onchange="changeFontFamily(this)" class="font-family-select">
-                <option value="맑은 고딕" selected>맑은 고딕</option>
+            <select onchange="changeFontFamily(this)" class="font-family-select" onmousedown="event.stopPropagation()">
+                <option value="'LG Smart UI Regular', 'LG Smart UI', '맑은 고딕'" selected>LG 스마트체</option>
+                <option value="맑은 고딕">맑은 고딕</option>
                 <option value="돋움">돋움</option>
                 <option value="굴림">굴림</option>
                 <option value="바탕">바탕</option>
                 <option value="Arial">Arial</option>
             </select>
-            <select onchange="changeFontSize(this)" class="font-size-select">
-                <option value="1">8</option><option value="2">10</option><option value="3" selected>11</option>
-                <option value="4">14</option><option value="5">18</option><option value="6">24</option><option value="7">36</option>
+            <select onchange="changeFontSize(this)" class="font-size-select" id="fontSizeSelect" onmousedown="event.stopPropagation()">
+                <option value="6px">6</option><option value="8px">8</option><option value="9px">9</option>
+                <option value="10px">10</option><option value="11px" selected>11</option><option value="12px">12</option>
+                <option value="14px">14</option><option value="16px">16</option><option value="18px">18</option>
+                <option value="20px">20</option><option value="22px">22</option><option value="24px">24</option>
+                <option value="26px">26</option><option value="28px">28</option><option value="36px">36</option>
+                <option value="48px">48</option>
             </select>
-            <button onclick="stepFontSize(1)" class="btn-font-step">가<span>+</span></button>
-            <button onclick="stepFontSize(-1)" class="btn-font-step">가<span>-</span></button>
+            <button onclick="stepFontSize(1)" class="btn-font-step" onmousedown="event.preventDefault()">가<span>+</span></button>
+            <button onclick="stepFontSize(-1)" class="btn-font-step" onmousedown="event.preventDefault()">가<span>-</span></button>
             <div class="color-tool-split">
-                <button class="color-btn-main" onclick="applyLastColor('foreColor', event)"><div class="color-icon-wrapper"><b>가</b><div class="color-bar" style="background-color: red;"></div></div></button>
-                <button class="color-btn-arrow" onclick="openColorTool('foreColor', event)"><i class="fas fa-caret-down"></i></button>
+                <button class="color-btn-main" onclick="applyLastColor('foreColor', event)" onmousedown="event.preventDefault()"><div class="color-icon-wrapper"><b>가</b><div class="color-bar" style="background-color: red;"></div></div></button>
+                <button class="color-btn-arrow" onclick="openColorTool('foreColor', event)" onmousedown="event.preventDefault()"><i class="fas fa-caret-down"></i></button>
             </div>
-            <button onclick="insertFormat('bold')"><i class="fas fa-bold"></i></button>
-            <button onclick="insertFormat('italic')"><i class="fas fa-italic"></i></button>
-            <button onclick="insertFormat('insertUnorderedList')"><i class="fas fa-list-ul"></i></button>
-            <button onclick="insertFormat('insertOrderedList')"><i class="fas fa-list-ol"></i></button>
-            <button onclick="openTableModal(event)"><i class="fas fa-table"></i></button>
+            <button onclick="insertFormat('bold')" onmousedown="event.preventDefault()"><i class="fas fa-bold"></i></button>
+            <button onclick="insertFormat('italic')" onmousedown="event.preventDefault()"><i class="fas fa-italic"></i></button>
+            <button onclick="insertFormat('insertUnorderedList')" onmousedown="event.preventDefault()"><i class="fas fa-list-ul"></i></button>
+            <button onclick="insertFormat('insertOrderedList')" onmousedown="event.preventDefault()"><i class="fas fa-list-ol"></i></button>
+            <button onclick="openTableModal(event)" onmousedown="event.preventDefault()"><i class="fas fa-table"></i></button>
         `;
 
         // --- Editor Core ---
@@ -930,20 +967,64 @@
         let isPendingColResize = false, isPendingRowResize = false;
         let isR = false, sY, sH; // For Code Area Resize
 
+        let isRestoringSelection = false;
         function saveSelectionState() {
+            if (isRestoringSelection) return;
             const sel = window.getSelection();
-            if (sel.rangeCount > 0) selectionRange = sel.getRangeAt(0);
+            if (sel.rangeCount > 0) {
+                selectionRange = sel.getRangeAt(0).cloneRange();
+                syncFontSize();
+            }
         }
         function restoreSelectionState() {
             if (selectionRange && lastFocusedEditor) {
+                isRestoringSelection = true;
                 lastFocusedEditor.focus();
                 const sel = window.getSelection();
                 sel.removeAllRanges(); sel.addRange(selectionRange);
+                setTimeout(() => { isRestoringSelection = false; }, 10);
             } else if (lastFocusedEditor) lastFocusedEditor.focus();
         }
 
-        function insertFormat(cmd, val = null) { restoreSelectionState(); document.execCommand(cmd, false, val); }
-        function insertHTML(html) { restoreSelectionState(); document.execCommand('insertHTML', false, html); }
+        // 선택 영역의 폰트 크기를 감지하여 툴바와 동기화
+        function syncFontSize() {
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0) {
+                let node = sel.anchorNode;
+                if (node.nodeType === 3) node = node.parentElement;
+                if (node) {
+                    const fs = window.getComputedStyle(node).fontSize;
+                    const select = document.getElementById('fontSizeSelect');
+                    if (select) {
+                        const px = parseInt(fs) + 'px';
+                        const sizes = ['6px', '8px', '9px', '10px', '11px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '36px', '48px'];
+                        if (sizes.includes(px)) {
+                            select.value = px;
+                        } else {
+                            // 가장 가까운 크기 매칭
+                            const num = parseInt(fs);
+                            let closest = '12px';
+                            let minDiff = 999;
+                            sizes.forEach(s => {
+                                const diff = Math.abs(parseInt(s) - num);
+                                if (diff < minDiff) { minDiff = diff; closest = s; }
+                            });
+                            select.value = closest;
+                        }
+                    }
+                }
+            }
+        }
+
+        function insertFormat(cmd, val = null) {
+            // 툴바 버튼 클릭 등으로 포커스를 잃었을 때만 선택 영역 복구
+            if (document.activeElement !== lastFocusedEditor) restoreSelectionState();
+            document.execCommand(cmd, false, val);
+        }
+        function insertHTML(html) {
+            if (document.activeElement !== lastFocusedEditor) restoreSelectionState();
+            document.execCommand('insertHTML', false, html);
+        }
         function insertImage(input) {
             if (!input.files || input.files.length === 0) return;
             const file = input.files[0];
@@ -956,15 +1037,51 @@
                 };
                 img.src = e.target.result;
             };
-            reader.readAsDataURL(file);
             input.value = '';
         }
         function changeFontFamily(s) { restoreSelectionState(); document.execCommand('fontName', false, s.value); }
-        function changeFontSize(s) { restoreSelectionState(); document.execCommand('fontSize', false, s.value); }
-        function stepFontSize(d) {
+        function changeFontSize(s) {
             restoreSelectionState();
-            let cur = parseInt(document.queryCommandValue('fontSize')) || 3;
-            document.execCommand('fontSize', false, Math.max(1, Math.min(7, cur + d)));
+            const val = typeof s === 'string' ? s : s.value;
+            document.execCommand('styleWithCSS', false, true);
+
+            // 현재 어떤 폰트 크기가 적용되어 있든 '7'이라는 마커를 통해 강제로 덮어씌움
+            document.execCommand('fontSize', false, '7');
+
+            if (lastFocusedEditor) {
+                // fontSize 7이 적용된 모든 요소(font 태그 또는 span)를 찾아 실제 px로 교체
+                const markers = lastFocusedEditor.querySelectorAll('font[size="7"], span[style*="font-size: xxx-large"], span[style*="font-size: -webkit-xxx-large"]');
+                markers.forEach(el => {
+                    el.style.fontSize = val;
+                    if (el.tagName === 'FONT') {
+                        el.removeAttribute('size');
+                        // 일관성을 위해 span으로 교체 시도 (선택 유지가 깨질 수 있으므로 스타일만 먼저 변경)
+                    }
+                    // 내부의 다른 font-size 스타일이 방해하지 않도록 함 (중첩 해결)
+                    el.querySelectorAll('[style*="font-size"]').forEach(inner => {
+                        inner.style.fontSize = 'inherit';
+                    });
+                });
+            }
+
+            // 변경 후의 선택 영역을 즉시 업데이트하여 다음 동작에 대비
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0) selectionRange = sel.getRangeAt(0).cloneRange();
+
+            if (document.getElementById('fontSizeSelect')) document.getElementById('fontSizeSelect').value = val;
+        }
+        function stepFontSize(d) {
+            const sizes = ['6px', '8px', '9px', '10px', '11px', '12px', '14px', '16px', '18px', '20px', '22px', '24px', '26px', '28px', '36px', '48px'];
+            const select = document.getElementById('fontSizeSelect');
+            if (!select) return;
+            let curIdx = sizes.indexOf(select.value);
+            if (curIdx === -1) {
+                // 현재 값이 목록에 없으면(예: 13px) 가장 가까운 값 찾기
+                const curSizeNum = parseInt(select.value) || 12;
+                curIdx = sizes.findIndex(s => parseInt(s) >= curSizeNum);
+            }
+            const nextIdx = Math.max(0, Math.min(sizes.length - 1, curIdx + d));
+            changeFontSize(sizes[nextIdx]);
         }
 
         function clearEditor(btn) {
@@ -1053,10 +1170,10 @@
                 <button class="btn-remove-section" onclick="document.getElementById('${id}').remove()"><i class="fas fa-times"></i></button>
                 <div class="form-group">
                     <div class="label-row" style="margin-bottom:8px;">
-                        <div style="display: flex; align-items: center; width: 110px; flex: 0 0 auto;">
+                        <div style="display: flex; align-items: center; flex: 0 0 auto;">
+                            <button type="button" class="btn-clear-title" onclick="this.parentElement.querySelector('.editable-label').focus();" title="소제목 수정" style="background:none; border:none; padding:0 4px; cursor:pointer; color:#888;"><i class="fas fa-pencil-alt" style="font-size:12px; transition:color 0.2s;" onmouseover="this.style.color='#ec455a'" onmouseout="this.style.color='#888'"></i></button>
                             <input type="text" class="editable-label dyn-title" value="추가 섹션" placeholder="소제목 입력" style="flex: 0 0 auto; width: 80px;" title="클릭하여 소제목 수정 가능">
                         </div>
-                        <button type="button" class="btn-clear-title" onclick="const p = this.previousElementSibling.querySelector('.editable-label'); p.value=''; p.focus();" title="소제목 지우기"><i class="fas fa-times"></i></button>
                         <span style="flex: 1;"></span>
                     </div>
                 <div class="editor-container">
@@ -1109,13 +1226,13 @@
             if (rows.length > 0) {
                 out += '<thead>\n<tr>\n';
                 rows[0].querySelectorAll('.cell-input').forEach(i => {
-                    out += `<th style="padding: 8px;">${toHtml(i.innerText)}</th>\n`;
+                    out += `<th style="padding: 2px 8px; line-height: 1.2;">${toHtml(i.innerText)}</th>\n`;
                 });
                 out += '</tr>\n</thead>\n<tbody>\n';
                 for (let i = 1; i < rows.length; i++) {
                     out += '<tr>\n';
                     rows[i].querySelectorAll('.cell-input').forEach(cell => {
-                        out += `<td style="padding: 8px;">${toHtml(cell.innerText)}</td>\n`;
+                        out += `<td style="padding: 2px 8px; line-height: 1.2;">${toHtml(cell.innerText)}</td>\n`;
                     });
                     out += '</tr>\n';
                 }
@@ -1138,23 +1255,90 @@
                 e.preventDefault();
                 const lines = t.trim().split(/\r\n|\n|\r/), rows = lines.map(line => line.split('\t')), max = Math.max(...rows.map(r => r.length));
                 let tableHtml = `<div class="tbl-scroll">\n<table style="width: auto;" class="xfe_just_info">\n<thead>\n<tr>\n`;
-                rows[0].forEach(c => tableHtml += `<th style="padding: 8px;">${c || '&nbsp;'}</th>\n`);
-                for (let j = rows[0].length; j < max; j++) tableHtml += `<th style="padding: 8px;">&nbsp;</th>\n`;
+                rows[0].forEach(c => tableHtml += `<th style="padding: 2px 8px; line-height: 1.2;">${c || '&nbsp;'}</th>\n`);
+                for (let j = rows[0].length; j < max; j++) tableHtml += `<th style="padding: 2px 8px; line-height: 1.2;">&nbsp;</th>\n`;
                 tableHtml += '</tr>\n</thead>\n<tbody>\n';
                 for (let i = 1; i < rows.length; i++) {
                     tableHtml += '<tr>\n';
-                    rows[i].forEach(c => tableHtml += `<td style="padding: 8px;">${c || '&nbsp;'}</td>\n`);
-                    for (let j = rows[i].length; j < max; j++) tableHtml += `<td style="padding: 8px;">&nbsp;</td>\n`;
+                    rows[i].forEach(c => tableHtml += `<td style="padding: 2px 8px; line-height: 1.2;">${c || '&nbsp;'}</td>\n`);
+                    for (let j = rows[i].length; j < max; j++) tableHtml += `<td style="padding: 2px 8px; line-height: 1.2;">&nbsp;</td>\n`;
                     tableHtml += '</tr>\n';
                 }
                 tableHtml += '</tbody>\n</table>\n</div>\n<p><br></p>\n';
-                insertHTML(tableHtml);
+                document.execCommand('insertHTML', false, tableHtml);
                 return;
             }
 
-            // 2. HTML 내용이 있는 경우 (웹페이지, 에디터 미리보기 등에서 복사)
+            // 2. HTML 내용이 있는 경우 (웹페이지, MS 워드/파포 등에서 복사)
             if (h) {
-                // 브라우저의 기본 붙여넣기 기능을 사용하여 이미지 주소와 서식을 그대로 유지 (preventDefault 미사용)
+                e.preventDefault();
+                const tempDiv = document.createElement('div');
+                // DOMPurify나 복잡한 정규식 없이 임시 DOM을 이용하여 필터링
+                tempDiv.innerHTML = h;
+
+                // 불필요한 메타, 스타일 태그 제거
+                tempDiv.querySelectorAll('meta, style, script, link').forEach(el => el.remove());
+
+                // 모든 요소에서 직접 서식(폰트, 크기)을 완전히 초기화하고 필요한 것만 복원
+                tempDiv.querySelectorAll('*').forEach(el => {
+                    const tag = el.tagName.toLowerCase();
+
+                    // 1. 배경 관련 속성 강제 제거
+                    el.removeAttribute('class');
+                    el.removeAttribute('id');
+                    el.removeAttribute('face');
+                    el.removeAttribute('size');
+                    el.removeAttribute('color');
+                    el.removeAttribute('bgcolor');
+                    el.removeAttribute('background');
+
+                    if (el.style) {
+                        // 2. 색상 보존 여부 확인 (붉은색 등 포인트 컬러만 남기기)
+                        const c = el.style.color ? el.style.color.toLowerCase() : '';
+                        const isSpecial = c && !(c.includes('rgb(0, 0, 0)') || c.includes('rgb(34, 34, 34)') || c.includes('rgb(51, 51, 51)') || c.includes('#000000') || c.includes('#000') || c.includes('#333') || c.includes('gray'));
+
+                        // 3. 서식 완전 초기화 (PPT의 지저분한 인라인 스타일/그레이 배경 증발)
+                        el.style.cssText = '';
+
+                        // 4. 선별적 복구
+                        if (isSpecial) el.style.color = c;
+
+                        if (tag === 'img') {
+                            el.style.maxWidth = '100%';
+                            el.style.height = 'auto';
+                        } else if (tag === 'table') {
+                            el.style.width = 'auto';
+                            el.style.borderCollapse = 'collapse';
+                        } else if (tag === 'td' || tag === 'th') {
+                            el.style.padding = '2px 8px';
+                            el.style.lineHeight = '1.2';
+                            el.style.border = '1px solid #ccc';
+                        } else {
+                            // 일반 텍스트 요소: 12px 고정 및 자연스러운 줄 간격(1.6) 적용
+                            el.style.fontSize = '12px';
+                            el.style.backgroundColor = 'transparent';
+                            el.style.lineHeight = '1.6';
+                            // PPT 등에서 줄 단위로 div가 생기는 경우를 대비해 최소한의 여백 허용
+                            if (tag === 'div' || tag === 'p') {
+                                el.style.marginBottom = '4px';
+                            }
+                        }
+                    }
+                });
+
+                // 불필요한 빈 span 태그 전처리 (텍스트만 덜렁 남지 않게 최적화)
+                const spans = tempDiv.querySelectorAll('span');
+                spans.forEach(span => {
+                    if (span.attributes.length === 0) {
+                        const fragment = document.createDocumentFragment();
+                        while (span.firstChild) {
+                            fragment.appendChild(span.firstChild);
+                        }
+                        span.parentNode.replaceChild(fragment, span);
+                    }
+                });
+
+                document.execCommand('insertHTML', false, tempDiv.innerHTML);
                 return;
             }
 
@@ -1167,7 +1351,7 @@
                         const img = new Image();
                         img.onload = () => {
                             const w = img.width > 800 ? 800 : img.width;
-                            insertHTML(`<div class="img-only"><img src="${ev.target.result}" width="${w}" style="max-width:100%; height:auto;"></div><p><br></p>`);
+                            document.execCommand('insertHTML', false, `<div class="img-only"><img src="${ev.target.result}" width="${w}" style="max-width:100%; height:auto;"></div><p><br></p>`);
                         };
                         img.src = ev.target.result;
                     };
@@ -1179,7 +1363,7 @@
             // 4. 일반 평문 텍스트인 경우 공백 처리 후 삽입
             if (t && t.trim().length > 0) {
                 e.preventDefault();
-                insertHTML(t.replace(/\n/g, '<br>'));
+                document.execCommand('insertHTML', false, t.replace(/\n/g, '<br>'));
             }
         }
 
@@ -1204,13 +1388,39 @@
                 // GSCS 서버 오타(lge.com:/gscs) 사전에 전역 교정
                 html = html.replace(/https:\/\/gscs\.lge\.com:\/gscs/gi, 'https://gscs.lge.com/gscs');
                 temp.innerHTML = html;
-                // 사각 박스 버그 발생원인인 div 껍데기를 모두 p로 부드럽게 변환
-                temp.querySelectorAll('div').forEach(el => {
-                    // p 태그 변환 시 발생하는 내부 table 블록 깨짐 방지를 위해 속성만 무효화
-                    el.style.margin = '0';
+                // 사각 박스 버그 방지 및 줄 간격 최적화 (div, p 태그에 자연스러운 여백 부여)
+                temp.querySelectorAll('div, p').forEach(el => {
+                    el.style.margin = '0 0 6px 0'; // 문단 간 간격 부여
                     el.style.padding = '0';
                     el.style.border = 'none';
+                    el.style.lineHeight = '1.6';
                 });
+                // 서식 정화: 모든 요소에서 배경색 및 불필요한 스타일 제거 (단, 인위적으로 설정된 빨간색 등은 보존 시도)
+                temp.querySelectorAll('*').forEach(el => {
+                    if (el.style) {
+                        // 모든 배경 관련 속성 제거 (PPT의 mso-shading 등 대응)
+                        const bgProps = ['background', 'background-color', 'background-image', 'background-clip', 'background-origin', 'background-size'];
+                        bgProps.forEach(prop => el.style.removeProperty(prop));
+
+                        // 배경을 아예 없앰 (transparent 대신 아예 속성 제거 or 명시적 흰색)
+                        el.style.background = 'none';
+                        el.style.backgroundColor = '';
+
+                        // 텍스트 색상이 회색/검정 계열이면 제거해서 기본색(#333)을 따르도록 함
+                        const c = el.style.color ? el.style.color.toLowerCase() : '';
+                        if (c && (c.includes('rgb(0, 0, 0)') || c.includes('#000000') || c.includes('#000') || c.includes('gray') || c.includes('rgb(128, 128, 128)') || c.includes('rgb(51, 51, 51)'))) {
+                            el.style.removeProperty('color');
+                        }
+
+                        // 기본 줄 간격 보장
+                        if (el.tagName !== 'TABLE' && el.tagName !== 'TBODY' && el.tagName !== 'TR') {
+                            el.style.lineHeight = '1.6';
+                        }
+                    }
+                    el.removeAttribute('bgcolor');
+                    el.removeAttribute('background');
+                });
+
                 // GSCS 에디터 내 이미지 업로더 오작동 방지 및 중복 URL 정화
                 temp.querySelectorAll('img').forEach(img => {
                     img.style.border = 'none';
@@ -1242,14 +1452,14 @@
             const add = (t, c) => {
                 let content = cleanContent(c);
                 const has = content.trim().replace(/<br>|<p[^>]*>|<\/p>|&nbsp;/gi, '').length > 0 || content.includes('<img') || content.includes('<table');
-                if (has) ch += `<span style="font-size:14px; color:#333;">${content}</span><br><br>\n`;
+                if (has) ch += `<table cellpadding="0" cellspacing="0" style="margin-bottom:6px; border-collapse:collapse; width:auto; border:none;"><tr><td style="background-color:#e2e2e2; padding:6px 14px; border-radius:4px; font-weight:bold; font-size:14px; color:#333; border:none;">● ${t}</td></tr></table>\n<span style="font-size:14px; color:#333;">${content}</span><br><br>\n`;
             };
             add(document.getElementById('inContentTitle').value || '내용', document.getElementById('inContent').innerHTML);
             document.querySelectorAll('.dynamic-section').forEach(s => add(s.querySelector('.dyn-title').value || '섹션', s.querySelector('.dyn-content').innerHTML));
 
             // Wrap result to handle absolute children positioning in the container
-            const finalCh = `<div style="position:relative; min-height:400px; width:100%;">\n${ch}\n</div>`;
-            document.getElementById('previewContainer').innerHTML = `<div class="content-service-view" style="padding:20px;">\n${finalCh}\n</div>`;
+            const finalCh = `<div style="position:relative; min-height:400px; width:100%; background-color:#ffffff; color:#333;">\n${ch}\n</div>`;
+            document.getElementById('previewContainer').innerHTML = `<div class="content-service-view" style="padding:20px; background-color:#ffffff;">\n${finalCh}\n</div>`;
 
             // HTML 포맷팅 (줄바꿈 추가)
             const formattedCh = ch.replace(/(<div|<h3|<p|<table|<tbody|<thead|<tr)/g, '\n        $1').replace(/(<\/div>|<\/table>)/g, '$1\n');
@@ -1259,7 +1469,7 @@
 <head>
     <meta charset="utf-8">
     <style>
-        .content-service-view { font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; text-align: left; }
+        .content-service-view { font-family: 'LG Smart UI Regular', 'LG Smart UI', 'Noto Sans KR', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0 auto; padding: 20px; text-align: left; background-color: #ffffff; }
         .sub-tit { position: relative; padding-left: 25px; margin: 30px 0 10px; font-size: 18px; font-weight: bold; }
         .sub-tit .num { position: absolute; left: 0; top: 2px; width: 20px; height: 20px; background: #999; color: #fff; border-radius: 50%; text-align: center; font-size: 12px; line-height: 20px; display: inline-block; }
         .tbl-scroll { overflow-x: auto; margin: 15px 0; }
@@ -1289,6 +1499,11 @@ ${formattedCh}
             // 테두리 복사 방지를 위해 알맹이 내용만 추출할 임시 영역 생성
             const tempDiv = document.createElement('div');
             const innerLayer = container.querySelector('.content-service-view > div');
+
+            // GSCS/워드 등에 붙여넣을 때 배경색이 꼬이지 않도록 흰색 배경 명시
+            tempDiv.style.backgroundColor = '#ffffff';
+            tempDiv.style.color = '#333333';
+
             if (innerLayer) {
                 tempDiv.innerHTML = innerLayer.innerHTML;
             } else {
@@ -1349,7 +1564,7 @@ ${formattedCh}
             if (tb) {
                 tb.innerHTML = TOOLBAR_HTML;
                 // Prevent toolbar from stealing focus from editor on ALL clicks
-                tb.addEventListener('mousedown', e => { e.preventDefault(); });
+                tb.addEventListener('mousedown', e => { if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'OPTION') e.preventDefault(); });
             }
 
             // Bind events for all scattered editors
@@ -1377,9 +1592,9 @@ ${formattedCh}
                 if (!cell) return;
 
                 const rect = cell.getBoundingClientRect();
-                const isRightEdge = Math.abs(e.clientX - rect.right) < 20;
-                const isLeftEdge = Math.abs(e.clientX - rect.left) < 20;
-                const isBottomEdge = Math.abs(e.clientY - rect.bottom) < 20;
+                const isRightEdge = Math.abs(e.clientX - rect.right) < 8;
+                const isLeftEdge = Math.abs(e.clientX - rect.left) < 8;
+                const isBottomEdge = Math.abs(e.clientY - rect.bottom) < 8;
 
                 const tbl = cell.closest('table');
                 if (!tbl) return;
@@ -1470,8 +1685,8 @@ ${formattedCh}
                         const cell = e.target.closest('.editor-content-view td, .editor-content-view th');
                         if (cell) {
                             const rect = cell.getBoundingClientRect();
-                            const isEdgeX = Math.abs(curX - rect.right) < 20 || Math.abs(curX - rect.left) < 20;
-                            const isEdgeY = Math.abs(curY - rect.bottom) < 20;
+                            const isEdgeX = Math.abs(curX - rect.right) < 8 || Math.abs(curX - rect.left) < 8;
+                            const isEdgeY = Math.abs(curY - rect.bottom) < 8;
                             if (isEdgeX) e.target.style.cursor = 'ew-resize';
                             else if (isEdgeY) e.target.style.cursor = 'ns-resize';
                             else e.target.style.cursor = '';
