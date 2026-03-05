@@ -445,27 +445,192 @@
         }
 
         .editor-toolbar {
-            padding: 8px;
-            background-color: #f9f9f9;
+            padding: 10px 15px;
             border-bottom: 1px solid #e0e0e0;
+            background: #fdfdfd;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
-        .editor-toolbar button {
+        .editor-toolbar button,
+        .custom-file-upload {
             background: #fff;
-            border: 1px solid #dcdcdc;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
             border-radius: 4px;
             cursor: pointer;
-            padding: 6px 12px;
             font-size: 13px;
-            font-weight: 500;
-            transition: background 0.2s;
+            color: #555;
+            transition: all 0.2s;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            box-sizing: border-box;
         }
 
-        .editor-toolbar button:hover {
-            background-color: #f0f0f0;
+        .editor-toolbar button:hover,
+        .custom-file-upload:hover {
+            background: #f0f0f0;
+            border-color: #ccc;
+        }
+
+        .editor-toolbar select {
+            padding: 0 8px;
+            font-size: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 30px;
+            background: #fff;
+            width: auto;
+        }
+
+        .font-family-select {
+            width: 110px !important;
+        }
+
+        .font-size-select {
+            width: 60px !important;
+        }
+
+        .btn-font-step {
+            min-width: 30px;
+            font-weight: bold;
+        }
+
+        .btn-font-step span {
+            font-size: 10px;
+            margin-left: 2px;
+            color: #0078d4;
+        }
+
+        /* Color Tool Split Button */
+        .color-tool-split {
+            display: inline-flex;
+            align-items: stretch;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            height: 30px;
+            background: #fff;
+            overflow: hidden;
+        }
+
+        .color-btn-main {
+            padding: 0 8px;
+            background: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-right: 1px solid #eee;
+        }
+
+        .color-btn-main:hover {
+            background-color: #f5f5f5;
+        }
+
+        .color-btn-arrow {
+            padding: 0 6px;
+            background: #fff;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            color: #666;
+        }
+
+        .color-btn-arrow:hover {
+            background-color: #f5f5f5;
+        }
+
+        .color-icon-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            line-height: 1;
+        }
+
+        .color-icon-wrapper b {
+            font-size: 14px;
+            font-family: 'Malgun Gothic', '맑은 고딕', sans-serif;
+        }
+
+        .color-icon-wrapper i {
+            font-size: 13px;
+        }
+
+        .color-bar {
+            width: 16px;
+            height: 3px;
+            margin-top: 1px;
+            border: 0.5px solid rgba(0,0,0,0.1);
+        }
+
+        /* Color Picker Popup */
+        .color-picker-popup {
+            position: absolute;
+            background: white;
+            border: 1px solid #ddd;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            padding: 15px;
+            z-index: 10000;
+            display: none;
+            width: 260px;
+            border-radius: 8px;
+        }
+
+        .cp-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 6px;
+            margin: 8px 0;
+        }
+
+        .cp-cell {
+            width: 20px;
+            height: 20px;
+            border: 1px solid #eee;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: transform 0.15s;
+        }
+
+        .cp-cell:hover {
+            transform: scale(1.3);
+            z-index: 2;
+            border-color: #333;
+        }
+
+        .cp-section-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            margin-top: 12px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 4px;
+        }
+
+        .cp-more-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #555;
+            border-radius: 4px;
+        }
+
+        .cp-more-btn:hover {
+            background: #f5f5f5;
         }
 
         .editor-content-textarea,
@@ -978,9 +1143,7 @@
                 <label>조치 방법 (요약)</label>
                 <div class="editor-container">
                     <div class="editor-toolbar">
-                        <button onclick="insertMarkdown('**', '**')" title="굵게"><i class="fas fa-bold"></i></button>
-                        <button onclick="insertMarkdown('*', '*')" title="기울임"><i class="fas fa-italic"></i></button>
-                        <button onclick="clearTextarea(this)" title="내용 지우기" style="color: #666; margin-left: auto;"><i class="fas fa-trash-alt"></i></button>
+                        <!-- JS에서 TOOLBAR_HTML 주입 -->
                     </div>
                     <div id="inActionSummary" class="editor-content-view paste-area" contenteditable="true"
                         placeholder="내용을 입력하세요...">LQC 모드 진입 시에만 발생되며, 에러 발생 시 메인 PCB 교체 안내</div>
@@ -998,16 +1161,7 @@
                 </div>
                 <div class="editor-container">
                     <div class="editor-toolbar">
-                        <button onclick="insertFormat('bold')" title="굵게"><i class="fas fa-bold"></i></button>
-                        <button onclick="insertFormat('italic')" title="기울임"><i class="fas fa-italic"></i></button>
-                        <button onclick="insertFormat('insertUnorderedList')" title="글머리 기호"><i
-                                class="fas fa-list-ul"></i></button>
-                        <button onclick="insertFormat('insertOrderedList')" title="번호 매기기"><i
-                                class="fas fa-list-ol"></i></button>
-                        <button onclick="insertFormat('foreColor', 'red')" title="빨간색 텍스트"
-                            style="color:red; font-weight:bold;">A</button>
-                        <button onclick="openTableModal()" title="표 삽입"><i class="fas fa-table"></i></button>
-                        <button onclick="clearTextarea(this)" title="내용 지우기" style="color: #666; margin-left: auto;"><i class="fas fa-trash-alt"></i></button>
+                        <!-- JS에서 TOOLBAR_HTML 주입 -->
                     </div>
                     <div id="inSymptom" class="editor-content-view paste-area" contenteditable="true"
                         placeholder="내용을 입력하세요...">- LE9 에러 발생</div>
@@ -1021,14 +1175,7 @@
                 </div>
                 <div class="editor-container">
                     <div class="editor-toolbar">
-                        <button onclick="insertMarkdown('**', '**')" title="굵게"><i class="fas fa-bold"></i></button>
-                        <button onclick="insertMarkdown('*', '*')" title="기울임"><i class="fas fa-italic"></i></button>
-                        <button onclick="insertMarkdown('\n- ', '')" title="글머리 기호"><i
-                                class="fas fa-list-ul"></i></button>
-                        <button onclick="insertMarkdown('\n1. ', '')" title="번호 매기기"><i
-                                class="fas fa-list-ol"></i></button>
-                        <button onclick="openTableModal()" title="표 삽입"><i class="fas fa-table"></i></button>
-                        <button onclick="clearTextarea(this)" title="내용 지우기" style="color: #666; margin-left: auto;"><i class="fas fa-trash-alt"></i></button>
+                        <!-- JS에서 TOOLBAR_HTML 주입 -->
                     </div>
                     <div id="inCause" class="editor-content-view paste-area" contenteditable="true"
                         placeholder="내용을 입력하세요...">- 메인 PCB 불량</div>
@@ -1042,12 +1189,7 @@
                 </div>
                 <div class="editor-container">
                     <div class="editor-toolbar">
-                        <button onclick="insertMarkdown('**', '**')" title="굵게"><i class="fas fa-bold"></i></button>
-                        <button onclick="insertMarkdown('*', '*')" title="기울임"><i class="fas fa-italic"></i></button>
-                        <button onclick="insertMarkdown('\n- ', '')" title="글머리 기호"><i
-                                class="fas fa-list-ul"></i></button>
-                        <button onclick="openTableModal()" title="표 삽입"><i class="fas fa-table"></i></button>
-                        <button onclick="clearTextarea(this)" title="내용 지우기" style="color: #666; margin-left: auto;"><i class="fas fa-trash-alt"></i></button>
+                        <!-- JS에서 TOOLBAR_HTML 주입 -->
                     </div>
                     <div id="inRepairMethod" class="editor-content-view paste-area" contenteditable="true"
                         placeholder="내용을 입력하세요...">- LQC 모드 진입 시에만 발생되며, 에러 발생 시 메인 PCB 교체 안내</div>
@@ -1114,6 +1256,17 @@
         </div>
     </div>
 
+    <!-- Color Picker Popup -->
+    <div id="customColorPicker" class="color-picker-popup" onmousedown="event.preventDefault()">
+        <div class="cp-section-title">테마 색상</div>
+        <div id="themeColorsGrid" class="cp-grid"></div>
+        <div class="cp-section-title">표준 색상</div>
+        <div id="standardColorsRow" class="cp-grid"></div>
+        <div class="cp-section-title">기타</div>
+        <div class="cp-more-btn" onclick="triggerNativeColorInput()"><i class="fas fa-palette"></i> 다른 색 선택...</div>
+        <input type="color" id="nativeColorInput" style="display:none;" onchange="selectQuickColor(this.value)">
+    </div>
+
     <script>
         // Custom renderer to wrap tables in .tbl-scroll div
         const renderer = new marked.Renderer();
@@ -1150,33 +1303,203 @@
             renderer: renderer
         });
 
-        // Bind paste events to existing textareas
-        document.querySelectorAll('.paste-area').forEach(textarea => {
-            textarea.addEventListener('paste', handleContentPaste);
-        });
+        // --- Shared Toolbar HTML ---
+        const TOOLBAR_HTML = `
+            <select onchange="changeFontFamily(this)" class="font-family-select" onmousedown="event.stopPropagation()">
+                <option value="'LG Smart UI Regular', 'LG Smart UI', '맑은 고딕'" selected>LG 스마트체</option>
+                <option value="맑은 고딕">맑은 고딕</option>
+                <option value="돋움">돋움</option>
+                <option value="굴림">굴림</option>
+                <option value="바탕">바탕</option>
+                <option value="Arial">Arial</option>
+            </select>
+            <select onchange="changeFontSize(this)" class="font-size-select" id="fontSizeSelect" onmousedown="event.stopPropagation()">
+                <option value="6px">6</option><option value="8px">8</option><option value="9px">9</option>
+                <option value="10px">10</option><option value="11px" selected>11</option><option value="12px">12</option>
+                <option value="14px">14</option><option value="16px">16</option><option value="18px">18</option>
+                <option value="20px">20</option><option value="22px">22</option><option value="24px">24</option>
+                <option value="26px">26</option><option value="28px">28</option><option value="36px">36</option>
+                <option value="48px">48</option>
+            </select>
+            <button onclick="stepFontSize(1)" class="btn-font-step" onmousedown="event.preventDefault()">가<span>+</span></button>
+            <button onclick="stepFontSize(-1)" class="btn-font-step" onmousedown="event.preventDefault()">가<span>-</span></button>
+            <div class="color-tool-split">
+                <button class="color-btn-main" onclick="applyLastColor('foreColor', event)" onmousedown="event.preventDefault()"><div class="color-icon-wrapper"><b>가</b><div class="color-bar" style="background-color: red;"></div></div></button>
+                <button class="color-btn-arrow" onclick="openColorTool('foreColor', event)" onmousedown="event.preventDefault()"><i class="fas fa-caret-down"></i></button>
+            </div>
+            <button onclick="insertFormat('bold')" onmousedown="event.preventDefault()"><i class="fas fa-bold"></i></button>
+            <button onclick="insertFormat('italic')" onmousedown="event.preventDefault()"><i class="fas fa-italic"></i></button>
+            <button onclick="insertFormat('insertUnorderedList')" onmousedown="event.preventDefault()"><i class="fas fa-list-ul"></i></button>
+            <button onclick="insertFormat('insertOrderedList')" onmousedown="event.preventDefault()"><i class="fas fa-list-ol"></i></button>
+            <button onclick="openTableModal(event)" onmousedown="event.preventDefault()"><i class="fas fa-table"></i></button>
+        `;
 
-        function insertFormat(command, value = null) {
-            document.execCommand(command, false, value);
+        // --- Editor Core ---
+        let lastFocusedEditor = null, selectionRange = null, activeToolbar = null, activeColorType = 'foreColor';
+        let isRestoringSelection = false;
+
+        function saveSelectionState() {
+            if (isRestoringSelection) return;
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) {
+                selectionRange = sel.getRangeAt(0).cloneRange();
+                syncFontSize();
+            }
+        }
+        function restoreSelectionState() {
+            if (selectionRange && lastFocusedEditor) {
+                isRestoringSelection = true;
+                lastFocusedEditor.focus();
+                const sel = window.getSelection();
+                sel.removeAllRanges(); sel.addRange(selectionRange);
+                setTimeout(() => { isRestoringSelection = false; }, 10);
+            } else if (lastFocusedEditor) lastFocusedEditor.focus();
+        }
+
+        function syncFontSize() {
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) {
+                let node = sel.anchorNode;
+                if (node && node.nodeType === 3) node = node.parentElement;
+                if (node) {
+                    const fs = window.getComputedStyle(node).fontSize;
+                    const selects = document.querySelectorAll('.font-size-select');
+                    selects.forEach(select => {
+                        const px = parseInt(fs) + 'px';
+                        const sizes = ['6px','8px','9px','10px','11px','12px','14px','16px','18px','20px','22px','24px','26px','28px','36px','48px'];
+                        if (sizes.includes(px)) {
+                            select.value = px;
+                        } else {
+                            const num = parseInt(fs);
+                            let closest = '12px', minDiff = 999;
+                            sizes.forEach(s => { const diff = Math.abs(parseInt(s) - num); if (diff < minDiff) { minDiff = diff; closest = s; } });
+                            select.value = closest;
+                        }
+                    });
+                }
+            }
+        }
+
+        function insertFormat(cmd, val = null) {
+            if (document.activeElement !== lastFocusedEditor) restoreSelectionState();
+            document.execCommand(cmd, false, val);
         }
 
         function insertHTML(html) {
+            if (document.activeElement !== lastFocusedEditor) restoreSelectionState();
             document.execCommand('insertHTML', false, html);
+        }
+
+        function changeFontFamily(s) { restoreSelectionState(); document.execCommand('fontName', false, s.value); }
+
+        function changeFontSize(s) {
+            restoreSelectionState();
+            const val = typeof s === 'string' ? s : s.value;
+            document.execCommand('styleWithCSS', false, true);
+            document.execCommand('fontSize', false, '7');
+            if (lastFocusedEditor) {
+                const markers = lastFocusedEditor.querySelectorAll('font[size="7"], span[style*="font-size: xxx-large"], span[style*="font-size: -webkit-xxx-large"]');
+                markers.forEach(el => {
+                    el.style.fontSize = val;
+                    if (el.tagName === 'FONT') el.removeAttribute('size');
+                    el.querySelectorAll('[style*="font-size"]').forEach(inner => { inner.style.fontSize = 'inherit'; });
+                });
+            }
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0) selectionRange = sel.getRangeAt(0).cloneRange();
+            document.querySelectorAll('.font-size-select').forEach(sel => sel.value = val);
+        }
+
+        function stepFontSize(d) {
+            const sizes = ['6px','8px','9px','10px','11px','12px','14px','16px','18px','20px','22px','24px','26px','28px','36px','48px'];
+            const select = document.querySelector('.font-size-select');
+            if (!select) return;
+            let curIdx = sizes.indexOf(select.value);
+            if (curIdx === -1) {
+                const curSizeNum = parseInt(select.value) || 12;
+                curIdx = sizes.findIndex(s => parseInt(s) >= curSizeNum);
+            }
+            const nextIdx = Math.max(0, Math.min(sizes.length - 1, curIdx + d));
+            changeFontSize(sizes[nextIdx]);
         }
 
         function clearEditor(btn) {
             const container = btn.closest('.editor-container');
             if (container) {
                 const editor = container.querySelector('.editor-content-view');
-                if (editor) {
+                if (editor && confirm('내용을 지우시겠습니까?')) {
                     editor.innerHTML = '';
                     editor.focus();
                 }
             }
         }
 
-        function clearTextarea(btn) {
-            clearEditor(btn);
+        function clearTextarea(btn) { clearEditor(btn); }
+
+        // --- Colors ---
+        function applyLastColor(type, e) {
+            e.stopPropagation(); activeColorType = type;
+            const color = e.currentTarget.querySelector('.color-bar').style.backgroundColor || 'red';
+            if (type === 'foreColor') changeColor(color); else changeBgColor(color);
         }
+        function openColorTool(type, e) {
+            e.stopPropagation(); activeColorType = type;
+            activeToolbar = e.currentTarget.closest('.color-tool-split');
+            const p = document.getElementById('customColorPicker'), r = e.currentTarget.getBoundingClientRect();
+            p.style.display = 'block'; p.style.top = (window.scrollY + r.bottom + 5) + 'px';
+            p.style.left = Math.min(r.left, window.innerWidth - 275) + 'px';
+        }
+        function changeColor(c) {
+            restoreSelectionState();
+            const sel = window.getSelection();
+            if (sel && sel.rangeCount > 0 && sel.getRangeAt(0).collapsed && lastFocusedEditor) {
+                const span = document.createElement('span');
+                span.style.color = c;
+                span.appendChild(document.createTextNode('\u200B'));
+                const range = sel.getRangeAt(0);
+                range.insertNode(span);
+                range.setStart(span.firstChild, 1);
+                range.collapse(true);
+                sel.removeAllRanges(); sel.addRange(range);
+            } else {
+                document.execCommand('styleWithCSS', false, true);
+                document.execCommand('foreColor', false, c);
+            }
+            document.querySelectorAll('.color-bar').forEach(b => b.style.backgroundColor = c);
+        }
+        function changeBgColor(c) {
+            restoreSelectionState();
+            document.execCommand('styleWithCSS', false, true);
+            document.execCommand('hiliteColor', false, c);
+            document.querySelectorAll('.color-bar').forEach(b => b.style.backgroundColor = c);
+        }
+        function selectQuickColor(c) {
+            if (activeColorType === 'foreColor') changeColor(c); else changeBgColor(c);
+            document.getElementById('customColorPicker').style.display = 'none';
+        }
+        function triggerNativeColorInput() { document.getElementById('nativeColorInput').click(); }
+
+        function initColorPicker() {
+            const theme = ['#ffffff','#000000','#eeece1','#1f497d','#4f81bd','#c0504d','#9bbb59','#8064a2','#4bacc6','#f79646','#f2f2f2','#7f7f7f','#ddd9c3','#c6d9f0','#dbe5f1','#f2dcdb','#ebf1de','#e5e0ec','#dbeef3','#fdeada','#d8d8d8','#595959','#c4bd97','#8db3e2','#b8cce4','#e5b9b7','#d7e3bc','#ccc1d9','#b7dde8','#fbd5b5','#bfbfbf','#3f3f3f','#938953','#548dd4','#95b3d7','#d99694','#c3d69b','#b2a2c7','#92cddc','#fac08f','#a5a5a5','#262626','#494429','#17365d','#366092','#953734','#76923c','#5f497a','#31859b','#e36c09','#7f7f7f','#0c0c0c','#1d1b10','#0f243e','#244061','#632423','#4f6128','#3f3151','#205867','#974806'];
+            const std = ['#c00000','#ff0000','#ffc000','#ffff00','#92d050','#00b050','#00b0f0','#0070c0','#002060','#7030a0'];
+            const tg = document.getElementById('themeColorsGrid'), sg = document.getElementById('standardColorsRow');
+            theme.forEach(c => { const d = document.createElement('div'); d.className = 'cp-cell'; d.style.backgroundColor = c; d.onclick = () => selectQuickColor(c); tg.appendChild(d); });
+            std.forEach(c => { const d = document.createElement('div'); d.className = 'cp-cell'; d.style.backgroundColor = c; d.onclick = () => selectQuickColor(c); sg.appendChild(d); });
+            document.addEventListener('click', () => document.getElementById('customColorPicker').style.display = 'none');
+            document.getElementById('customColorPicker').onclick = e => e.stopPropagation();
+        }
+
+        // Bind paste events to existing paste-areas
+        document.querySelectorAll('.paste-area').forEach(el => {
+            el.addEventListener('paste', handleContentPaste);
+            el.addEventListener('focus', () => { lastFocusedEditor = el; saveSelectionState(); });
+            el.addEventListener('mouseup', saveSelectionState);
+            el.addEventListener('keyup', saveSelectionState);
+        });
+
+        // Inject toolbar HTML into all editor-toolbar divs and init color picker
+        document.querySelectorAll('.editor-toolbar').forEach(tb => { tb.innerHTML = TOOLBAR_HTML; });
+        initColorPicker();
 
         // --- Table Modal Logic ---
         let lastFocusedTextarea = null;
@@ -1350,14 +1673,7 @@
                     <input type="text" class="dyn-title" placeholder="소제목 입력">
                 </div>
                 <div class="editor-container">
-                    <div class="editor-toolbar">
-                        <button onclick="insertFormat('bold')" title="굵게"><i class="fas fa-bold"></i></button>
-                        <button onclick="insertFormat('italic')" title="기울임"><i class="fas fa-italic"></i></button>
-                        <button onclick="insertFormat('insertUnorderedList')" title="글머리 기호"><i class="fas fa-list-ul"></i></button>
-                        <button onclick="insertFormat('foreColor', 'red')" title="빨간색 텍스트">A</button>
-                        <button onclick="openTableModal()" title="표 삽입"><i class="fas fa-table"></i></button>
-                        <button onclick="clearTextarea(this)" title="내용 지우기" style="color: #666; margin-left: auto;"><i class="fas fa-trash-alt"></i></button>
-                    </div>
+                    <div class="editor-toolbar"></div>
                     <div class="editor-content-view paste-area dyn-content" contenteditable="true" placeholder="내용을 입력하세요... (이미지 붙여넣기 가능)"></div>
                 </div>
             </div>
@@ -1365,9 +1681,14 @@
 
             container.insertAdjacentHTML('beforeend', sectionHtml);
 
-            // Attach paste listener to new textarea
-            const newTextarea = container.lastElementChild.querySelector('.paste-area');
-            newTextarea.addEventListener('paste', handleContentPaste);
+            // Inject toolbar and attach listeners to new editor
+            const newSection = container.lastElementChild;
+            newSection.querySelector('.editor-toolbar').innerHTML = TOOLBAR_HTML;
+            const newEditor = newSection.querySelector('.paste-area');
+            newEditor.addEventListener('paste', handleContentPaste);
+            newEditor.addEventListener('focus', () => { lastFocusedEditor = newEditor; saveSelectionState(); });
+            newEditor.addEventListener('mouseup', saveSelectionState);
+            newEditor.addEventListener('keyup', saveSelectionState);
         }
 
         function removeSection(id) {
