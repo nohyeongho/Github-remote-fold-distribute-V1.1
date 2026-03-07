@@ -111,8 +111,8 @@
     .spot {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: 15px;
-      height: 15px;
+      width: clamp(12px, 2vw, 18px);
+      height: clamp(12px, 2vw, 18px);
       border-radius: 50%;
       background: #A50034;
       border: 2px solid #ffffff;
@@ -241,16 +241,15 @@
     }
 
     /* Table styles for readability */
-    .table-container {
-      width: 100%;
-      overflow-x: auto;
-      margin-top: 12px;
-    }
+    
+
+    
 
     .table-container {
       overflow-x: auto;
       -webkit-overflow-scrolling: touch;
       width: 100%;
+      min-width: 0;
     }
 
     .info-table {
