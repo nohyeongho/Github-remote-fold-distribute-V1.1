@@ -494,6 +494,76 @@
             color: #999;
         }
 
+        /* Summary Section Styles */
+        .info-container {
+            margin-bottom: 10px;
+        }
+
+        .info-row {
+            margin-bottom: 15px;
+        }
+
+        .info-row-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .info-bullet {
+            font-size: 12px;
+            color: #333;
+        }
+
+        .info-editable-title {
+            border: 1px solid transparent;
+            background: transparent;
+            font-weight: bold;
+            font-size: 15px;
+            width: 150px;
+            padding: 2px 5px;
+            color: #333;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .info-editable-title:hover {
+            background: #fff;
+            border-color: #ddd;
+        }
+
+        .info-editable-title:focus {
+            background: #fff;
+            border-color: var(--lg-red);
+            outline: none;
+        }
+
+        .faint-text {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .info-content-area {
+            background-color: #f2f2f2 !important;
+            border: 1px solid #ddd !important;
+            border-radius: 4px;
+            padding: 10px 12px !important;
+            width: 100%;
+            min-height: 50px;
+            font-size: 14px;
+            box-sizing: border-box;
+            resize: vertical;
+            display: block;
+            line-height: 1.5;
+        }
+
+        .info-content-area:focus {
+            background-color: #fff !important;
+            border-color: var(--lg-red) !important;
+            outline: none;
+        }
+
         /* Column Drag Resize */
         .col-resizing {
             cursor: col-resize !important;
@@ -518,73 +588,45 @@
             <div class="panel-title"><i class="fas fa-edit"></i> 업무 표준 콘텐츠 작성</div>
             <p style="font-size: 13px; color: #666; margin: -15px 0 20px 28px;">제목, 제품군, 제품, 모델등은 상단 부분에 정확히 입력하세요.</p>
 
-            <!-- Modification Information Table -->
-            <div style="margin-bottom: 20px; border-bottom: 2px solid var(--lg-red); padding-bottom: 10px;">
+            <!-- Modification Information (Summary) -->
+            <div
+                style="margin-bottom: 20px; border-bottom: 2px solid var(--lg-red); padding-bottom: 10px; display: flex; justify-content: space-between; align-items: flex-end;">
                 <h3 style="color: var(--lg-red); margin: 0; font-size: 18px;">수정 정보</h3>
+                <span class="faint-text">제목 등은 직접 수정 가능합니다.</span>
             </div>
-            <div class="form-group" style="margin-bottom: 30px;">
-                <table id="infoTable" style="width:100%; border-collapse:collapse; font-size:14px;">
-                    <colgroup>
-                        <col style="width: 140px;">
-                        <col>
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th
-                                style="border:1px solid #ccc; padding:8px 10px; background:#f0f0f0; text-align:center; font-weight:600;">
-                                구분</th>
-                            <th
-                                style="border:1px solid #ccc; padding:8px 10px; background:#f0f0f0; text-align:center; font-weight:600;">
-                                내용</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                배경 <span style="color:var(--lg-red);">*</span></td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_bg"
-                                    placeholder="품질 문제 해결 등"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                변경 전</td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_before"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                변경 후</td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_after"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                적용 일시</td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_date"
-                                    placeholder="'26.02.21 생산분 부터"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                적용 제번</td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_serial"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                증상</td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_symptom"></textarea></td>
-                        </tr>
-                        <tr>
-                            <td
-                                style="border:1px solid #ccc; padding:8px 10px; text-align:center; background:#fafafa; font-weight:600;">
-                                부품 정보</td>
-                            <td style="border:1px solid #ccc;"><textarea id="info_partInfo"></textarea></td>
-                        </tr>
-                    </tbody>
-                </table>
+
+            <div class="info-container">
+                <div class="info-row">
+                    <div class="info-row-header">
+                        <span class="info-bullet">●</span>
+                        <input type="text" id="info_title_bg" class="info-editable-title" value="배경">
+                    </div>
+                    <textarea id="info_bg" class="info-content-area" placeholder="품질 문제 해결 등"></textarea>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-row-header">
+                        <span class="info-bullet">●</span>
+                        <input type="text" id="info_title_product" class="info-editable-title" value="제품">
+                    </div>
+                    <textarea id="info_product" class="info-content-area" placeholder="제품군 또는 상세 모델"></textarea>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-row-header">
+                        <span class="info-bullet">●</span>
+                        <input type="text" id="info_title_symptom" class="info-editable-title" value="증상">
+                    </div>
+                    <textarea id="info_symptom" class="info-content-area" placeholder="발생 증상 요합"></textarea>
+                </div>
+
+                <div class="info-row">
+                    <div class="info-row-header">
+                        <span class="info-bullet">●</span>
+                        <input type="text" id="info_title_parts" class="info-editable-title" value="부품정보">
+                    </div>
+                    <textarea id="info_partInfo" class="info-content-area" placeholder="관련 부품 정보"></textarea>
+                </div>
             </div>
 
             <!-- Content Area -->
@@ -983,33 +1025,38 @@
             }
         });
 
-        // --- HTML Generation ---
         function generateHTML() {
-            // Modification Table Data
+            // Modification (Summary) Data
             const infoData = [
-                ['배경', document.getElementById('info_bg').value],
-                ['변경 전', document.getElementById('info_before').value],
-                ['변경 후', document.getElementById('info_after').value],
-                ['적용 일시', document.getElementById('info_date').value],
-                ['적용 제번', document.getElementById('info_serial').value],
-                ['증상', document.getElementById('info_symptom').value],
-                ['부품 정보', document.getElementById('info_partInfo').value]
+                { title: document.getElementById('info_title_bg').value, val: document.getElementById('info_bg').value },
+                { title: document.getElementById('info_title_product').value, val: document.getElementById('info_product').value },
+                { title: document.getElementById('info_title_symptom').value, val: document.getElementById('info_symptom').value },
+                { title: document.getElementById('info_title_parts').value, val: document.getElementById('info_partInfo').value }
             ];
 
-            let infoTableHtml = '';
-            const validRows = infoData.filter(([label, val]) => val && val.trim().length > 0);
+            let summaryHtml = '<div class="summary-box" style="margin-bottom: 25px;">';
+            let summaryItems = 0;
 
-            if (validRows.length > 0) {
-                infoTableHtml = '<div class="tbl-scroll"><table style="width: 600px; border-collapse: collapse;" class="xfe_just_info"><thead><tr><th style="border:1px solid #ccc; padding:8px; background:#ddd; width:140px;">구분</th><th style="border:1px solid #ccc; padding:8px; background:#ddd;">내용</th></tr></thead><tbody>';
-                validRows.forEach(([label, val]) => {
-                    const formattedVal = (val || '').replace(/\n/g, '<br>');
-                    infoTableHtml += `<tr><td style="border:1px solid #ccc; padding:8px; background:#eee; font-weight:bold;">${label}</td><td style="border:1px solid #ccc; padding:8px; text-align: left;">${formattedVal || '&nbsp;'}</td></tr>`;
-                });
-                infoTableHtml += '</tbody></table></div>';
-            }
+            infoData.forEach(item => {
+                if (item.val && item.val.trim().length > 0) {
+                    const formattedVal = (item.val || '').replace(/\n/g, '<br>');
+                    summaryHtml += `
+                        <div class="summary-item" style="margin-bottom: 15px;">
+                            <div class="summary-title" style="display: flex; align-items: center; gap: 8px; font-weight: bold; margin-bottom: 6px; font-size: 16px;">
+                                <span style="font-size: 10px; color: #000;">●</span> ${item.title}
+                            </div>
+                            <div class="summary-content" style="background: #f2f2f2; padding: 12px 15px; border-radius: 4px; font-size: 14px; line-height: 1.6; color: #333;">
+                                ${formattedVal}
+                            </div>
+                        </div>`;
+                    summaryItems++;
+                }
+            });
+            summaryHtml += '</div>';
+            if (summaryItems === 0) summaryHtml = '';
 
             // Sections
-            let contentHtml = infoTableHtml;
+            let contentHtml = summaryHtml;
             let idx = 1;
             const addSec = (title, html) => {
                 // 열 너비 조절 컨트롤 제거 (출력에서 제외)
@@ -1038,16 +1085,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .content-service-view { font-family: 'Noto Sans KR', sans-serif; line-height: 1.6; color: #333; max-width: 800px; margin: 0; padding: 20px; text-align: left; }
-        .sub-tit { position: relative; padding-left: 25px; margin: 30px 0 10px; font-size: 18px; font-weight: bold; }
-        .sub-tit .num { position: absolute; left: 0; top: 2px; width: 20px; height: 20px; background: #999; color: #fff; border-radius: 50%; text-align: center; font-size: 12px; line-height: 20px; display: inline-block; }
-        .sub-tit.no-content { margin-top: 15px; }
-        .tbl-scroll { overflow-x: auto; margin: 15px 0; }
+        .summary-item { margin-bottom: 20px; }
+        .summary-title { font-weight: bold; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; font-size: 16px; color: #000; }
+        .summary-content { background: #f2f2f2; padding: 12px 18px; border-radius: 4px; font-size: 14px; line-height: 1.6; }
+        .sub-tit { position: relative; padding-left: 25px; margin: 35px 0 15px; font-size: 18px; font-weight: bold; color: #000; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .sub-tit .num { position: absolute; left: 0; top: 2px; width: 20px; height: 20px; background: #ec455a; color: #fff; border-radius: 50%; text-align: center; font-size: 12px; line-height: 20px; display: inline-block; }
+        .sub-tit.no-content { margin-top: 20px; }
+        .tbl-scroll { overflow-x: auto; margin: 20px 0; border: 1px solid #eee; border-radius: 4px; }
         .tbl-scroll table { width: 100%; border-collapse: collapse; min-width: 600px; }
-        .tbl-scroll th, .tbl-scroll td { border: 1px solid #ccc; padding: 12px; text-align: center; }
-        .tbl-scroll th { background: #f4f4f4; font-weight: bold; }
-        .img-only { margin: 20px 0; text-align: left; }
-        .img-only img { max-width: 100%; height: auto; border: 1px solid #eee; }
-        p { margin: 10px 0; }
+        .tbl-scroll th, .tbl-scroll td { border: 1px solid #eee; padding: 12px; text-align: center; }
+        .tbl-scroll th { background: #f9f9f9; font-weight: bold; }
+        .img-only { margin: 25px 0; text-align: left; }
+        .img-only img { max-width: 100%; height: auto; border: 1px solid #eee; border-radius: 4px; }
+        p { margin: 12px 0; }
     </style>
 </head>
 <body>
