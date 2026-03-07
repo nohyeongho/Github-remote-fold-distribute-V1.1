@@ -138,6 +138,7 @@
 
     /* Info panel */
     .info-panel {
+      flex-wrap: wrap;
       margin-top: 16px;
       width: min(1100px, 96vw);
       background: #ffffff;
@@ -249,10 +250,12 @@
     
 
     .table-container {
-      overflow-x: auto;
-      -webkit-overflow-scrolling: touch;
       width: 100%;
       min-width: 0;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      margin-top: 12px;
+      border-radius: 8px;
     }
 
     .info-table {
@@ -265,11 +268,13 @@
 
     .info-table th,
     .info-table td {
+      font-size: clamp(10px, 1.2vw, 14px);
       border: 1px solid #e2e8f0;
       padding: 8px 12px;
     }
 
     .info-table th {
+      font-size: clamp(10px, 1.2vw, 14px);
       background: #f8fafc;
       font-weight: 700;
       color: #0f172a;
@@ -604,8 +609,8 @@
         <div class="part-info">
           <h2>${p.name}</h2>
           <p>${p.desc}</p>
-          ${extraHtml}
-        </div>`;
+        </div>
+        ${extraHtml}`;
         });
         overlay.appendChild(btn);
       });
