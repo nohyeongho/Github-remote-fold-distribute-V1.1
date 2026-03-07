@@ -111,8 +111,8 @@
     .spot {
       position: absolute;
       transform: translate(-50%, -50%);
-      width: 20px;
-      height: 20px;
+      width: clamp(14px, 1.8vw, 22px);
+      height: clamp(14px, 1.8vw, 22px);
       border-radius: 50%;
       background: #A50034;
       border: 2px solid #ffffff;
@@ -121,7 +121,7 @@
       align-items: center;
       justify-content: center;
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 9px;
+      font-size: clamp(8px, 1vw, 11px);
       font-weight: 700;
       color: #ffffff;
       box-shadow: 0 2px 6px rgba(165, 0, 52, 0.25);
@@ -217,12 +217,66 @@
     .excel-info p {
       margin: 4px 0;
     }
+
+
+    .copy-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+      margin-left: 6px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .copy-btn:hover {
+      background: #e2e8f0;
+    }
+
+    .part-number-cell {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Table styles for readability */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 12px;
+    }
+
+    .info-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      text-align: left;
+      white-space: nowrap;
+    }
+
+    .info-table th,
+    .info-table td {
+      border: 1px solid #e2e8f0;
+      padding: 8px 12px;
+    }
+
+    .info-table th {
+      background: #f8fafc;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .info-table td {
+      color: #444;
+    }
+
     /* Image Size for Tablet/Desktop */
     .diagram-wrap {
       max-width: 800px;
       margin: 0 auto;
     }
-    
+
     .diagram-wrap img {
       width: 100%;
       height: auto;
@@ -231,29 +285,54 @@
 
     /* Mobile Optimization */
     @media (max-width: 768px) {
-      body { padding: 16px 12px; }
-      header h1 { font-size: 22px; }
-      .tab-bar { border-radius: 12px; }
-      .tab-btn { padding: 10px 0; font-size: 13px; }
-      .diagram-wrap { border-radius: 12px; max-width: 100%; }
-      .spot { width: 24px; height: 24px; font-size: 11px; }
-      .info-panel { flex-direction: column; padding: 20px 16px; gap: 16px; align-items: flex-start; text-align: left; }
-      .info-panel .divider { display: none; }
-      .info-panel .part-badge { font-size: 20px; min-width: 50px; height: 44px; }
-      .info-panel .hint { font-size: 13px; }
-    }
-    /* Mobile Optimization */
-    @media (max-width: 768px) {
-      body { padding: 16px 12px; }
-      header h1 { font-size: 22px; }
-      .tab-bar { border-radius: 12px; }
-      .tab-btn { padding: 10px 0; font-size: 13px; }
-      .diagram-wrap { border-radius: 12px; }
-      .spot { width: 24px; height: 24px; font-size: 11px; }
-      .info-panel { flex-direction: column; padding: 20px 16px; gap: 16px; align-items: flex-start; text-align: left; }
-      .info-panel .divider { display: none; }
-      .info-panel .part-badge { font-size: 20px; min-width: 50px; height: 44px; }
-      .info-panel .hint { font-size: 13px; }
+      body {
+        padding: 16px 12px;
+      }
+
+      header h1 {
+        font-size: 22px;
+      }
+
+      .tab-bar {
+        border-radius: 12px;
+      }
+
+      .tab-btn {
+        padding: 10px 0;
+        font-size: 13px;
+      }
+
+      .diagram-wrap {
+        border-radius: 12px;
+        max-width: 100%;
+      }
+
+      .spot {
+        font-size: 9px !important;
+        border-width: 1px !important;
+      }
+
+      .info-panel {
+        flex-direction: column;
+        padding: 20px 16px;
+        gap: 16px;
+        align-items: flex-start;
+        text-align: left;
+      }
+
+      .info-panel .divider {
+        display: none;
+      }
+
+      .info-panel .part-badge {
+        font-size: 20px;
+        min-width: 50px;
+        height: 44px;
+      }
+
+      .info-panel .hint {
+        font-size: 13px;
+      }
     }
   </style>
 </head>
@@ -262,12 +341,12 @@
 
   <header>
     <h1>Lockring Searcher</h1>
-    <p>노란 번호 버튼을 클릭하면 해당 부품 정보를 확인할 수 있습니다</p>
+    <p>번호 버튼을 클릭하면 해당 부품 정보를 확인할 수 있습니다</p>
   </header>
 
   <div class="tab-bar">
-    <button class="tab-btn" id="tab1ea" onclick="switchTab('1ea')">1EA</button>
-    <button class="tab-btn active" id="tab2ea" onclick="switchTab('2ea')">2EA</button>
+    <button class="tab-btn" id="tab1ea" onclick="switchTab('1ea')">1EVA</button>
+    <button class="tab-btn active" id="tab2ea" onclick="switchTab('2ea')">2EVA</button>
   </div>
 
   <div class="diagram-wrap" id="diagramWrap">
@@ -438,7 +517,17 @@
 
     console.log('Elements lookup:', { overlay: !!overlay, panel: !!panel, diagImg: !!diagImg });
 
+
+    function copyText(text) {
+      navigator.clipboard.writeText(text).then(() => {
+        alert(text + ' 복사되었습니다.');
+      }).catch(err => {
+        console.error('Failed to copy: ', err);
+      });
+    }
+
     function buildSpots(parts) {
+
       console.log('buildSpots called with', parts.length, 'parts');
       if (!overlay) {
         console.error('CRITICAL: overlay element not found!');
@@ -463,23 +552,41 @@
           const excelInfoList = excelData[spotId];
           let extraHtml = '';
 
+          let items = [];
           if (excelInfoList && Array.isArray(excelInfoList)) {
-            extraHtml = excelInfoList.map(excelInfo => `
-              <div class="excel-info">
-                <p><strong>Where to use:</strong> ${excelInfo.whereToUse}</p>
-                <p><strong>Part Number:</strong> ${excelInfo.partNumber}</p>
-                <p><strong>Connector Name:</strong> ${excelInfo.connectorName}</p>
-                <p><strong>Pipe (mm / inch):</strong> ${excelInfo.pipeMm} / ${excelInfo.pipeInch}</p>
-              </div>
-            `).join('');
+            items = excelInfoList;
           } else if (excelInfoList) {
-            // Fallback for single object if needed
+            items = [excelInfoList];
+          }
+
+          if (items.length > 0) {
             extraHtml = `
-              <div class="excel-info">
-                <p><strong>Where to use:</strong> ${excelInfoList.whereToUse}</p>
-                <p><strong>Part Number:</strong> ${excelInfoList.partNumber}</p>
-                <p><strong>Connector Name:</strong> ${excelInfoList.connectorName}</p>
-                <p><strong>Pipe (mm / inch):</strong> ${excelInfoList.pipeMm} / ${excelInfoList.pipeInch}</p>
+              <div class="table-container">
+                <table class="info-table">
+                  <thead>
+                    <tr>
+                      <th>Where to use</th>
+                      <th>Part Number</th>
+                      <th>Connector Name</th>
+                      <th>Pipe (mm / inch)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    ${items.map(e => `
+                      <tr>
+                        <td>${e.whereToUse}</td>
+                        <td>
+                          <div class="part-number-cell">
+                            <span>${e.partNumber}</span>
+                            <button class="copy-btn" onclick="copyText('${e.partNumber}')" title="복사하기">📋</button>
+                          </div>
+                        </td>
+                        <td>${e.connectorName}</td>
+                        <td>${e.pipeMm} / ${e.pipeInch}</td>
+                      </tr>
+                    `).join('')}
+                  </tbody>
+                </table>
               </div>
             `;
           }
@@ -516,4 +623,3 @@
 </body>
 
 </html>
-
