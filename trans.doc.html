@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>영호의 tras.doc</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary: #a50034;
+            --primary-hover: #8a002b;
+            --primary-light: rgba(165, 0, 52, 0.08);
+            --bg: #f5f6f8;
+            --bg-white: #ffffff;
+            --border: #e0e3e8;
+            --text: #1a1a2e;
+            --text-muted: #6b7280;
+            --text-light: #9ca3af;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.10);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.2s ease;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== Header ===== */
+        .header {
+            background: var(--primary);
+            color: #fff;
+            padding: 0 24px;
+            height: 52px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .header .logo {
+            font-size: 18px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header .logo span {
+            opacity: 0.7;
+            font-weight: 400;
+            font-size: 13px;
+        }
+
+        /* ===== Tab Navigation ===== */
+        .tab-nav {
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            padding: 0 24px;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-muted);
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tab-btn:hover {
+            color: var(--text);
+        }
+
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        /* ===== Main Layout ===== */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* ===== Translation Panel ===== */
+        .trans-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Language Bar */
+        .lang-bar {
+            display: flex;
+            align-items: center;
+            padding: 12px 24px;
+            background: var(--bg-white);
+            border-bottom: 1px solid var(--border);
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .lang-select-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .lang-select-wrap label {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .lang-select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 10px center;
+            padding-right: 30px;
+        }
+
+        .lang-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .btn-switch {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            transition: var(--transition);
+            flex-shrink: 0;
+            margin-top: 16px;
+        }
+
+        .btn-switch:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+        }
+
+        .engine-select {
+            padding: 6px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            font-family: inherit;
+            background: var(--bg);
+            color: var(--text);
+            cursor: pointer;
+            margin-top: 16px;
+        }
+
+        /* Translation Area */
+        .trans-area {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .trans-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .trans-col:first-child {
+            border-right: 1px solid var(--border);
+        }
+
+        .trans-col .col-header {
+            padding: 8px 16px;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .col-header .col-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .col-header .col-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: none;
+            cursor: pointer;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-muted);
+            transition: var(--transition);
+        }
+
+        .icon-btn:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .icon-btn.active {
+            color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .icon-btn[title]:hover::after {
+            content: attr(title);
+            position: absolute;
+            bottom: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text);
+            color: #fff;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
+            z-index: 10;
+        }
+
+        .text-input {
+            flex: 1;
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            font-family: inherit;
+            line-height: 1.6;
+            resize: none;
+            background: var(--bg-white);
+            color: var(--text);
+        }
+
+        .text-input:focus {
+            outline: none;
+        }
+
+        .text-input::placeholder {
+            color: var(--text-light);
+        }
+
+        .text-output {
+            flex: 1;
+            padding: 16px;
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-y: auto;
+            background: var(--bg-white);
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .text-output.placeholder {
+            color: var(--text-light);
+            font-style: italic;
+        }
+
+        .char-count {
+            position: absolute;
+            bottom: 8px;
+            right: 16px;
+            font-size: 12px;
+            color: var(--text-light);
+        }
+
+        .char-count strong {
+            color: var(--text-muted);
+        }
+
+        .translate-btn-wrap {
+            padding: 12px 24px;
+            background: var(--bg-white);
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-shrink: 0;
+        }
+
+        .btn-translate {
+            padding: 10px 48px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .btn-translate:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-translate:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .btn-clear {
+            padding: 10px 24px;
+            background: var(--bg);
+            color: var(--text-muted);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            font-family: inherit;
+        }
+
+        .btn-clear:hover {
+            background: var(--border);
+        }
+
+        /* ===== Sidebar ===== */
+        .sidebar {
+            width: 320px;
+            background: var(--bg-white);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-header {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .sidebar-header .btn-clear-history {
+            font-size: 12px;
+            color: var(--text-muted);
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-family: inherit;
+        }
+
+        .sidebar-header .btn-clear-history:hover {
+            color: var(--error);
+        }
+
+        .history-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+
+        .history-item {
+            padding: 12px;
+            border-radius: var(--radius-sm);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid transparent;
+            margin-bottom: 4px;
+        }
+
+        .history-item:hover {
+            background: var(--bg);
+            border-color: var(--border);
+        }
+
+        .history-item .h-lang {
+            font-size: 11px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .history-item .h-original {
+            font-size: 13px;
+            color: var(--text);
+            margin-bottom: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item .h-trans {
+            font-size: 13px;
+            color: var(--text-muted);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .history-item .h-time {
+            font-size: 11px;
+            color: var(--text-light);
+            margin-top: 4px;
+        }
+
+        .history-item .h-actions {
+            display: flex;
+            gap: 4px;
+            margin-top: 6px;
+        }
+
+        .h-actions button {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            border: 1px solid var(--border);
+            background: var(--bg-white);
+            color: var(--text-muted);
+            cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .h-actions button:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        .h-actions button.delete:hover {
+            border-color: var(--error);
+            color: var(--error);
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 40px 16px;
+            color: var(--text-light);
+            font-size: 13px;
+        }
+
+        /* ===== File Tab ===== */
+        .file-panel {
+            display: none;
+            flex-direction: column;
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .file-panel.active {
+            display: flex;
+        }
+
+        .text-panel {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        .text-panel.hidden {
+            display: none;
+        }
+
+        .file-drop-zone {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--bg-white);
+            margin-bottom: 20px;
+        }
+
+        .file-drop-zone:hover,
+        .file-drop-zone.dragover {
+            border-color: var(--primary);
+            background: var(--primary-light);
+        }
+
+        .file-drop-zone .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-drop-zone .title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .file-drop-zone .desc {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .file-drop-zone input[type="file"] {
+            display: none;
+        }
+
+        .file-info {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-bottom: 16px;
+            display: none;
+        }
+
+        .file-info.active {
+            display: block;
+        }
+
+        .file-info .file-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .file-info .file-size {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .file-result {
+            background: var(--bg-white);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 24px;
+            text-align: center;
+            display: none;
+        }
+
+        .file-result.active {
+            display: block;
+        }
+
+        .file-result .success-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .file-result .success-msg {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .btn-download {
+            padding: 10px 32px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .btn-download:hover {
+            background: var(--primary-hover);
+        }
+
+        .file-progress {
+            display: none;
+            margin-top: 16px;
+        }
+
+        .file-progress.active {
+            display: block;
+        }
+
+        .file-progress-bar {
+            height: 6px;
+            background: var(--bg);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .file-progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 3px;
+            transition: width 0.3s;
+            width: 0%;
+        }
+
+        .file-progress-text {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-align: center;
+        }
+
+        /* ===== Toast ===== */
+        .toast-container {
+            position: fixed;
+            top: 60px;
+            right: 24px;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 500;
+            color: #fff;
+            animation: toastIn 0.3s ease;
+            max-width: 400px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .toast.success {
+            background: var(--success);
+        }
+
+        .toast.error {
+            background: var(--error);
+        }
+
+        .toast.info {
+            background: var(--info);
+        }
+
+        .toast.warning {
+            background: var(--warning);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* ===== Detected Language Badge ===== */
+        .detected-lang {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 2px 8px;
+            background: var(--primary-light);
+            color: var(--primary);
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        /* ===== Responsive ===== */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 280px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .trans-area {
+                flex-direction: column;
+            }
+
+            .trans-col:first-child {
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+        }
+
+        /* ===== Spinner ===== */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* File lang bar */
+        .file-lang-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            background: var(--bg-white);
+            padding: 16px;
+            border-radius: var(--radius);
+            border: 1px solid var(--border);
+        }
+
+        .file-lang-bar .lang-select-wrap {
+            flex: 1;
+        }
+
+        .file-lang-bar .btn-switch {
+            margin-top: 0;
+        }
+
+        .file-translate-btn {
+            padding: 10px 32px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: inherit;
+            margin-top: 16px;
+            width: 100%;
+        }
+
+        .file-translate-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .file-translate-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .tips-box {
+            background: var(--primary-light);
+            border: 1px solid rgba(165, 0, 52, 0.15);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            margin-top: 20px;
+        }
+
+        .tips-box h4 {
+            font-size: 13px;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        .tips-box ul {
+            padding-left: 16px;
+        }
+
+        .tips-box li {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <div class="header">
+        <div class="logo">
+            🌐 Trans:Doc <span>Translator</span>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tab-nav">
+        <button class="tab-btn active" data-tab="text" onclick="switchTab('text')">📝 텍스트 번역</button>
+        <button class="tab-btn" data-tab="file" onclick="switchTab('file')">📁 파일 번역</button>
+    </div>
+
+    <!-- Main -->
+    <div class="main-layout">
+        <!-- Text Translation Panel -->
+        <div class="trans-panel">
+            <div class="text-panel" id="textPanel">
+                <!-- Language Bar -->
+                <div class="lang-bar">
+                    <div class="lang-select-wrap">
+                        <label>원문 언어</label>
+                        <select class="lang-select" id="sourceLang">
+                            <option value="auto">자동 감지</option>
+                            <option value="ko">한국어</option>
+                            <option value="en" selected>영어</option>
+                            <option value="zh">중국어(간체)</option>
+                            <option value="zh-TW">중국어(번체)</option>
+                            <option value="ja">일본어</option>
+                            <option value="vi">베트남어</option>
+                            <option value="de">독일어</option>
+                            <option value="es">스페인어</option>
+                            <option value="fr">프랑스어</option>
+                            <option value="ru">러시아어</option>
+                            <option value="th">태국어</option>
+                            <option value="id">인도네시아어</option>
+                            <option value="pt">포르투갈어</option>
+                            <option value="it">이탈리아어</option>
+                            <option value="pl">폴란드어</option>
+                            <option value="tr">터키어</option>
+                            <option value="nl">네덜란드어</option>
+                            <option value="sv">스웨덴어</option>
+                            <option value="ar">아랍어</option>
+                            <option value="fi">핀란드어</option>
+                            <option value="uk">우크라이나어</option>
+                            <option value="ms">말레이어</option>
+                            <option value="el">그리스어</option>
+                            <option value="sr">세르비아어</option>
+                        </select>
+                    </div>
+                    <button class="btn-switch" onclick="switchLangs()" title="언어 전환">⇄</button>
+                    <div class="lang-select-wrap">
+                        <label>번역 언어</label>
+                        <select class="lang-select" id="targetLang">
+                            <option value="ko" selected>한국어</option>
+                            <option value="en">영어</option>
+                            <option value="zh">중국어(간체)</option>
+                            <option value="zh-TW">중국어(번체)</option>
+                            <option value="ja">일본어</option>
+                            <option value="vi">베트남어</option>
+                            <option value="de">독일어</option>
+                            <option value="es">스페인어</option>
+                            <option value="fr">프랑스어</option>
+                            <option value="ru">러시아어</option>
+                            <option value="th">태국어</option>
+                            <option value="id">인도네시아어</option>
+                            <option value="pt">포르투갈어</option>
+                            <option value="it">이탈리아어</option>
+                            <option value="pl">폴란드어</option>
+                            <option value="tr">터키어</option>
+                            <option value="nl">네덜란드어</option>
+                            <option value="sv">스웨덴어</option>
+                            <option value="ar">아랍어</option>
+                            <option value="fi">핀란드어</option>
+                            <option value="uk">우크라이나어</option>
+                            <option value="ms">말레이어</option>
+                            <option value="el">그리스어</option>
+                            <option value="sr">세르비아어</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Translation Area -->
+                <div class="trans-area">
+                    <!-- Source -->
+                    <div class="trans-col">
+                        <div class="col-header">
+                            <span class="col-title">원문 <span id="detectedLangBadge"></span></span>
+                            <div class="col-actions">
+                                <button class="icon-btn" onclick="listenSource()" title="듣기">🔊</button>
+                                <button class="icon-btn" onclick="clearSource()" title="지우기">✕</button>
+                            </div>
+                        </div>
+                        <textarea class="text-input" id="sourceText" placeholder="번역할 내용을 입력하세요"
+                            maxlength="50000"></textarea>
+                        <div class="char-count"><strong id="charCount">0</strong><span> / 50,000</span></div>
+                    </div>
+                    <!-- Target -->
+                    <div class="trans-col">
+                        <div class="col-header">
+                            <span class="col-title">번역 결과</span>
+                            <div class="col-actions">
+                                <button class="icon-btn" onclick="listenTarget()" title="듣기">🔊</button>
+                                <button class="icon-btn" onclick="copyResult()" title="복사">📋</button>
+                            </div>
+                        </div>
+                        <div class="text-output placeholder" id="resultText">번역 결과가 여기에 표시됩니다.</div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="translate-btn-wrap">
+                    <button class="btn-clear" onclick="clearAll()">초기화</button>
+                    <button class="btn-translate" id="btnTranslate" onclick="translateText()">번역</button>
+                </div>
+            </div>
+
+            <!-- File Panel -->
+            <div class="file-panel" id="filePanel">
+                <div class="file-lang-bar">
+                    <div class="lang-select-wrap">
+                        <label>원문 언어</label>
+                        <select class="lang-select" id="fileSourceLang">
+                            <option value="auto" selected>자동 감지</option>
+                            <option value="ko">한국어</option>
+                            <option value="en">영어</option>
+                            <option value="zh">중국어(간체)</option>
+                            <option value="zh-TW">중국어(번체)</option>
+                            <option value="ja">일본어</option>
+                            <option value="vi">베트남어</option>
+                            <option value="de">독일어</option>
+                            <option value="es">스페인어</option>
+                            <option value="fr">프랑스어</option>
+                            <option value="ru">러시아어</option>
+                        </select>
+                    </div>
+                    <button class="btn-switch" onclick="switchFileLangs()" title="언어 전환">⇄</button>
+                    <div class="lang-select-wrap">
+                        <label>번역 언어</label>
+                        <select class="lang-select" id="fileTargetLang">
+                            <option value="ko" selected>한국어</option>
+                            <option value="en">영어</option>
+                            <option value="zh">중국어(간체)</option>
+                            <option value="zh-TW">중국어(번체)</option>
+                            <option value="ja">일본어</option>
+                            <option value="vi">베트남어</option>
+                            <option value="de">독일어</option>
+                            <option value="es">스페인어</option>
+                            <option value="fr">프랑스어</option>
+                            <option value="ru">러시아어</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="file-drop-zone" id="fileDropZone">
+                    <div class="icon">📂</div>
+                    <div class="title">파일을 드래그하여 업로드하세요</div>
+                    <div class="desc">지원 형식: xlsx, xls, csv, txt (최대 10MB)</div>
+                    <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt">
+                </div>
+
+                <div class="file-info" id="fileInfoBox">
+                    <div class="file-name" id="fileNameDisplay"></div>
+                    <div class="file-size" id="fileSizeDisplay"></div>
+                </div>
+
+                <button class="file-translate-btn" id="btnFileTranslate" onclick="translateFile()" disabled>📄 파일 번역
+                    시작</button>
+
+                <div class="file-progress" id="fileProgress">
+                    <div class="file-progress-bar">
+                        <div class="file-progress-fill" id="fileProgressFill"></div>
+                    </div>
+                    <div class="file-progress-text" id="fileProgressText">준비 중...</div>
+                </div>
+
+                <div class="file-result" id="fileResult">
+                    <div class="success-icon">✅</div>
+                    <div class="success-msg">번역이 완료되었습니다!</div>
+                    <button class="btn-download" onclick="downloadTranslatedFile()">📥 번역된 파일 다운로드</button>
+                </div>
+
+                <div class="tips-box">
+                    <h4>💡 파일 번역 안내</h4>
+                    <ul>
+                        <li>엑셀 파일은 모든 시트의 텍스트 셀을 자동으로 번역합니다.</li>
+                        <li>텍스트 파일(txt)은 줄 단위로 번역됩니다.</li>
+                        <li>숫자, 날짜만 있는 셀은 자동으로 건너뜁니다.</li>
+                        <li>파일 크기가 클수록 번역에 시간이 더 걸립니다.</li>
+                        <li>번역은 100% 정확하지 않을 수 있으니, 반드시 확인이 필요합니다.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar: History -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h3>📋 번역 내역</h3>
+                <button class="btn-clear-history" onclick="clearHistory()">전체 삭제</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="no-history" id="noHistory">번역 내역이 없습니다.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+        // ===== State =====
+        let isTranslating = false;
+        let currentFile = null;
+        let translatedWorkbook = null;
+        let translatedFileName = '';
+        let autoTransTimer = null;
+
+        const LANG_NAMES = {
+            'auto': '자동 감지', 'ko': '한국어', 'en': '영어', 'zh': '중국어(간체)',
+            'zh-TW': '중국어(번체)', 'ja': '일본어', 'vi': '베트남어', 'de': '독일어',
+            'es': '스페인어', 'fr': '프랑스어', 'ru': '러시아어', 'th': '태국어',
+            'id': '인도네시아어', 'pt': '포르투갈어', 'it': '이탈리아어', 'pl': '폴란드어',
+            'tr': '터키어', 'nl': '네덜란드어', 'sv': '스웨덴어', 'ar': '아랍어',
+            'fi': '핀란드어', 'uk': '우크라이나어', 'ms': '말레이어', 'el': '그리스어', 'sr': '세르비아어'
+        };
+
+        // ===== DOM =====
+        const $ = id => document.getElementById(id);
+        const sourceText = $('sourceText');
+        const resultText = $('resultText');
+        const btnTranslate = $('btnTranslate');
+        const charCount = $('charCount');
+
+        // ===== Tab Switch =====
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+            $('textPanel').classList.toggle('hidden', tab !== 'text');
+            $('filePanel').classList.toggle('active', tab === 'file');
+        }
+
+        // ===== Character Count =====
+        sourceText.addEventListener('input', () => {
+            const len = sourceText.value.length;
+            charCount.textContent = len.toLocaleString();
+
+            // Auto-translate on pause (debounce)
+            clearTimeout(autoTransTimer);
+            if (sourceText.value.trim()) {
+                autoTransTimer = setTimeout(() => {
+                    translateText(true);
+                }, 800);
+            }
+        });
+
+        // ===== Language Switch =====
+        function switchLangs() {
+            const src = $('sourceLang');
+            const tgt = $('targetLang');
+            if (src.value === 'auto') {
+                showToast('자동 감지 모드에서는 언어 전환이 불가합니다.', 'warning');
+                return;
+            }
+            const temp = src.value;
+            src.value = tgt.value;
+            tgt.value = temp;
+
+            // Swap texts too
+            const srcTxt = sourceText.value;
+            const tgtTxt = resultText.classList.contains('placeholder') ? '' : resultText.textContent;
+            if (tgtTxt) {
+                sourceText.value = tgtTxt;
+                resultText.textContent = srcTxt;
+                resultText.classList.remove('placeholder');
+                charCount.textContent = tgtTxt.length.toLocaleString();
+            }
+        }
+
+        function switchFileLangs() {
+            const src = $('fileSourceLang');
+            const tgt = $('fileTargetLang');
+            if (src.value === 'auto') {
+                showToast('자동 감지 모드에서는 언어 전환이 불가합니다.', 'warning');
+                return;
+            }
+            const temp = src.value;
+            src.value = tgt.value;
+            tgt.value = temp;
+        }
+
+        // ===== Translation API =====
+        const MAX_URL_BYTES = 6000; // URL 인코딩 후 최대 바이트 (한글 안전)
+
+        // URL 인코딩 길이 기준으로 청크 분할
+        function splitTextIntoChunks(text) {
+            if (encodeURIComponent(text).length <= MAX_URL_BYTES) return [text];
+            const chunks = [];
+            let remaining = text;
+            while (remaining.length > 0) {
+                if (encodeURIComponent(remaining).length <= MAX_URL_BYTES) {
+                    chunks.push(remaining);
+                    break;
+                }
+                // 안전한 분할 지점 찾기 (이진 탐색)
+                let lo = 1, hi = remaining.length, cutAt = Math.floor(hi / 2);
+                while (lo < hi) {
+                    const mid = Math.floor((lo + hi) / 2);
+                    if (encodeURIComponent(remaining.substring(0, mid)).length <= MAX_URL_BYTES) {
+                        lo = mid + 1;
+                    } else {
+                        hi = mid;
+                    }
+                }
+                cutAt = lo - 1;
+                // 자연스러운 위치에서 자르기
+                let naturalCut = remaining.lastIndexOf('\n', cutAt);
+                if (naturalCut <= cutAt * 0.3) naturalCut = remaining.lastIndexOf('. ', cutAt);
+                if (naturalCut <= cutAt * 0.3) naturalCut = remaining.lastIndexOf(' ', cutAt);
+                if (naturalCut > cutAt * 0.3) cutAt = naturalCut;
+                chunks.push(remaining.substring(0, cutAt));
+                remaining = remaining.substring(cutAt);
+            }
+            return chunks;
+        }
+
+        // 단일 청크 번역
+        async function _translateChunk(text, source, target, retries = 3) {
+            const sl = source === 'auto' ? 'auto' : source;
+            const encoded = encodeURIComponent(text);
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${target}&dt=t&q=${encoded}`;
+
+            for (let attempt = 0; attempt < retries; attempt++) {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    const translated = data[0].map(s => s[0]).join('');
+                    const detectedLang = data[2] || source;
+                    return { translated, lang: detectedLang };
+                } catch (e) {
+                    if (attempt < retries - 1) {
+                        await sleep(800 * (attempt + 1));
+                    } else {
+                        throw e;
+                    }
+                }
+            }
+        }
+
+        // 메인 번역 함수 (자동 분할)
+        async function callTranslateAPI(text, source, target, retries = 3) {
+            const chunks = splitTextIntoChunks(text);
+
+            if (chunks.length === 1) {
+                try {
+                    return await _translateChunk(text, source, target, retries);
+                } catch (e) {
+                    showToast('번역 실패: ' + e.message, 'error');
+                    return { translated: text, lang: 'error' };
+                }
+            }
+
+            // 여러 청크 순차 번역
+            const results = [];
+            let detectedLang = source;
+            for (let i = 0; i < chunks.length; i++) {
+                try {
+                    showToast(`번역 중... (${i + 1}/${chunks.length})`, 'info');
+                    const r = await _translateChunk(chunks[i], source, target, retries);
+                    results.push(r.translated);
+                    if (r.lang && r.lang !== 'error') detectedLang = r.lang;
+                    if (i < chunks.length - 1) await sleep(300); // API 과부하 방지
+                } catch (e) {
+                    showToast(`청크 ${i + 1} 번역 실패: ` + e.message, 'error');
+                    results.push(chunks[i]); // 실패 시 원문 유지
+                }
+            }
+            return { translated: results.join(''), lang: detectedLang };
+        }
+
+        // Batch translate
+        const SEPARATOR = '\n🔸\n';
+        async function callTranslateBatchAPI(texts, source, target, retries = 3) {
+            const sl = source === 'auto' ? 'auto' : source;
+            const combined = texts.join(SEPARATOR);
+            const encoded = encodeURIComponent(combined);
+            const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${target}&dt=t&q=${encoded}`;
+
+            for (let attempt = 0; attempt < retries; attempt++) {
+                try {
+                    const res = await fetch(url);
+                    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                    const data = await res.json();
+                    const fullTranslated = data[0].map(s => s[0]).join('');
+                    const detectedLang = data[2] || source;
+                    const parts = fullTranslated.split(/\s*🔸\s*/);
+                    return texts.map((orig, i) => ({
+                        translated: (parts[i] || orig).trim(),
+                        lang: detectedLang
+                    }));
+                } catch (e) {
+                    if (attempt < retries - 1) await sleep(800 * (attempt + 1));
+                    else return texts.map(t => ({ translated: t, lang: 'error' }));
+                }
+            }
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+
+        // ===== Text Translation =====
+        async function translateText(auto = false) {
+            const text = sourceText.value.trim();
+            if (!text) {
+                if (!auto) showToast('번역할 내용을 입력하세요.', 'warning');
+                return;
+            }
+
+            const source = $('sourceLang').value;
+            const target = $('targetLang').value;
+
+            if (source === target && source !== 'auto') {
+                showToast('원문 언어와 번역 언어가 동일합니다.', 'warning');
+                return;
+            }
+
+            if (isTranslating) return;
+            isTranslating = true;
+            btnTranslate.disabled = true;
+            btnTranslate.innerHTML = '<span class="spinner"></span>번역 중...';
+            resultText.textContent = '번역 중...';
+            resultText.classList.add('placeholder');
+
+            try {
+                const result = await callTranslateAPI(text, source, target);
+                resultText.textContent = result.translated;
+                resultText.classList.remove('placeholder');
+
+                // Show detected language
+                if (source === 'auto' && result.lang && result.lang !== 'error') {
+                    const langName = LANG_NAMES[result.lang] || result.lang;
+                    $('detectedLangBadge').innerHTML = `<span class="detected-lang">감지: ${langName}</span>`;
+                } else {
+                    $('detectedLangBadge').innerHTML = '';
+                }
+
+                // Save to history
+                saveHistory(text, result.translated, source === 'auto' ? result.lang : source, target);
+
+                if (!auto) showToast('번역이 완료되었습니다.', 'success');
+            } catch (e) {
+                showToast('번역 오류: ' + e.message, 'error');
+            } finally {
+                isTranslating = false;
+                btnTranslate.disabled = false;
+                btnTranslate.textContent = '번역';
+            }
+        }
+
+        // ===== Keyboard Shortcuts =====
+        sourceText.addEventListener('keydown', e => {
+            if (e.ctrlKey && e.key === 'Enter') {
+                e.preventDefault();
+                clearTimeout(autoTransTimer);
+                translateText();
+            }
+        });
+
+        // ===== Clear / Copy =====
+        function clearSource() {
+            sourceText.value = '';
+            charCount.textContent = '0';
+            $('detectedLangBadge').innerHTML = '';
+        }
+        function clearAll() {
+            clearSource();
+            resultText.textContent = '번역 결과가 여기에 표시됩니다.';
+            resultText.classList.add('placeholder');
+        }
+        function copyResult() {
+            const text = resultText.classList.contains('placeholder') ? '' : resultText.textContent;
+            if (!text) { showToast('복사할 내용이 없습니다.', 'warning'); return; }
+            navigator.clipboard.writeText(text).then(() => showToast('복사되었습니다.', 'success'));
+        }
+
+        // ===== TTS =====
+        function speakText(text, lang) {
+            if (!text) return;
+            speechSynthesis.cancel();
+            const utt = new SpeechSynthesisUtterance(text);
+            utt.lang = lang;
+            utt.rate = lang.startsWith('ja') || lang.startsWith('zh') ? 1.2 : 1.0;
+            speechSynthesis.speak(utt);
+        }
+        function listenSource() {
+            const text = sourceText.value.trim();
+            if (!text) { showToast('읽을 내용이 없습니다.', 'warning'); return; }
+            const lang = $('sourceLang').value === 'auto' ? 'ko' : $('sourceLang').value;
+            speakText(text, lang);
+        }
+        function listenTarget() {
+            const text = resultText.classList.contains('placeholder') ? '' : resultText.textContent;
+            if (!text) { showToast('읽을 내용이 없습니다.', 'warning'); return; }
+            speakText(text, $('targetLang').value);
+        }
+
+        // ===== History =====
+        function getHistory() {
+            try { return JSON.parse(localStorage.getItem('transHistory') || '[]'); } catch { return []; }
+        }
+        function saveHistory(original, translated, sourceLang, targetLang) {
+            const history = getHistory();
+            history.unshift({
+                id: Date.now(),
+                original: original.substring(0, 200),
+                translated: translated.substring(0, 200),
+                sourceLang,
+                targetLang,
+                time: new Date().toLocaleString('ko-KR')
+            });
+            if (history.length > 50) history.length = 50;
+            localStorage.setItem('transHistory', JSON.stringify(history));
+            renderHistory();
+        }
+        function renderHistory() {
+            const history = getHistory();
+            const list = $('historyList');
+
+            if (history.length === 0) {
+                list.innerHTML = '<div class="no-history">번역 내역이 없습니다.</div>';
+                return;
+            }
+
+            list.innerHTML = history.map(h => `
+        <div class="history-item" onclick="loadHistory('${h.id}')">
+            <div class="h-lang">${LANG_NAMES[h.sourceLang] || h.sourceLang} → ${LANG_NAMES[h.targetLang] || h.targetLang}</div>
+            <div class="h-original">${escHtml(h.original)}</div>
+            <div class="h-trans">${escHtml(h.translated)}</div>
+            <div class="h-time">${h.time}</div>
+            <div class="h-actions">
+                <button onclick="event.stopPropagation(); copyHistoryTrans('${h.id}')">복사</button>
+                <button class="delete" onclick="event.stopPropagation(); deleteHistory('${h.id}')">삭제</button>
+            </div>
+        </div>
+    `).join('');
+        }
+        function loadHistory(id) {
+            const h = getHistory().find(x => x.id == id);
+            if (!h) return;
+            switchTab('text');
+            sourceText.value = h.original;
+            resultText.textContent = h.translated;
+            resultText.classList.remove('placeholder');
+            $('sourceLang').value = h.sourceLang === 'auto' ? 'auto' : (document.querySelector(`#sourceLang option[value="${h.sourceLang}"]`) ? h.sourceLang : 'auto');
+            $('targetLang').value = h.targetLang;
+            charCount.textContent = h.original.length.toLocaleString();
+        }
+        function copyHistoryTrans(id) {
+            const h = getHistory().find(x => x.id == id);
+            if (h) navigator.clipboard.writeText(h.translated).then(() => showToast('복사되었습니다.', 'success'));
+        }
+        function deleteHistory(id) {
+            const history = getHistory().filter(x => x.id != id);
+            localStorage.setItem('transHistory', JSON.stringify(history));
+            renderHistory();
+        }
+        function clearHistory() {
+            if (!confirm('모든 번역 내역을 삭제하시겠습니까?')) return;
+            localStorage.removeItem('transHistory');
+            renderHistory();
+            showToast('번역 내역이 삭제되었습니다.', 'info');
+        }
+
+        // ===== File Translation =====
+        const fileDropZone = $('fileDropZone');
+        const fileInput = $('fileInput');
+
+        fileDropZone.addEventListener('click', () => fileInput.click());
+        fileDropZone.addEventListener('dragover', e => { e.preventDefault(); fileDropZone.classList.add('dragover'); });
+        fileDropZone.addEventListener('dragleave', () => fileDropZone.classList.remove('dragover'));
+        fileDropZone.addEventListener('drop', e => {
+            e.preventDefault();
+            fileDropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length) handleFileSelect(e.dataTransfer.files[0]);
+        });
+        fileInput.addEventListener('change', e => {
+            if (e.target.files.length) handleFileSelect(e.target.files[0]);
+        });
+
+        function handleFileSelect(file) {
+            const validExts = ['.xlsx', '.xls', '.csv', '.txt'];
+            const ext = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            if (!validExts.includes(ext)) {
+                showToast('지원하지 않는 파일 형식입니다.', 'error');
+                return;
+            }
+            if (file.size > 10 * 1024 * 1024) {
+                showToast('최대 업로드 용량은 10MB입니다.', 'error');
+                return;
+            }
+            currentFile = file;
+            $('fileNameDisplay').textContent = '📄 ' + file.name;
+            $('fileSizeDisplay').textContent = (file.size / 1024).toFixed(1) + ' KB';
+            $('fileInfoBox').classList.add('active');
+            $('btnFileTranslate').disabled = false;
+            $('fileResult').classList.remove('active');
+            showToast('파일이 선택되었습니다: ' + file.name, 'success');
+        }
+
+        async function translateFile() {
+            if (!currentFile || isTranslating) return;
+
+            const source = $('fileSourceLang').value;
+            const target = $('fileTargetLang').value;
+
+            if (source === target && source !== 'auto') {
+                showToast('원문 언어와 번역 언어가 동일합니다.', 'warning');
+                return;
+            }
+
+            isTranslating = true;
+            $('btnFileTranslate').disabled = true;
+            $('btnFileTranslate').innerHTML = '<span class="spinner"></span>번역 중...';
+            $('fileProgress').classList.add('active');
+            $('fileResult').classList.remove('active');
+
+            const ext = currentFile.name.substring(currentFile.name.lastIndexOf('.')).toLowerCase();
+
+            try {
+                if (ext === '.txt') {
+                    await translateTxtFile(source, target);
+                } else {
+                    await translateExcelFile(source, target);
+                }
+                $('fileResult').classList.add('active');
+                showToast('파일 번역이 완료되었습니다!', 'success');
+            } catch (e) {
+                showToast('파일 번역 오류: ' + e.message, 'error');
+            } finally {
+                isTranslating = false;
+                $('btnFileTranslate').disabled = false;
+                $('btnFileTranslate').textContent = '📄 파일 번역 시작';
+            }
+        }
+
+        async function translateTxtFile(source, target) {
+            const text = await currentFile.text();
+            const lines = text.split('\n');
+            const result = [];
+            const total = lines.length;
+
+            const BATCH = 20;
+            const PARALLEL = 3;
+            const batches = [];
+            for (let i = 0; i < lines.length; i += BATCH) batches.push(lines.slice(i, i + BATCH));
+
+            let done = 0;
+            for (let i = 0; i < batches.length; i += PARALLEL) {
+                const pBatches = batches.slice(i, i + PARALLEL);
+                const allRes = await Promise.all(pBatches.map(b => callTranslateBatchAPI(b, source, target)));
+                allRes.forEach(res => { res.forEach(r => result.push(r.translated)); done += res.length; });
+                updateFileProgress(done, total);
+                if (i + PARALLEL < batches.length) await sleep(200);
+            }
+
+            translatedFileName = currentFile.name.replace(/\.txt$/, '_translated.txt');
+            const blob = new Blob([result.join('\n')], { type: 'text/plain;charset=utf-8' });
+            translatedWorkbook = blob;
+        }
+
+        async function translateExcelFile(source, target) {
+            const data = await currentFile.arrayBuffer();
+            const wb = XLSX.read(data, { type: 'array' });
+
+            let totalCells = 0;
+            const tasks = [];
+
+            wb.SheetNames.forEach(name => {
+                const ws = wb.Sheets[name];
+                const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+                for (let r = range.s.r; r <= range.e.r; r++) {
+                    for (let c = range.s.c; c <= range.e.c; c++) {
+                        const addr = XLSX.utils.encode_cell({ r, c });
+                        const cell = ws[addr];
+                        if (cell && cell.t === 's' && cell.v && cellNeedsTranslation(cell.v)) {
+                            tasks.push({ sheet: name, addr, text: String(cell.v).trim() });
+                            totalCells++;
+                        }
+                    }
+                }
+            });
+
+            if (totalCells === 0) {
+                showToast('번역할 텍스트 셀이 없습니다.', 'warning');
+                translatedWorkbook = null;
+                return;
+            }
+
+            const BATCH = 20;
+            const PARALLEL = 3;
+            const batches = [];
+            for (let i = 0; i < tasks.length; i += BATCH) batches.push(tasks.slice(i, i + BATCH));
+
+            let done = 0;
+            for (let i = 0; i < batches.length; i += PARALLEL) {
+                const pBatches = batches.slice(i, i + PARALLEL);
+                const allRes = await Promise.all(pBatches.map(b => callTranslateBatchAPI(b.map(t => t.text), source, target)));
+                allRes.forEach((res, bi) => {
+                    const batch = pBatches[bi];
+                    res.forEach((r, ci) => {
+                        const task = batch[ci];
+                        if (!task) return;
+                        const ws = wb.Sheets[task.sheet];
+                        ws[task.addr] = { t: 's', v: r.translated };
+                    });
+                    done += batch.length;
+                });
+                updateFileProgress(done, totalCells);
+                if (i + PARALLEL < batches.length) await sleep(200);
+            }
+
+            translatedFileName = currentFile.name.replace(/(\.\w+)$/, '_translated$1');
+            translatedWorkbook = wb;
+        }
+
+        function cellNeedsTranslation(val) {
+            if (val === null || val === undefined) return false;
+            const str = String(val).trim();
+            if (!str) return false;
+            if (/^[\d\s.,\-\/:;%+$€¥£()]+$/.test(str)) return false;
+            // Check if already Korean
+            const koreanRatio = (str.match(/[\uAC00-\uD7AF]/g) || []).length / str.length;
+            if (koreanRatio > 0.3) return false;
+            return true;
+        }
+
+        function updateFileProgress(done, total) {
+            const pct = Math.round((done / total) * 100);
+            $('fileProgressFill').style.width = pct + '%';
+            $('fileProgressText').textContent = `번역 중... (${done}/${total}) — ${pct}%`;
+        }
+
+        function downloadTranslatedFile() {
+            if (!translatedWorkbook) return;
+
+            if (translatedWorkbook instanceof Blob) {
+                // TXT file
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(translatedWorkbook);
+                a.download = translatedFileName;
+                a.click();
+            } else {
+                // Excel file
+                const wbout = XLSX.write(translatedWorkbook, { bookType: 'xlsx', type: 'array' });
+                const blob = new Blob([wbout], { type: 'application/octet-stream' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = translatedFileName;
+                a.click();
+            }
+            showToast('파일이 다운로드되었습니다.', 'success');
+        }
+
+        // ===== Toast =====
+        function showToast(msg, type = 'info') {
+            const container = $('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = msg;
+            container.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
+        }
+
+        function escHtml(s) {
+            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        // ===== Init =====
+        renderHistory();
+
+        // Save/restore language preferences
+        const savedSource = localStorage.getItem('transSourceLang');
+        const savedTarget = localStorage.getItem('transTargetLang');
+        if (savedSource) $('sourceLang').value = savedSource;
+        if (savedTarget) $('targetLang').value = savedTarget;
+
+        $('sourceLang').addEventListener('change', () => localStorage.setItem('transSourceLang', $('sourceLang').value));
+        $('targetLang').addEventListener('change', () => localStorage.setItem('transTargetLang', $('targetLang').value));
+
+        // Focus on input
+        sourceText.focus();
+    </script>
+</body>
+
+</html>
