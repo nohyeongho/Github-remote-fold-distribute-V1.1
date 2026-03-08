@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lockring Searcher</title>
+  <title>락링 검색</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap');
 
@@ -263,7 +263,8 @@
       border-collapse: collapse;
       font-size: 13px;
       text-align: left;
-      white-space: nowrap;
+      white-space: normal;
+      word-break: keep-all;
     }
 
     .info-table th,
@@ -299,25 +300,36 @@
     /* Mobile Optimization */
     @media (max-width: 768px) {
       body {
-        padding: 16px 12px;
+        padding: 12px 8px;
+      }
+
+      header {
+        margin-bottom: 12px;
       }
 
       header h1 {
-        font-size: 22px;
+        font-size: 20px;
+      }
+
+      header p {
+        font-size: 12px;
+        word-break: keep-all;
       }
 
       .tab-bar {
         border-radius: 12px;
+        width: 100%;
       }
 
       .tab-btn {
         padding: 10px 0;
-        font-size: 13px;
+        font-size: 14px;
       }
 
       .diagram-wrap {
         border-radius: 12px;
         max-width: 100%;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       }
 
       .spot {
@@ -326,10 +338,11 @@
 
       .info-panel {
         flex-direction: column;
-        padding: 20px 16px;
-        gap: 16px;
+        padding: 16px;
+        gap: 12px;
         align-items: flex-start;
         text-align: left;
+        width: 100%;
       }
 
       .info-panel .divider {
@@ -337,13 +350,43 @@
       }
 
       .info-panel .part-badge {
-        font-size: 20px;
-        min-width: 50px;
-        height: 44px;
+        font-size: 18px;
+        min-width: 48px;
+        height: 40px;
       }
 
       .info-panel .hint {
-        font-size: 13px;
+        font-size: 12px;
+      }
+
+      .pkg-search-btn {
+        position: relative;
+        top: auto;
+        right: auto;
+        width: 100%;
+        margin-bottom: 16px;
+        padding: 12px;
+        font-size: 15px;
+        justify-content: center;
+        border-radius: 12px;
+      }
+
+      .info-table {
+        font-size: 12px;
+      }
+
+      .info-table th,
+      .info-table td {
+        padding: 6px 8px;
+      }
+
+      .search-results table {
+        font-size: 12px;
+      }
+
+      .search-results th,
+      .search-results td {
+        padding: 8px 6px;
       }
     }
 
@@ -508,6 +551,18 @@
     <p>번호 버튼을 클릭하면 해당 부품 정보를 확인할 수 있습니다</p>
     <p>📌 모바일은 가로보기 또는 화면을 펼쳐서 사용하세요.</p>
   </header>
+
+  <button id="pkgSearchBtn" class="pkg-search-btn" onclick="toggleSearchModal(true)">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+      stroke-linejoin="round">
+      <path
+        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
+      </path>
+      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+      <line x1="12" y1="22.08" x2="12" y2="12"></line>
+    </svg>
+    패키지 자재 검색
+  </button>
 
   <div class="tab-bar">
     <button class="tab-btn" id="tab1ea" onclick="switchTab('1ea')">1EVA</button>
