@@ -363,12 +363,10 @@
         position: relative;
         top: auto;
         right: auto;
-        width: 100%;
-        margin-bottom: 16px;
-        padding: 12px;
-        font-size: 15px;
+        width: fit-content;
+        max-width: 100%;
+        margin: 0 auto 16px auto;
         justify-content: center;
-        border-radius: 12px;
       }
 
       .info-table {
@@ -380,13 +378,19 @@
         padding: 6px 8px;
       }
 
+      .search-results {
+        padding: 16px;
+      }
       .search-results table {
         font-size: 12px;
+        min-width: 500px;
       }
 
       .search-results th,
       .search-results td {
         padding: 8px 6px;
+        word-break: keep-all;
+        white-space: nowrap;
       }
     }
 
@@ -508,6 +512,7 @@
     .search-results {
       flex: 1;
       overflow-y: auto;
+      overflow-x: auto;
       padding: 24px;
     }
 
