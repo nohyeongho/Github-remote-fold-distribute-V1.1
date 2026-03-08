@@ -151,7 +151,7 @@
       min-height: 80px;
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -2px rgba(0, 0, 0, 0.02);
       border-top: 2px solid rgba(165, 0, 52, 0.15);
-          overflow: hidden;
+      overflow: hidden;
     }
 
     .info-panel .part-badge {
@@ -245,9 +245,9 @@
     }
 
     /* Table styles for readability */
-    
 
-    
+
+
 
     .table-container {
       width: 100%;
@@ -456,8 +456,67 @@
       { id: '2b', displayId: 2, name: 'Hot line', desc: '압축기에서 응축기로 고온 고압 냉매가 이동하는 배관', lp: 95.29, tp: 33.68 },
     ];
 
-  // ── Excel Data ───────────────────────────────────────────────
-  const excelData = {"3":[{"usageArea":"","connectorName":"LR 5/4 NR Ms 00","pipeSize":"4.76 / 4","partNumber":"MGZ63047801","whereToUse":"Condenser(4.76) + Hot Line(4.0)"}],"5":[{"usageArea":"","connectorName":"LR 7/5 NR Ms 00","pipeSize":"7 / 4.76","partNumber":"MGZ63047901","whereToUse":"Comp high side pipe"}],"18":[{"usageArea":"","connectorName":"3.5 NK MS 00","pipeSize":"3.5/3.5","partNumber":"MGZ63847101","whereToUse":"Drier - Drier (SCD)"}],"12":[{"usageArea":"","connectorName":"LR 8 NK Al 00","pipeSize":"8","partNumber":"MGZ63047502","whereToUse":"8.0 Evaporator pipe connection (AL)"}],"10":[{"usageArea":"","connectorName":"6/2 NR Al 00","pipeSize":"6.35 / 2","partNumber":"MGZ63447201","whereToUse":"6.35 Evaporator – Capi (AL)"},{"partNumber":"MGZ63447202","whereToUse":"8.0 Evaporator - Capi (AL)","pipeSize":"8/2","connectorName":"8/2 NR Al 00","usageArea":""}],"2":[{"usageArea":"","connectorName":"LR 5 NK Ms 00","pipeSize":"4.76","partNumber":"MGZ63047101","whereToUse":"Condenser connection(4.76)"}],"8":[{"usageArea":"","connectorName":"6 NK MS SV 00","pipeSize":"6.35","partNumber":"MGZ63447001","whereToUse":"T Charging(Comp+S/Pipe)"}],"17":[{"usageArea":"","connectorName":"3.5/2 NR Ms 00","pipeSize":"3.5/2","partNumber":"MGZ65528101","whereToUse":"3.5 3way – 2.0 Capi"}],"11":[{"usageArea":"","connectorName":"LR 6.35 NK Al 00","pipeSize":"6.35","partNumber":"MGZ63047202","whereToUse":"6.35 Evaporator pipe connection (AL)"}],"1":[{"usageArea":"","connectorName":"LR 4 NK Ms 00","pipeSize":"4","partNumber":"MGZ63048101","whereToUse":"Drier Inlet(1Eva, 2Eva) / Drier Outlet(2Eva)"}],"9":[{"usageArea":"","connectorName":"LR 6 NK Ms 00","pipeSize":"6.35","partNumber":"MGZ63047201","whereToUse":"6.35 Pipe connection"}],"14":[{"usageArea":"","connectorName":"LR 8 NK Al 00","pipeSize":"8","partNumber":"MGZ63047502","whereToUse":"8.0 Evaporator pipe connection (AL)"},{"partNumber":"MGZ63048201","whereToUse":"Drier – Capi tube","pipeSize":"4/2","connectorName":"LR 4/2 NR Ms 00","usageArea":""}],"7":[{"usageArea":"","connectorName":"LR 8/6 NR Ms 00","pipeSize":"8 / 6.35","partNumber":"MGZ63048001","whereToUse":"Comp suction pipe, Process pipe"},{"usageArea":"","connectorName":"8 NWK MS SV 00","pipeSize":"6.35 / -","partNumber":"MGZ65560901","whereToUse":"L shape Lokring : Comp process pipe"}],"15":[{"usageArea":"","connectorName":"LR 6.35 NK Al 00","pipeSize":"6.35","partNumber":"MGZ63047202","whereToUse":"6.35 Evaporator pipe connection (AL)"}],"6":[{"usageArea":"","connectorName":"LR 8 NK Ms 00","pipeSize":"8","partNumber":"MGZ63047501","whereToUse":"8.0 Pipe connection"}],"4":[{"usageArea":"","connectorName":"LR 5 NK Ms 00","pipeSize":"4.76","partNumber":"MGZ63047101","whereToUse":"Condenser connection(4.76)"}],"19":[{"usageArea":"","connectorName":"4/3.2 NR MS 00","pipeSize":"4/3.2","partNumber":"MGZ63847201","whereToUse":"Drier Outlet - 3 Way Valve(SCD)"},{"usageArea":"","connectorName":"4/3.5 NR Ms 00","pipeSize":"4/3.5","partNumber":"MGZ63847202","whereToUse":"4.0 Drier – 3.5 3way"}],"13":[{"usageArea":"","connectorName":"8.5 NK Al 00","pipeSize":"8.5/8.5","partNumber":"MGZ63847301","whereToUse":"Evaporator Pipe - Evaporator Pipe(OD 8.5)"}]};
+    // ── Excel Data ───────────────────────────────────────────────
+    const excelData = {
+      "1": [
+        { "whereToUse": "Drier Inlet(1Eva, 2Eva) / Drier Outlet(2Eva)", "partNumber": "MGZ63048101", "connectorName": "LR 4 NK Ms 00", "pipeSize": "4" }
+      ],
+      "2": [
+        { "whereToUse": "Condenser connection(4.76)", "partNumber": "MGZ63047101", "connectorName": "LR 5 NK Ms 00", "pipeSize": "4.76" }
+      ],
+      "3": [
+        { "whereToUse": "Condenser(4.76) + Hot Line(4.0)", "partNumber": "MGZ63047801", "connectorName": "LR 5/4 NR Ms 00", "pipeSize": "4.76" }
+      ],
+      "4": [
+        { "whereToUse": "Condenser connection(4.76)", "partNumber": "MGZ63047101", "connectorName": "LR 5 NK Ms 00", "pipeSize": "4.76" }
+      ],
+      "5": [
+        { "whereToUse": "Comp high side pipe", "partNumber": "MGZ63047901", "connectorName": "LR 7/5 NR Ms 00", "pipeSize": "7" }
+      ],
+      "6": [
+        { "whereToUse": "8.0 Pipe connection - Comp", "partNumber": "MGZ63047501", "connectorName": "LR 8 NK Ms 00", "pipeSize": "8" }
+      ],
+      "7": [
+        { "whereToUse": "Comp suction pipe, Process pipe", "partNumber": "MGZ63048001", "connectorName": "LR 8/6 NR Ms 00", "pipeSize": "8" },
+        { "whereToUse": "L shape Lokring : Comp process pipe", "partNumber": "MGZ65560901", "connectorName": "8 NWK MS SV 00", "pipeSize": "6.35" }
+      ],
+      "8": [
+        { "whereToUse": "T Charging(Comp+S/Pipe)", "partNumber": "MGZ63447001", "connectorName": "6 NK MS SV 00", "pipeSize": "6.35" }
+      ],
+      "9": [
+        { "whereToUse": "6.35 Pipe connection - Suction", "partNumber": "MGZ63047201", "connectorName": "LR 6 NK Ms 00", "pipeSize": "6.35" }
+      ],
+      "10": [
+        { "whereToUse": "6.35 Evaporator Inlet - Capi (AL)", "partNumber": "MGZ63447201", "connectorName": "6/2 NR Al 00", "pipeSize": "6.35" },
+        { "whereToUse": "8.0 Evaporator Inlet - Capi (AL)", "partNumber": "MGZ63447202", "connectorName": "8/2 NR Al 00", "pipeSize": "8" }
+      ],
+      "11": [
+        { "whereToUse": "6.35 Evaporator pipe connection (AL)", "partNumber": "MGZ63047202", "connectorName": "LR 6.35 NK Al 00", "pipeSize": "6.35" }
+      ],
+      "12": [
+        { "whereToUse": "8.0 Evaporator pipe connection (AL)", "partNumber": "MGZ63047502", "connectorName": "LR 8 NK Al 00", "pipeSize": "8" }
+      ],
+      "13": [
+        { "whereToUse": "Evaporator Pipe - Evaporator Pipe (OD 8.5)", "partNumber": "MGZ63847301", "connectorName": "8.5 NK Al 00", "pipeSize": "8.5" }
+      ],
+      "14": [
+        { "whereToUse": "8.0 Evaporator pipe connection (AL)", "partNumber": "MGZ63047502", "connectorName": "LR 8 NK Al 00", "pipeSize": "8" },
+        { "whereToUse": "Drier outlet - Capi tube", "partNumber": "MGZ63048201", "connectorName": "LR 4/2 NR Ms 00", "pipeSize": "4" }
+      ],
+      "15": [
+        { "whereToUse": "6.35 Evaporator pipe connection (AL)", "partNumber": "MGZ63047202", "connectorName": "LR 6.35 NK Al 00", "pipeSize": "6.35" }
+      ],
+      "17": [
+        { "whereToUse": "3.5 3way valve - 2.0 Capi", "partNumber": "MGZ65528101", "connectorName": "3.5/2 NR Ms 00", "pipeSize": "3.5" }
+      ],
+      "18": [
+        { "whereToUse": "Drier - 3 Way Valve (SCD)", "partNumber": "MGZ63847101", "connectorName": "3.5 NK MS 00", "pipeSize": "3.5" }
+      ],
+      "19": [
+        { "whereToUse": "Drier Outlet - 3 Way Valve (SCD)", "partNumber": "MGZ63847201", "connectorName": "4/3.2 NR MS 00", "pipeSize": "4" },
+        { "whereToUse": "4.0 Drier - 3.5 3way valve", "partNumber": "MGZ63847202", "connectorName": "4/3.5 NR Ms 00", "pipeSize": "4" }
+      ]
+    };
 
     // ── State ────────────────────────────────────────────────────
     console.log('Script started. Environment:', typeof document !== 'undefined' ? 'Browser' : 'Node/Other');
@@ -502,7 +561,9 @@
           activeBtn = btn;
 
           const spotId = p.displayId ?? p.id;
-          const excelInfoList = excelData[spotId];
+          console.log('Spot clicked:', { id: p.id, displayId: p.displayId, spotId: spotId });
+          const excelInfoList = excelData[spotId.toString()];
+          console.log('Excel data lookup result:', excelInfoList);
           let extraHtml = '';
 
           let items = [];
@@ -521,7 +582,7 @@
                       <th>Where to use</th>
                       <th>Part Number</th>
                       <th>Connector Name</th>
-                      <th>Pipe (mm / inch)</th>
+                      <th>Pipe Size</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -535,7 +596,7 @@
                           </div>
                         </td>
                         <td>${e.connectorName}</td>
-                        <td>${e.pipeMm} / ${e.pipeInch}</td>
+                        <td>${e.pipeSize ?? ''}</td>
                       </tr>
                     `).join('')}
                   </tbody>
@@ -563,7 +624,7 @@
       document.getElementById('tab2ea').classList.toggle('active', tab === '2ea');
       if (tab === '2ea') {
         diagImg.src = IMG_2EA;
-        buildSpots(parts2ea);
+        switchTab('2ea');
       } else {
         diagImg.src = IMG_1EA;
         buildSpots(parts1ea);
@@ -571,10 +632,9 @@
     }
 
     // Init with 2ea
-    buildSpots(parts2ea);
-  
+    switchTab('2ea');
+
   </script>
 </body>
 
 </html>
-
