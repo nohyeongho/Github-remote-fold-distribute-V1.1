@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 
 <head>
@@ -400,21 +400,21 @@
       position: absolute;
       top: 20px;
       right: 20px;
-      padding: 10px 16px;
+      padding: 6px 12px;
       background: rgba(255, 255, 255, 0.8);
       backdrop-filter: blur(10px);
       -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(165, 0, 52, 0.2);
-      border-radius: 12px;
+      border-radius: 8px;
       color: #A50034;
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       /* Shown for all tabs */
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       transition: all 0.3s ease;
       z-index: 100;
@@ -428,8 +428,8 @@
     }
 
     .pkg-search-btn svg {
-      width: 16px;
-      height: 16px;
+      width: 14px;
+      height: 14px;
     }
 
     /* Search Modal */
@@ -553,22 +553,11 @@
 <body>
 
   <header>
-    <h1>Lockring Searcher</h1>
+    <h1>락링 검색</h1>
     <p>번호 버튼을 클릭하면 해당 부품 정보를 확인할 수 있습니다</p>
-    <p>📌 모바일은 가로보기 또는 화면을 펼쳐서 사용하세요.</p>
+    <p style="color: #A50034; font-weight: 700;">📌 모바일은 가로보기 또는 화면을 펼쳐서 사용하세요.</p>
   </header>
 
-  <button id="pkgSearchBtn" class="pkg-search-btn" onclick="toggleSearchModal(true)">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-      stroke-linejoin="round">
-      <path
-        d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z">
-      </path>
-      <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-      <line x1="12" y1="22.08" x2="12" y2="12"></line>
-    </svg>
-    패키지 자재 검색
-  </button>
 
   <div class="tab-bar">
     <button class="tab-btn" id="tab1ea" onclick="switchTab('1ea')">1EVA</button>
@@ -586,7 +575,7 @@
         <circle cx="11" cy="11" r="8"></circle>
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
-      패키지 목록 검색
+      패키지 검색
     </button>
     <div class="overlay" id="overlay"></div>
   </div>
@@ -680,7 +669,7 @@
     ];
 
     // ── Excel Data ───────────────────────────────────────────────
-    const excelData = { "1": [{ "whereToUse": "Drier Inlet(1Eva, 2Eva) / Drier Outlet(2Eva)", "usageArea": "4+4, Drier입출구", "partNumber": "MGZ63048101", "connectorName": "LR 4 NK Ms 00", "pipeMm": "4", "pipeInch": "" }], "2": [{ "whereToUse": "Condenser connection(4.76) ", "usageArea": "4.76+4.76 Cond", "partNumber": "MGZ63047101", "connectorName": "LR 5 NK Ms 00", "pipeMm": "4.76", "pipeInch": "" }], "3": [{ "whereToUse": "Condenser(4.76) + Hot Line(4.0) ", "usageArea": "4.76+4.0 Cond+H/Line", "partNumber": "MGZ63047801", "connectorName": "LR 5/4 NR Ms 00", "pipeMm": "4.76 / 4", "pipeInch": "" }], "4": [{ "whereToUse": "Condenser connection(4.76) ", "usageArea": "4.76+4.76 Cond", "partNumber": "MGZ63047101", "connectorName": "LR 5 NK Ms 00", "pipeMm": "4.76", "pipeInch": "" }], "5": [{ "whereToUse": "Comp high side pipe ", "usageArea": "7+4.76, Comp토출", "partNumber": "MGZ63047901", "connectorName": "LR 7/5 NR Ms 00", "pipeMm": "7 / 4.76", "pipeInch": "" }], "6": [{ "whereToUse": "8.0 Pipe connection ", "usageArea": "8+8, Comp흡입(동-동연결)", "partNumber": "MGZ63047501", "connectorName": "LR 8 NK Ms 00", "pipeMm": "8", "pipeInch": "" }], "7": [{ "whereToUse": "Comp suction pipe, Process pipe", "usageArea": "8+6.35, Comp석션/Comp흡입", "partNumber": "MGZ63048001", "connectorName": "LR 8/6 NR Ms 00", "pipeMm": "8 / 6.35", "pipeInch": "" }, { "whereToUse": "L shape Lokring : Comp process pipe", "usageArea": "L자 락링용", "partNumber": "MGZ65560901", "connectorName": "8 NWK MS SV 00", "pipeMm": "6.35 / -", "pipeInch": "" }], "8": [{ "whereToUse": "T Charging(Comp+S/Pipe)", "usageArea": "T자 차징용", "partNumber": "MGZ63447001", "connectorName": "6 NK MS SV 00", "pipeMm": "6.35", "pipeInch": "" }], "9": [{ "whereToUse": "6.35 Pipe connection ", "usageArea": "6.35+6.35 석션연결(동-동연결)", "partNumber": "MGZ63047201", "connectorName": "LR 6 NK Ms 00", "pipeMm": "6.35", "pipeInch": "" }], "10": [{ "whereToUse": "6.35 Evaporator – Capi (AL)", "usageArea": "6.35+2.0 Eva+Capi", "partNumber": "MGZ63447201", "connectorName": "6/2 NR Al 00", "pipeMm": "6.35 / 2", "pipeInch": "" }, { "whereToUse": "8.0 Evaporator - Capi (AL)", "usageArea": "8.0+2.0 Eva+Capi", "partNumber": "MGZ63447202", "connectorName": "8/2 NR Al 00", "pipeMm": "46236", "pipeInch": "" }], "11": [{ "whereToUse": "6.35 Evaporator pipe connection (AL)", "usageArea": "6.35+6.35 Eva(Al-Al연결)", "partNumber": "MGZ63047202", "connectorName": "LR 6.35 NK Al 00", "pipeMm": "6.35", "pipeInch": "" }], "12": [{ "whereToUse": "8.0 Evaporator pipe connection (AL)", "usageArea": "8.0+8.0 Eva(Al-Al연결)", "partNumber": "MGZ63047502", "connectorName": "LR 8 NK Al 00", "pipeMm": "8", "pipeInch": "" }], "13": [{ "whereToUse": "Evaporator Pipe - Evaporator Pipe(OD 8.5)", "usageArea": "8.5+8.5 Eva", "partNumber": "MGZ63847301", "connectorName": "8.5 NK Al 00", "pipeMm": "8.5/8.5", "pipeInch": "" }], "14": [{ "whereToUse": "8.0 Evaporator pipe connection (AL)", "usageArea": "8.0+8.0 Eva(Al-Al연결)", "partNumber": "MGZ63047502", "connectorName": "LR 8 NK Al 00", "pipeMm": "8", "pipeInch": "" }, { "whereToUse": "Drier – Capi tube", "usageArea": "4+2, Drier+Capi", "partNumber": "MGZ63048201", "connectorName": "LR 4/2 NR Ms 00", "pipeMm": "46114", "pipeInch": "" }], "15": [{ "whereToUse": "6.35 Evaporator pipe connection (AL)", "usageArea": "6.35+6.35 Eva(Al-Al연결)", "partNumber": "MGZ63047202", "connectorName": "LR 6.35 NK Al 00", "pipeMm": "6.35", "pipeInch": "" }], "17": [{ "whereToUse": "3.5 3way – 2.0 Capi", "usageArea": "3.5+2.0 3way+Capi", "partNumber": "MGZ65528101", "connectorName": "3.5/2 NR Ms 00", "pipeMm": "3.5/2", "pipeInch": "" }], "18": [{ "whereToUse": "Drier - Drier (SCD)", "usageArea": "3.5+3.5 3way", "partNumber": "MGZ63847101", "connectorName": "3.5 NK MS 00", "pipeMm": "3.5/3.5", "pipeInch": "" }], "19": [{ "whereToUse": "Drier Outlet - 3 Way Valve(SCD)", "usageArea": "4.0+3.2 Drier+3way", "partNumber": "MGZ63847201", "connectorName": "4/3.2 NR MS 00", "pipeMm": "4/3.2", "pipeInch": "" }, { "whereToUse": "4.0 Drier – 3.5 3way", "usageArea": "4.0+3.5 Drier+3way", "partNumber": "MGZ63847202", "connectorName": "4/3.5 NR Ms 00", "pipeMm": "4/3.5", "pipeInch": "" }] };
+    const excelData = { "1": [{ "whereToUse": "Drier Inlet(1Eva, 2Eva) / Drier Outlet(2Eva)", "usageArea": "4+4, Drier입출구", "partNumber": "MGZ63048101", "connectorName": "LR 4 NK Ms 00", "pipeMm": "4", "pipeInch": "" }], "2": [{ "whereToUse": "Condenser connection(4.76) ", "usageArea": "4.76+4.76 Cond", "partNumber": "MGZ63047101", "connectorName": "LR 5 NK Ms 00", "pipeMm": "4.76", "pipeInch": "" }], "3": [{ "whereToUse": "Condenser(4.76) + Hot Line(4.0) ", "usageArea": "4.76+4.0 Cond+H/Line", "partNumber": "MGZ63047801", "connectorName": "LR 5/4 NR Ms 00", "pipeMm": "4.76 / 4", "pipeInch": "" }], "4": [{ "whereToUse": "Condenser connection(4.76) ", "usageArea": "4.76+4.76 Cond", "partNumber": "MGZ63047101", "connectorName": "LR 5 NK Ms 00", "pipeMm": "4.76", "pipeInch": "" }], "5": [{ "whereToUse": "Comp high side pipe ", "usageArea": "7+4.76, Comp토출", "partNumber": "MGZ63047901", "connectorName": "LR 7/5 NR Ms 00", "pipeMm": "7 / 4.76", "pipeInch": "" }], "6": [{ "whereToUse": "8.0 Pipe connection ", "usageArea": "8+8, Comp흡입(동-동연결)", "partNumber": "MGZ63047501", "connectorName": "LR 8 NK Ms 00", "pipeMm": "8", "pipeInch": "" }], "7": [{ "whereToUse": "Comp suction pipe, Process pipe", "usageArea": "8+6.35, Comp석션/Comp흡입", "partNumber": "MGZ63048001", "connectorName": "LR 8/6 NR Ms 00", "pipeMm": "8 / 6.35", "pipeInch": "" }, { "whereToUse": "L shape Lokring : Comp process pipe", "usageArea": "L자 락링용", "partNumber": "MGZ65560901", "connectorName": "8 NWK MS SV 00", "pipeMm": "6.35 / -", "pipeInch": "" }], "8": [{ "whereToUse": "T Charging(Comp+S/Pipe)", "usageArea": "T자 차징용", "partNumber": "MGZ63447001", "connectorName": "6 NK MS SV 00", "pipeMm": "6.35", "pipeInch": "" }], "9": [{ "whereToUse": "6.35 Pipe connection ", "usageArea": "6.35+6.35 석션연결(동-동연결)", "partNumber": "MGZ63047201", "connectorName": "LR 6 NK Ms 00", "pipeMm": "6.35", "pipeInch": "" }], "10": [{ "whereToUse": "6.35 Evaporator – Capi (AL)", "usageArea": "6.35+2.0 Eva+Capi", "partNumber": "MGZ63447201", "connectorName": "6/2 NR Al 00", "pipeMm": "6.35 / 2", "pipeInch": "" }, { "whereToUse": "8.0 Evaporator - Capi (AL)", "usageArea": "8.0+2.0 Eva+Capi", "partNumber": "MGZ63447202", "connectorName": "8/2 NR Al 00", "pipeMm": "8/2", "pipeInch": "" }], "11": [{ "whereToUse": "6.35 Evaporator pipe connection (AL)", "usageArea": "6.35+6.35 Eva(Al-Al연결)", "partNumber": "MGZ63047202", "connectorName": "LR 6.35 NK Al 00", "pipeMm": "6.35", "pipeInch": "" }], "12": [{ "whereToUse": "8.0 Evaporator pipe connection (AL)", "usageArea": "8.0+8.0 Eva(Al-Al연결)", "partNumber": "MGZ63047502", "connectorName": "LR 8 NK Al 00", "pipeMm": "8", "pipeInch": "" }], "13": [{ "whereToUse": "Evaporator Pipe - Evaporator Pipe(OD 8.5)", "usageArea": "8.5+8.5 Eva", "partNumber": "MGZ63847301", "connectorName": "8.5 NK Al 00", "pipeMm": "8.5/8.5", "pipeInch": "" }], "14": [{ "whereToUse": "8.0 Evaporator pipe connection (AL)", "usageArea": "8.0+8.0 Eva(Al-Al연결)", "partNumber": "MGZ63047502", "connectorName": "LR 8 NK Al 00", "pipeMm": "8", "pipeInch": "" }, { "whereToUse": "Drier – Capi tube", "usageArea": "4+2, Drier+Capi", "partNumber": "MGZ63048201", "connectorName": "LR 4/2 NR Ms 00", "pipeMm": "4/2", "pipeInch": "" }], "15": [{ "whereToUse": "6.35 Evaporator pipe connection (AL)", "usageArea": "6.35+6.35 Eva(Al-Al연결)", "partNumber": "MGZ63047202", "connectorName": "LR 6.35 NK Al 00", "pipeMm": "6.35", "pipeInch": "" }], "17": [{ "whereToUse": "3.5 3way – 2.0 Capi", "usageArea": "3.5+2.0 3way+Capi", "partNumber": "MGZ65528101", "connectorName": "3.5/2 NR Ms 00", "pipeMm": "3.5/2", "pipeInch": "" }], "18": [{ "whereToUse": "Drier - Drier (SCD)", "usageArea": "3.5+3.5 3way", "partNumber": "MGZ63847101", "connectorName": "3.5 NK MS 00", "pipeMm": "3.5/3.5", "pipeInch": "" }], "19": [{ "whereToUse": "Drier Outlet - 3 Way Valve(SCD)", "usageArea": "4.0+3.2 Drier+3way", "partNumber": "MGZ63847201", "connectorName": "4/3.2 NR MS 00", "pipeMm": "4/3.2", "pipeInch": "" }, { "whereToUse": "4.0 Drier – 3.5 3way", "usageArea": "4.0+3.5 Drier+3way", "partNumber": "MGZ63847202", "connectorName": "4/3.5 NR Ms 00", "pipeMm": "4/3.5", "pipeInch": "" }] };
 
     const pacData = [
       { name: '락링 패키지', partNumber: 'MGZ65547804', desc: '락링 패키지 (1&2EvaSCD 통합)', note: '내수 & 글로벌' },
@@ -813,7 +802,6 @@
       const overlay = document.getElementById('searchModalOverlay');
       if (show) {
         overlay.classList.add('active');
-        document.getElementById('pkgSearchInput').focus();
         filterPackages(''); // Initial load
       } else {
         overlay.classList.remove('active');
@@ -882,13 +870,10 @@
   <!-- Package Search Modal -->
   <div id="searchModalOverlay" class="search-modal-overlay" onclick="if(event.target===this) toggleSearchModal(false)">
     <div class="search-modal">
-      <div class="search-header">
-        <div class="search-input-wrap">
-          <span class="search-icon-fixed">🔍</span>
-          <input type="text" id="pkgSearchInput" class="search-input" placeholder="부품 번호, 이름 또는 사용 부위를 입력하세요..."
-            oninput="filterPackages(this.value)">
-          <button class="search-close" onclick="toggleSearchModal(false)">×</button>
-        </div>
+      <div class="search-header"
+        style="display: flex; justify-content: space-between; align-items: center; padding: 20px 24px;">
+        <h2 style="margin: 0; font-size: 1.25rem; color: #1e293b;">패키지 리스트</h2>
+        <button class="search-close" onclick="toggleSearchModal(false)" style="margin: 0;">×</button>
       </div>
       <div id="searchResults" class="search-results">
         <!-- Results will be injected here -->
