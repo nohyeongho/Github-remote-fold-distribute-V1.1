@@ -1,0 +1,1461 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>챗봇 사용자 데이터 필터링 도구</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: #0a0a0a;
+            min-height: 100vh;
+            color: #e0e0e0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        header p {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .upload-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        @media (max-width: 768px) {
+            .upload-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .upload-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .upload-card:hover {
+            border-color: #444;
+            box-shadow: 0 8px 32px rgba(255, 255, 255, 0.03);
+        }
+
+        .upload-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .upload-card h3 .material-symbols-outlined {
+            font-size: 22px;
+            color: #ccc;
+        }
+
+        .upload-card .desc {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 16px;
+        }
+
+        .recommend-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #fff;
+            color: #000;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            margin-left: 6px;
+            vertical-align: middle;
+        }
+
+        .drop-zone {
+            border: 2px dashed #333;
+            border-radius: 12px;
+            padding: 28px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #0d0d0d;
+            position: relative;
+        }
+
+        .drop-zone:hover,
+        .drop-zone.dragover {
+            border-color: #888;
+            background: #1a1a1a;
+        }
+
+        .drop-zone .material-symbols-outlined {
+            font-size: 36px;
+            color: #555;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .drop-zone p {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .drop-zone p span {
+            color: #bbb;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .drop-zone input[type="file"] {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .file-loaded {
+            border-color: #999 !important;
+            background: #1a1a1a !important;
+        }
+
+        .file-loaded .material-symbols-outlined {
+            color: #ccc !important;
+        }
+
+        .loaded-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 12px;
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 8px;
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .loaded-info .material-symbols-outlined {
+            font-size: 18px !important;
+            color: #ccc !important;
+        }
+
+        .paste-area {
+            margin-top: 12px;
+        }
+
+        .paste-area label {
+            font-size: 12px;
+            color: #777;
+            display: block;
+            margin-bottom: 6px;
+        }
+
+        .paste-area textarea {
+            width: 100%;
+            height: 120px;
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 12px;
+            color: #e0e0e0;
+            font-family: 'Noto Sans KR', monospace;
+            font-size: 12px;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .paste-area textarea:focus {
+            border-color: #888;
+        }
+
+        .paste-area textarea::placeholder {
+            color: #444;
+        }
+
+        .or-divider {
+            text-align: center;
+            color: #555;
+            font-size: 12px;
+            margin: 10px 0;
+            position: relative;
+        }
+
+        .or-divider::before,
+        .or-divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: calc(50% - 20px);
+            height: 1px;
+            background: #222;
+        }
+
+        .or-divider::before {
+            left: 0;
+        }
+
+        .or-divider::after {
+            right: 0;
+        }
+
+        .action-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 12px;
+            border: none;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .btn .material-symbols-outlined {
+            font-size: 20px;
+        }
+
+        .btn-primary {
+            background: #fff;
+            color: #000;
+            box-shadow: 0 4px 16px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(255, 255, 255, 0.15);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-success {
+            background: #333;
+            color: #fff;
+            border: 1px solid #555;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            background: #444;
+            box-shadow: 0 6px 24px rgba(0, 0, 0, 0.4);
+        }
+
+        .btn-success:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            padding: 8px 16px;
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .stat-chip .material-symbols-outlined {
+            font-size: 18px;
+            color: #999;
+        }
+
+        .stat-chip .val {
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .result-section {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .result-header {
+            padding: 16px 24px;
+            background: #111;
+            border-bottom: 1px solid #2a2a2a;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .result-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .result-header h3 .material-symbols-outlined {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .sort-controls {
+            display: flex;
+            gap: 8px;
+        }
+
+        .sort-btn {
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid #333;
+            background: transparent;
+            color: #888;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sort-btn:hover,
+        .sort-btn.active {
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #888;
+            color: #fff;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .table-wrapper::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        .table-wrapper::-webkit-scrollbar-track {
+            background: #111;
+        }
+
+        .table-wrapper::-webkit-scrollbar-thumb {
+            background: #333;
+            border-radius: 3px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        th {
+            background: #111;
+            padding: 12px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 12px;
+            color: #999;
+            border-bottom: 1px solid #2a2a2a;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 10px 14px;
+            border-bottom: 1px solid #1a1a1a;
+            white-space: nowrap;
+        }
+
+        tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .center-group-header td {
+            background: #1a1a1a !important;
+            font-weight: 600;
+            color: #fff;
+            font-size: 14px;
+            padding: 14px;
+            border-bottom: 2px solid #333;
+        }
+
+        .date-group-header td {
+            background: #161616 !important;
+            font-weight: 500;
+            color: #ccc;
+            font-size: 13px;
+            padding: 10px 14px;
+            border-bottom: 1px solid #2a2a2a;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-center {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ccc;
+        }
+
+        .badge-type {
+            background: rgba(255, 255, 255, 0.06);
+            color: #aaa;
+        }
+
+        .badge-menu {
+            background: rgba(255, 255, 255, 0.04);
+            color: #999;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #555;
+        }
+
+        .empty-state .material-symbols-outlined {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state p {
+            font-size: 14px;
+        }
+
+        .summary-section {
+            margin-top: 24px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .summary-card {
+            background: #141414;
+            border: 1px solid #2a2a2a;
+            border-radius: 14px;
+            padding: 20px;
+        }
+
+        .summary-card h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .summary-card h4 .material-symbols-outlined {
+            font-size: 20px;
+            color: #999;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid #1a1a1a;
+            font-size: 13px;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+        }
+
+        .summary-item .label {
+            color: #777;
+        }
+
+        .summary-item .value {
+            font-weight: 600;
+            color: #e0e0e0;
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            padding: 14px 24px;
+            background: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 12px;
+            color: #ccc;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 100;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* 로딩 오버레이 */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 200;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .loading-spinner {
+            width: 48px;
+            height: 48px;
+            border: 3px solid #333;
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .loading-text {
+            color: #ccc;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .loading-progress {
+            width: 280px;
+            height: 4px;
+            background: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: #fff;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* 더보기 버튼 */
+        .load-more-btn {
+            width: 100%;
+            padding: 14px;
+            background: #1a1a1a;
+            border: none;
+            border-top: 1px solid #2a2a2a;
+            color: #999;
+            font-family: 'Noto Sans KR', sans-serif;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .load-more-btn:hover {
+            background: #222;
+            color: #fff;
+        }
+
+        .load-more-btn .material-symbols-outlined {
+            font-size: 18px;
+        }
+
+        .perf-tip {
+            font-size: 11px;
+            color: #555;
+            margin-top: 8px;
+            padding: 6px 10px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 6px;
+            border: 1px solid #1a1a1a;
+        }
+
+        .perf-tip .material-symbols-outlined {
+            font-size: 14px;
+            vertical-align: middle;
+            margin-right: 4px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 로딩 오버레이 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text" id="loadingText">데이터 처리 중...</div>
+        <div class="loading-progress">
+            <div class="loading-progress-bar" id="loadingProgressBar"></div>
+        </div>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1>챗봇 사용자 데이터 필터링 도구</h1>
+            <p>RAW DATA에서 대상 사용자만 추출하고 일시/센터별로 정리합니다</p>
+        </header>
+
+        <!-- 업로드 영역 -->
+        <div class="upload-section">
+            <!-- RAW DATA -->
+            <div class="upload-card">
+                <h3>
+                    <span class="material-symbols-outlined">database</span>
+                    ① RAW DATA (챗봇 사용 로그)
+                </h3>
+                <p class="desc">chatMsg, chatTime, userNo, userName 등이 포함된 데이터</p>
+
+                <div class="drop-zone" id="rawDropZone">
+                    <input type="file" id="rawFileInput" accept=".xlsx,.xls,.csv">
+                    <span class="material-symbols-outlined">upload_file</span>
+                    <p>엑셀 파일을 드래그하거나 <span>클릭하여 업로드</span></p>
+                    <p style="font-size:11px;color:#555;margin-top:6px">
+                        <span class="recommend-badge">추천</span> 대용량 데이터는 파일 업로드가 빠릅니다
+                    </p>
+                </div>
+                <div id="rawLoadedInfo" class="loaded-info" style="display:none;">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span id="rawLoadedText">파일 로드 완료</span>
+                </div>
+
+                <div class="or-divider">또는</div>
+
+                <div class="paste-area">
+                    <label>엑셀에서 복사하여 붙여넣기 (탭 구분)</label>
+                    <textarea id="rawPasteArea"
+                        placeholder="엑셀에서 헤더 포함 데이터를 복사하여 붙여넣기&#10;chatMsg&#9;chatTime&#9;userNo&#9;userName&#9;..."></textarea>
+                    <div class="perf-tip">
+                        <span class="material-symbols-outlined">tips_and_updates</span>
+                        대용량(5만행 이상) 데이터는 파일 업로드를 권장합니다
+                    </div>
+                </div>
+            </div>
+
+            <!-- 사용자 목록 -->
+            <div class="upload-card">
+                <h3>
+                    <span class="material-symbols-outlined">people</span>
+                    ② 대상 사용자 목록
+                </h3>
+                <p class="desc">사번, 성명, 센터, 직무가 포함된 사용자 목록</p>
+
+                <div class="drop-zone" id="userDropZone">
+                    <input type="file" id="userFileInput" accept=".xlsx,.xls,.csv">
+                    <span class="material-symbols-outlined">upload_file</span>
+                    <p>엑셀 파일을 드래그하거나 <span>클릭하여 업로드</span></p>
+                </div>
+                <div id="userLoadedInfo" class="loaded-info" style="display:none;">
+                    <span class="material-symbols-outlined">check_circle</span>
+                    <span id="userLoadedText">파일 로드 완료</span>
+                </div>
+
+                <div class="or-divider">또는</div>
+
+                <div class="paste-area">
+                    <label>엑셀에서 복사하여 붙여넣기 (탭 구분)</label>
+                    <textarea id="userPasteArea"
+                        placeholder="엑셀에서 헤더 포함 데이터를 복사하여 붙여넣기&#10;사번&#9;성명&#9;센터&#9;직무"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- 버튼 -->
+        <div class="action-bar">
+            <button class="btn btn-primary" id="processBtn" onclick="processData()">
+                <span class="material-symbols-outlined">filter_alt</span>
+                데이터 필터링 및 정리
+            </button>
+            <button class="btn btn-success" id="exportBtn" onclick="exportToExcel()" disabled>
+                <span class="material-symbols-outlined">download</span>
+                엑셀 다운로드
+            </button>
+        </div>
+
+        <!-- 통계 -->
+        <div class="stats-bar" id="statsBar" style="display:none;"></div>
+
+        <!-- 결과 테이블 -->
+        <div class="result-section" id="resultSection" style="display:none;">
+            <div class="result-header">
+                <h3>
+                    <span class="material-symbols-outlined">table_chart</span>
+                    필터링 결과
+                </h3>
+                <div class="sort-controls">
+                    <button class="sort-btn active" onclick="sortResult('center-date')" id="sortCenterDate">센터 →
+                        일시</button>
+                    <button class="sort-btn" onclick="sortResult('date-center')" id="sortDateCenter">일시 → 센터</button>
+                    <button class="sort-btn" onclick="sortResult('user')" id="sortUser">사용자별</button>
+                </div>
+            </div>
+            <div class="table-wrapper" id="tableWrapper">
+            </div>
+        </div>
+
+        <!-- 요약 -->
+        <div class="summary-section" id="summarySection" style="display:none;"></div>
+    </div>
+
+    <!-- 토스트 -->
+    <div class="toast" id="toast">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span id="toastMsg"></span>
+    </div>
+
+    <script>
+        let rawData = [];
+        let userData = [];
+        let filteredData = [];
+        let currentSort = 'center-date';
+        let currentSortedData = [];
+        let currentDisplayCount = 0;
+        const PAGE_SIZE = 200;
+
+        // 파일 업로드 처리
+        document.getElementById('rawFileInput').addEventListener('change', (e) => loadFile(e, 'raw'));
+        document.getElementById('userFileInput').addEventListener('change', (e) => loadFile(e, 'user'));
+
+        // 드래그앤드롭
+        ['rawDropZone', 'userDropZone'].forEach(id => {
+            const zone = document.getElementById(id);
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', (e) => {
+                e.preventDefault();
+                zone.classList.remove('dragover');
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    const type = id === 'rawDropZone' ? 'raw' : 'user';
+                    readExcelFile(file, type);
+                }
+            });
+        });
+
+        function loadFile(e, type) {
+            const file = e.target.files[0];
+            if (file) readExcelFile(file, type);
+        }
+
+        function showLoading(text, progress) {
+            const overlay = document.getElementById('loadingOverlay');
+            const textEl = document.getElementById('loadingText');
+            const bar = document.getElementById('loadingProgressBar');
+            overlay.classList.add('active');
+            if (text) textEl.textContent = text;
+            if (progress !== undefined) bar.style.width = progress + '%';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingOverlay').classList.remove('active');
+            document.getElementById('loadingProgressBar').style.width = '0%';
+        }
+
+        function readExcelFile(file, type) {
+            showLoading(`${file.name} 읽는 중...`, 10);
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    showLoading('엑셀 파싱 중...', 40);
+                    // setTimeout으로 UI 업데이트 기회 제공
+                    setTimeout(() => {
+                        try {
+                            const workbook = XLSX.read(e.target.result, { type: 'array' });
+                            showLoading('데이터 변환 중...', 70);
+                            setTimeout(() => {
+                                try {
+                                    const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                                    const data = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+
+                                    if (type === 'raw') {
+                                        rawData = data;
+                                        showLoadedInfo('raw', `${file.name} (${data.length.toLocaleString()}행)`);
+                                    } else {
+                                        userData = data;
+                                        showLoadedInfo('user', `${file.name} (${data.length.toLocaleString()}명)`);
+                                    }
+                                    hideLoading();
+                                } catch (err) {
+                                    hideLoading();
+                                    alert('데이터 변환 오류: ' + err.message);
+                                }
+                            }, 50);
+                        } catch (err) {
+                            hideLoading();
+                            alert('엑셀 파싱 오류: ' + err.message);
+                        }
+                    }, 50);
+                } catch (err) {
+                    hideLoading();
+                    alert('파일 읽기 오류: ' + err.message);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        function showLoadedInfo(type, text) {
+            const infoEl = document.getElementById(type + 'LoadedInfo');
+            const textEl = document.getElementById(type + 'LoadedText');
+            const dropZone = document.getElementById(type + 'DropZone');
+            textEl.textContent = text;
+            infoEl.style.display = 'flex';
+            dropZone.classList.add('file-loaded');
+            showToast('파일 로드 완료!');
+        }
+
+        // 최적화된 클립보드 파싱 (대용량 대응)
+        function parseClipboardData(text) {
+            if (!text.trim()) return [];
+            const lines = text.trim().split('\n');
+            if (lines.length < 2) return [];
+
+            const headers = lines[0].split('\t').map(h => h.trim());
+            const headerCount = headers.length;
+            const data = new Array(lines.length - 1);
+            let validCount = 0;
+
+            for (let i = 1; i < lines.length; i++) {
+                const cols = lines[i].split('\t');
+                if (cols.length < 2) continue;
+                const row = {};
+                for (let j = 0; j < headerCount; j++) {
+                    row[headers[j]] = (cols[j] || '').trim();
+                }
+                data[validCount++] = row;
+            }
+            data.length = validCount;
+            return data;
+        }
+
+        function findColumn(row, possibleNames) {
+            for (const name of possibleNames) {
+                if (row.hasOwnProperty(name)) return name;
+            }
+            const keys = Object.keys(row);
+            for (const name of possibleNames) {
+                const found = keys.find(k => k.includes(name));
+                if (found) return found;
+            }
+            return null;
+        }
+
+        function processData() {
+            const startTime = performance.now();
+            showLoading('데이터 준비 중...', 5);
+
+            // 비동기로 처리하여 UI 업데이트
+            setTimeout(() => {
+                // 클립보드 데이터 확인
+                const rawPaste = document.getElementById('rawPasteArea').value;
+                const userPaste = document.getElementById('userPasteArea').value;
+
+                if (rawPaste.trim()) {
+                    showLoading('RAW DATA 파싱 중...', 10);
+                    rawData = parseClipboardData(rawPaste);
+                }
+                if (userPaste.trim()) {
+                    userData = parseClipboardData(userPaste);
+                }
+
+                if (rawData.length === 0) {
+                    hideLoading();
+                    alert('RAW DATA를 업로드하거나 붙여넣기 해주세요.');
+                    return;
+                }
+                if (userData.length === 0) {
+                    hideLoading();
+                    alert('사용자 목록을 업로드하거나 붙여넣기 해주세요.');
+                    return;
+                }
+
+                showLoading('사용자 목록 분석 중...', 20);
+
+                setTimeout(() => {
+                    // 사용자 목록에서 사번 추출
+                    const firstUser = userData[0];
+                    const userNoCol = findColumn(firstUser, ['사번', 'userNo', '사원번호', '번호', 'empNo', 'no']);
+                    const userNameCol = findColumn(firstUser, ['성명', '이름', 'userName', 'name']);
+                    const centerCol = findColumn(firstUser, ['센터', 'center', '부서', 'dept']);
+                    const jobCol = findColumn(firstUser, ['직무', '직책', 'job', '역할']);
+
+                    if (!userNoCol) {
+                        hideLoading();
+                        alert('사용자 목록에서 "사번" 컬럼을 찾을 수 없습니다.');
+                        return;
+                    }
+
+                    // 사번 Set 생성 (문자열 비교)
+                    const userNoSet = new Set();
+                    const userInfoMap = {};
+                    userData.forEach(u => {
+                        const no = String(u[userNoCol]).trim();
+                        userNoSet.add(no);
+                        userInfoMap[no] = {
+                            name: userNameCol ? u[userNameCol] : '',
+                            center: centerCol ? u[centerCol] : '',
+                            job: jobCol ? u[jobCol] : ''
+                        };
+                    });
+
+                    showLoading(`RAW DATA ${rawData.length.toLocaleString()}건 필터링 중...`, 40);
+
+                    setTimeout(() => {
+                        // RAW DATA에서 사번 컬럼 찾기
+                        const firstRaw = rawData[0];
+                        const rawUserNoCol = findColumn(firstRaw, ['userNo', '사번', 'user_no', 'userId']);
+
+                        if (!rawUserNoCol) {
+                            hideLoading();
+                            alert('RAW DATA에서 "userNo" (사번) 컬럼을 찾을 수 없습니다.');
+                            return;
+                        }
+
+                        // 필터링 - 최적화: 한 번의 루프로 필터링+변환 동시 수행
+                        const rawChatMsgCol = findColumn(firstRaw, ['chatMsg', '메시지', 'message']);
+                        const rawChatTimeCol = findColumn(firstRaw, ['chatTime', '일시', 'time', 'datetime']);
+                        const rawUserNameCol = findColumn(firstRaw, ['userName', '이름', 'name']);
+                        const rawDeptCol = findColumn(firstRaw, ['userDeptName', '부서', 'dept']);
+                        const rawActionCol = findColumn(firstRaw, ['userAction', 'action']);
+                        const rawQTypeCol = findColumn(firstRaw, ['questionTypeCd', 'questionType', 'type']);
+                        const rawMenuCol = findColumn(firstRaw, ['userSelectedMenuType', 'menuType', 'menu']);
+
+                        filteredData = [];
+                        for (let i = 0; i < rawData.length; i++) {
+                            const row = rawData[i];
+                            const no = String(row[rawUserNoCol]).trim();
+                            if (!userNoSet.has(no)) continue;
+
+                            const info = userInfoMap[no] || {};
+                            const chatTime = row[rawChatTimeCol] || '';
+                            const dateStr = chatTime ? String(chatTime).substring(0, 10) : '';
+
+                            filteredData.push({
+                                일시: chatTime,
+                                날짜: dateStr,
+                                사번: no,
+                                성명: row[rawUserNameCol] || info.name,
+                                센터: info.center || (row[rawDeptCol] || ''),
+                                직무: info.job || '',
+                                부서명: row[rawDeptCol] || '',
+                                질문내용: row[rawChatMsgCol] || '',
+                                질문유형: row[rawQTypeCol] || '',
+                                메뉴타입: row[rawMenuCol] || '',
+                                액션: row[rawActionCol] || ''
+                            });
+                        }
+
+                        showLoading(`${filteredData.length.toLocaleString()}건 필터링 완료, 정렬 중...`, 70);
+
+                        if (filteredData.length === 0) {
+                            hideLoading();
+                            alert('사용자 목록에 해당하는 데이터가 없습니다.\n사번이 일치하는 데이터를 확인해주세요.');
+                            return;
+                        }
+
+                        setTimeout(() => {
+                            showStats();
+                            sortResult(currentSort);
+                            document.getElementById('resultSection').style.display = 'block';
+                            document.getElementById('exportBtn').disabled = false;
+                            buildSummary();
+
+                            const elapsed = ((performance.now() - startTime) / 1000).toFixed(1);
+                            hideLoading();
+                            showToast(`${filteredData.length.toLocaleString()}건 필터링 완료 (${elapsed}초)`);
+                        }, 50);
+                    }, 50);
+                }, 50);
+            }, 50);
+        }
+
+        function showStats() {
+            const uniqueUsers = new Set(filteredData.map(d => d.사번));
+            const uniqueCenters = new Set(filteredData.map(d => d.센터).filter(Boolean));
+            const uniqueDates = new Set(filteredData.map(d => d.날짜).filter(Boolean));
+
+            const statsBar = document.getElementById('statsBar');
+            statsBar.style.display = 'flex';
+            statsBar.innerHTML = `
+                <div class="stat-chip fade-in">
+                    <span class="material-symbols-outlined">database</span>
+                    전체 RAW 데이터: <span class="val">${rawData.length.toLocaleString()}건</span>
+                </div>
+                <div class="stat-chip fade-in">
+                    <span class="material-symbols-outlined">filter_alt</span>
+                    필터링 결과: <span class="val">${filteredData.length.toLocaleString()}건</span>
+                </div>
+                <div class="stat-chip fade-in">
+                    <span class="material-symbols-outlined">people</span>
+                    사용자 수: <span class="val">${uniqueUsers.size}명</span>
+                </div>
+                <div class="stat-chip fade-in">
+                    <span class="material-symbols-outlined">location_city</span>
+                    센터 수: <span class="val">${uniqueCenters.size}개</span>
+                </div>
+                <div class="stat-chip fade-in">
+                    <span class="material-symbols-outlined">calendar_today</span>
+                    기간: <span class="val">${uniqueDates.size}일</span>
+                </div>
+            `;
+        }
+
+        function sortResult(mode) {
+            currentSort = mode;
+
+            document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('sort' + (mode === 'center-date' ? 'CenterDate' : mode === 'date-center' ? 'DateCenter' : 'User')).classList.add('active');
+
+            let sorted = [...filteredData];
+
+            if (mode === 'center-date') {
+                sorted.sort((a, b) => (a.센터 || '').localeCompare(b.센터 || '') || (a.일시 || '').localeCompare(b.일시 || ''));
+            } else if (mode === 'date-center') {
+                sorted.sort((a, b) => (a.날짜 || '').localeCompare(b.날짜 || '') || (a.센터 || '').localeCompare(b.센터 || '') || (a.일시 || '').localeCompare(b.일시 || ''));
+            } else {
+                sorted.sort((a, b) => (a.사번 || '').localeCompare(b.사번 || '') || (a.일시 || '').localeCompare(b.일시 || ''));
+            }
+
+            currentSortedData = sorted;
+            currentDisplayCount = 0;
+            renderTable(sorted, mode, true);
+        }
+
+        // 그룹 카운트 사전 계산 (O(n) - 기존 O(n²) 대비 대폭 개선)
+        function precomputeGroupCounts(data, mode) {
+            const group1Counts = {};
+            const group2Counts = {};
+
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                let g1, g2;
+                if (mode === 'center-date') {
+                    g1 = row.센터 || '(미지정)';
+                    g2 = row.날짜 || '(날짜없음)';
+                } else if (mode === 'date-center') {
+                    g1 = row.날짜 || '(날짜없음)';
+                    g2 = row.센터 || '(미지정)';
+                } else {
+                    g1 = `${row.성명} (${row.사번})`;
+                    g2 = row.날짜 || '(날짜없음)';
+                }
+
+                group1Counts[g1] = (group1Counts[g1] || 0) + 1;
+                const key2 = g1 + '|||' + g2;
+                group2Counts[key2] = (group2Counts[key2] || 0) + 1;
+            }
+
+            return { group1Counts, group2Counts };
+        }
+
+        function renderTable(data, mode, isNew) {
+            const wrapper = document.getElementById('tableWrapper');
+
+            if (data.length === 0) {
+                wrapper.innerHTML = `
+                    <div class="empty-state">
+                        <span class="material-symbols-outlined">search_off</span>
+                        <p>필터링 결과가 없습니다</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // 그룹 카운트 사전 계산
+            const { group1Counts, group2Counts } = precomputeGroupCounts(data, mode);
+
+            const end = Math.min(currentDisplayCount + PAGE_SIZE, data.length);
+            const isFirstPage = currentDisplayCount === 0;
+
+            let html = '';
+            if (isFirstPage) {
+                html = `<table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>일시</th>
+                        <th>사번</th>
+                        <th>성명</th>
+                        <th>센터</th>
+                        <th>부서명</th>
+                        <th>질문내용</th>
+                        <th>질문유형</th>
+                        <th>메뉴타입</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">`;
+            }
+
+            // 이전 페이지의 마지막 그룹 추적
+            let prevGroup1 = '';
+            let prevGroup2 = '';
+            if (!isFirstPage && currentDisplayCount > 0) {
+                const lastRow = data[currentDisplayCount - 1];
+                if (mode === 'center-date') {
+                    prevGroup1 = lastRow.센터 || '(미지정)';
+                    prevGroup2 = lastRow.날짜 || '(날짜없음)';
+                } else if (mode === 'date-center') {
+                    prevGroup1 = lastRow.날짜 || '(날짜없음)';
+                    prevGroup2 = lastRow.센터 || '(미지정)';
+                } else {
+                    prevGroup1 = `${lastRow.성명} (${lastRow.사번})`;
+                    prevGroup2 = lastRow.날짜 || '(날짜없음)';
+                }
+            }
+
+            let rowHtml = '';
+            for (let idx = currentDisplayCount; idx < end; idx++) {
+                const row = data[idx];
+                let group1 = '', group2 = '';
+
+                if (mode === 'center-date') {
+                    group1 = row.센터 || '(미지정)';
+                    group2 = row.날짜 || '(날짜없음)';
+                } else if (mode === 'date-center') {
+                    group1 = row.날짜 || '(날짜없음)';
+                    group2 = row.센터 || '(미지정)';
+                } else {
+                    group1 = `${row.성명} (${row.사번})`;
+                    group2 = row.날짜 || '(날짜없음)';
+                }
+
+                if (group1 !== prevGroup1) {
+                    const count = group1Counts[group1] || 0;
+                    const icon = mode === 'center-date' ? 'location_city' : mode === 'date-center' ? 'calendar_today' : 'person';
+                    rowHtml += `<tr class="center-group-header">
+                        <td colspan="9">
+                            <span class="material-symbols-outlined" style="font-size:18px;vertical-align:middle;margin-right:6px">${icon}</span>
+                            ${group1} <span style="font-size:12px;opacity:0.7;margin-left:8px">(${count.toLocaleString()}건)</span>
+                        </td>
+                    </tr>`;
+                    prevGroup1 = group1;
+                    prevGroup2 = '';
+                }
+
+                if (group2 !== prevGroup2) {
+                    const key2 = group1 + '|||' + group2;
+                    const count2 = group2Counts[key2] || 0;
+                    const icon2 = mode === 'center-date' ? 'calendar_today' : mode === 'date-center' ? 'location_city' : 'calendar_today';
+                    rowHtml += `<tr class="date-group-header">
+                        <td colspan="9">
+                            <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:4px">${icon2}</span>
+                            ${group2} <span style="font-size:11px;opacity:0.6;margin-left:6px">(${count2.toLocaleString()}건)</span>
+                        </td>
+                    </tr>`;
+                    prevGroup2 = group2;
+                }
+
+                const num = idx + 1;
+                rowHtml += `<tr>
+                    <td style="color:#555">${num}</td>
+                    <td>${row.일시 || ''}</td>
+                    <td>${row.사번}</td>
+                    <td>${row.성명}</td>
+                    <td><span class="badge badge-center">${row.센터 || ''}</span></td>
+                    <td>${row.부서명 || ''}</td>
+                    <td style="max-width:260px;overflow:hidden;text-overflow:ellipsis" title="${(row.질문내용 || '').replace(/"/g, '&quot;')}">${row.질문내용 || ''}</td>
+                    <td><span class="badge badge-type">${row.질문유형 || ''}</span></td>
+                    <td><span class="badge badge-menu">${row.메뉴타입 || ''}</span></td>
+                </tr>`;
+            }
+
+            currentDisplayCount = end;
+            const remaining = data.length - currentDisplayCount;
+
+            if (isFirstPage) {
+                html += rowHtml;
+                html += '</tbody></table>';
+                if (remaining > 0) {
+                    html += `<button class="load-more-btn" onclick="loadMore()">
+                        <span class="material-symbols-outlined">expand_more</span>
+                        더 보기 (${remaining.toLocaleString()}건 남음, 현재 ${currentDisplayCount.toLocaleString()}/${data.length.toLocaleString()}건)
+                    </button>`;
+                }
+                wrapper.innerHTML = html;
+            } else {
+                // 기존 테이블에 행 추가 (DOM 직접 조작으로 성능 최적화)
+                const tbody = document.getElementById('tableBody');
+                tbody.insertAdjacentHTML('beforeend', rowHtml);
+
+                // 더보기 버튼 업데이트 또는 제거
+                const existingBtn = wrapper.querySelector('.load-more-btn');
+                if (remaining > 0) {
+                    if (existingBtn) {
+                        existingBtn.innerHTML = `
+                            <span class="material-symbols-outlined">expand_more</span>
+                            더 보기 (${remaining.toLocaleString()}건 남음, 현재 ${currentDisplayCount.toLocaleString()}/${data.length.toLocaleString()}건)
+                        `;
+                    }
+                } else {
+                    if (existingBtn) existingBtn.remove();
+                }
+            }
+        }
+
+        function loadMore() {
+            renderTable(currentSortedData, currentSort, false);
+        }
+
+        function buildSummary() {
+            const section = document.getElementById('summarySection');
+            section.style.display = 'grid';
+
+            const centerCounts = {};
+            const userCounts = {};
+            const typeCounts = {};
+            const dateCounts = {};
+
+            filteredData.forEach(d => {
+                const c = d.센터 || '(미지정)';
+                centerCounts[c] = (centerCounts[c] || 0) + 1;
+
+                const u = `${d.성명}(${d.사번})`;
+                userCounts[u] = (userCounts[u] || 0) + 1;
+
+                const t = d.질문유형 || '(미지정)';
+                typeCounts[t] = (typeCounts[t] || 0) + 1;
+
+                const dt = d.날짜 || '(미지정)';
+                dateCounts[dt] = (dateCounts[dt] || 0) + 1;
+            });
+
+            let html = '';
+
+            html += `<div class="summary-card fade-in">
+                <h4><span class="material-symbols-outlined">location_city</span>센터별 사용 건수</h4>`;
+            Object.entries(centerCounts).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => {
+                html += `<div class="summary-item"><span class="label">${k}</span><span class="value">${v.toLocaleString()}건</span></div>`;
+            });
+            html += '</div>';
+
+            html += `<div class="summary-card fade-in">
+                <h4><span class="material-symbols-outlined">person</span>사용자별 사용 건수 (Top 15)</h4>`;
+            Object.entries(userCounts).sort((a, b) => b[1] - a[1]).slice(0, 15).forEach(([k, v]) => {
+                html += `<div class="summary-item"><span class="label">${k}</span><span class="value">${v.toLocaleString()}건</span></div>`;
+            });
+            html += '</div>';
+
+            html += `<div class="summary-card fade-in">
+                <h4><span class="material-symbols-outlined">category</span>질문유형별 건수</h4>`;
+            Object.entries(typeCounts).sort((a, b) => b[1] - a[1]).forEach(([k, v]) => {
+                html += `<div class="summary-item"><span class="label">${k}</span><span class="value">${v.toLocaleString()}건</span></div>`;
+            });
+            html += '</div>';
+
+            html += `<div class="summary-card fade-in">
+                <h4><span class="material-symbols-outlined">calendar_today</span>일자별 사용 건수</h4>`;
+            Object.entries(dateCounts).sort((a, b) => a[0].localeCompare(b[0])).forEach(([k, v]) => {
+                html += `<div class="summary-item"><span class="label">${k}</span><span class="value">${v.toLocaleString()}건</span></div>`;
+            });
+            html += '</div>';
+
+            section.innerHTML = html;
+        }
+
+        function exportToExcel() {
+            if (filteredData.length === 0) return;
+
+            showLoading('엑셀 파일 생성 중...', 10);
+
+            setTimeout(() => {
+                const wb = XLSX.utils.book_new();
+
+                showLoading('전체 데이터 시트 생성 중...', 20);
+
+                const sorted = [...filteredData].sort((a, b) =>
+                    (a.센터 || '').localeCompare(b.센터 || '') || (a.일시 || '').localeCompare(b.일시 || '')
+                );
+
+                const exportData = sorted.map((d, i) => ({
+                    '번호': i + 1,
+                    '일시': d.일시,
+                    '날짜': d.날짜,
+                    '사번': d.사번,
+                    '성명': d.성명,
+                    '센터': d.센터,
+                    '부서명': d.부서명,
+                    '질문내용': d.질문내용,
+                    '질문유형': d.질문유형,
+                    '메뉴타입': d.메뉴타입
+                }));
+
+                const ws1 = XLSX.utils.json_to_sheet(exportData);
+                ws1['!cols'] = [
+                    { wch: 6 }, { wch: 20 }, { wch: 12 }, { wch: 10 },
+                    { wch: 10 }, { wch: 14 }, { wch: 18 }, { wch: 40 },
+                    { wch: 20 }, { wch: 12 }
+                ];
+                XLSX.utils.book_append_sheet(wb, ws1, '전체데이터(센터별)');
+
+                showLoading('센터별 시트 생성 중...', 50);
+
+                setTimeout(() => {
+                    const centers = [...new Set(filteredData.map(d => d.센터).filter(Boolean))].sort();
+                    centers.forEach(center => {
+                        const centerData = filteredData
+                            .filter(d => d.센터 === center)
+                            .sort((a, b) => (a.일시 || '').localeCompare(b.일시 || ''))
+                            .map((d, i) => ({
+                                '번호': i + 1,
+                                '일시': d.일시,
+                                '날짜': d.날짜,
+                                '사번': d.사번,
+                                '성명': d.성명,
+                                '부서명': d.부서명,
+                                '질문내용': d.질문내용,
+                                '질문유형': d.질문유형,
+                                '메뉴타입': d.메뉴타입
+                            }));
+
+                        const sheetName = center.substring(0, 31);
+                        const ws = XLSX.utils.json_to_sheet(centerData);
+                        ws['!cols'] = [
+                            { wch: 6 }, { wch: 20 }, { wch: 12 }, { wch: 10 },
+                            { wch: 10 }, { wch: 18 }, { wch: 40 }, { wch: 20 }, { wch: 12 }
+                        ];
+                        XLSX.utils.book_append_sheet(wb, ws, sheetName);
+                    });
+
+                    showLoading('요약 시트 생성 중...', 80);
+
+                    setTimeout(() => {
+                        const summaryData = [];
+                        const centerCounts = {};
+                        filteredData.forEach(d => {
+                            const c = d.센터 || '(미지정)';
+                            if (!centerCounts[c]) centerCounts[c] = { total: 0, users: new Set(), dates: new Set() };
+                            centerCounts[c].total++;
+                            centerCounts[c].users.add(d.사번);
+                            centerCounts[c].dates.add(d.날짜);
+                        });
+
+                        Object.entries(centerCounts).sort((a, b) => b[1].total - a[1].total).forEach(([center, info]) => {
+                            summaryData.push({
+                                '센터': center,
+                                '총 사용 건수': info.total,
+                                '사용자 수': info.users.size,
+                                '사용 일수': info.dates.size
+                            });
+                        });
+
+                        const ws3 = XLSX.utils.json_to_sheet(summaryData);
+                        ws3['!cols'] = [{ wch: 18 }, { wch: 14 }, { wch: 12 }, { wch: 12 }];
+                        XLSX.utils.book_append_sheet(wb, ws3, '센터별요약');
+
+                        showLoading('파일 다운로드 중...', 95);
+
+                        setTimeout(() => {
+                            const now = new Date();
+                            const dateStr = `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, '0')}${String(now.getDate()).padStart(2, '0')}`;
+                            XLSX.writeFile(wb, `챗봇사용자_필터링결과_${dateStr}.xlsx`);
+                            hideLoading();
+                            showToast('엑셀 파일이 다운로드되었습니다!');
+                        }, 50);
+                    }, 50);
+                }, 50);
+            }, 50);
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            document.getElementById('toastMsg').textContent = msg;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+    </script>
+</body>
+
+</html>
