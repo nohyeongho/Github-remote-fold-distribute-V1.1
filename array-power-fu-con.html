@@ -1524,38 +1524,39 @@
                 var ua = navigator.userAgent || navigator.vendor || window.opera;
                 if (/KAKAOTALK/i.test(ua)) {
                     location.href = 'kakaotalk://inappbrowser/close';
+                    return;
                 } else if (/NAVER/i.test(ua)) {
                     location.href = 'naversearchapp://inappbrowser/close';
+                    return;
                 }
 
-                // 2. 다른 일반 팝업 브라우저 강제 종료 시도
+                // 2. 다른 일반 팝업 브라우저 강제 종료 (사파리/삼성/크롬 꼼수)
+                window.opener = null;
                 window.open('', '_self').close();
                 window.close();
                 
-                // 3. 브라우저 보안상 위 코드가 막혔을 경우
+                // 3. 브라우저 보안상 닫기가 안 먹혔을 경우 무조건 뒤로가기 시도
                 setTimeout(function() {
-                    // 뒤로 갈 페이지가 브라우저 기록에 남아있다면 뒤로 가기로 빠져나가기
-                    if (window.history.length > 2 || document.referrer) {
-                        window.history.back();
-                    } else {
-                        // 뒤로 갈 곳도 없고 종료도 막히는 완전 고립 탭인 경우 (사파리 등 단독 탭)
-                        // 화면을 덮어서 "종료됨"을 시각적으로 알림
+                    window.history.back();
+                }, 100);
+
+                // 4. 뒤로가기도 실패하고 현재 페이지에 머무르는 단일 탭인 경우 화면을 덮음
+                setTimeout(function() {
                         document.body.innerHTML = `
                             <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background-color:#f4f4f4; font-family:'Noto Sans KR', sans-serif; text-align:center; padding:20px; animation: fadeIn 0.3s ease-out;">
                                 <div style="width: 80px; height: 80px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 24px;">
-                                    <svg viewBox="0 0 24 24" fill="none" class="w-10 h-10" stroke="currentColor" stroke-width="2" style="width:40px; height:40px; color:#94a3b8;">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px; height:40px; color:#94a3b8;">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                                     </svg>
                                 </div>
                                 <h2 style="color:#0f172a; margin-bottom: 12px; font-size: 1.25rem; font-weight: 700;">검색기 창이 종료되었습니다</h2>
                                 <p style="color:#64748b; font-size: 0.9rem; line-height: 1.6; background-color: white; padding: 16px; border-radius: 12px; box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);">
-                                    현재 사용 중이신 브라우저(사파리/크롬 등)의 <br><strong style="color:#A50034; font-weight:600;">보안 정책</strong>으로 인해 자동으로 창을 닫을 수 없습니다.<br><br>
+                                    현재 사용 중이신 삼성 인터넷(또는 기타 모바일 브라우저)의 <br><strong style="color:#A50034; font-weight:600;">보안 정책</strong>으로 인해 자동으로 창을 닫을 수 없습니다.<br><br>
                                     스마트폰의 창 닫기나 뒤로가기 버튼을<br>직접 눌러 화면을 닫아주세요.
                                 </p>
                             </div>
                         `;
-                    }
-                }, 200);
+                }, 400);
             }
         </script>
         <button onclick="closeSearchApp()" 
