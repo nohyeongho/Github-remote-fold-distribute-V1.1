@@ -1517,8 +1517,22 @@
 <body class="bg-[#f4f4f4] min-h-screen transition-colors duration-300 antialiased font-sans">
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 relative">
         
-        <!-- 검색기 닫기 버튼 -->
-        <button onclick="window.close()" 
+        <!-- 검색기 닫기 버튼 및 모바일 호환 스크립트 -->
+        <script>
+            function closeSearchApp() {
+                // 1. 보안 정책을 우회할 수 있는 일반적인 close 방식 시도
+                window.open('', '_self').close();
+                window.close();
+                
+                // 2. 스크립트로 연 창이 아니어 위 코드가 안 먹힐 경우 (모바일 브라우저 등), 뒤로 가기로 빠져나가기
+                setTimeout(function() {
+                    if (window.history.length > 1 || document.referrer) {
+                        window.history.back();
+                    }
+                }, 150);
+            }
+        </script>
+        <button onclick="closeSearchApp()" 
             class="fixed top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/95 backdrop-blur-sm rounded-full shadow-md border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all z-[1300] group"
             title="검색기 닫기">
             <span class="material-symbols-outlined text-2xl md:text-3xl transition-transform group-hover:rotate-90">close</span>
