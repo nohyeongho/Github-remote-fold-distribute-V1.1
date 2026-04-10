@@ -1406,12 +1406,22 @@
         }
 
         #exp-modalImg {
-            max-width: 90vw;
-            max-height: 90vh;
-            border-radius: 12px;
+            max-width: 98vw;
+            max-height: 98vh;
+            border-radius: 8px;
             object-fit: contain;
             opacity: 0;
-            transition: opacity 0.3s ease;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            cursor: zoom-in;
+        }
+
+        #exp-modalImg.zoomed {
+            max-width: none;
+            max-height: none;
+            transform: scale(1.5);
+            cursor: zoom-out;
+            margin: 50% 0;
+            /* 중앙 정렬 유지 보조 */
         }
 
         #exp-modalImg.loaded {
@@ -1516,7 +1526,7 @@
 
 <body class="bg-[#f4f4f4] min-h-screen transition-colors duration-300 antialiased font-sans">
     <div class="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-6 relative">
-        
+
         <!-- 검색기 닫기 버튼 및 모바일 호환 스크립트 -->
         <script>
             function closeSearchApp() {
@@ -1534,15 +1544,15 @@
                 window.opener = null;
                 window.open('', '_self').close();
                 window.close();
-                
+
                 // 3. 브라우저 보안상 닫기가 안 먹혔을 경우 무조건 뒤로가기 시도
-                setTimeout(function() {
+                setTimeout(function () {
                     window.history.back();
                 }, 100);
 
                 // 4. 뒤로가기도 실패하고 현재 페이지에 머무르는 단일 탭인 경우 화면을 덮음
-                setTimeout(function() {
-                        document.body.innerHTML = `
+                setTimeout(function () {
+                    document.body.innerHTML = `
                             <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; height:100vh; background-color:#f4f4f4; font-family:'Noto Sans KR', sans-serif; text-align:center; padding:20px; animation: fadeIn 0.3s ease-out;">
                                 <div style="width: 80px; height: 80px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); margin-bottom: 24px;">
                                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:40px; height:40px; color:#94a3b8;">
@@ -1559,10 +1569,11 @@
                 }, 400);
             }
         </script>
-        <button onclick="closeSearchApp()" 
+        <button onclick="closeSearchApp()"
             class="fixed top-4 right-4 md:top-6 md:right-6 w-10 h-10 md:w-12 md:h-12 flex items-center justify-center bg-white/95 backdrop-blur-sm rounded-full shadow-md border border-slate-200 text-slate-500 hover:text-red-500 hover:bg-red-50 hover:border-red-200 transition-all z-[1300] group"
             title="검색기 닫기">
-            <span class="material-symbols-outlined text-2xl md:text-3xl transition-transform group-hover:rotate-90">close</span>
+            <span
+                class="material-symbols-outlined text-2xl md:text-3xl transition-transform group-hover:rotate-90">close</span>
         </button>
 
         <div id="standard-app">
@@ -1977,10 +1988,13 @@
             </div>
 
             <!-- 이미지 확대 모달 -->
-            <div id="exp-imageModal" class="modal" onclick="closeModalExp()">
+            <div id="exp-imageModal" class="modal" onclick="if(event.target === this) closeModalExp()">
                 <span class="close-modal" onclick="closeModalExp()">&times;</span>
                 <div class="loader" id="exp-modalLoader"></div>
-                <img class="modal-content" id="exp-modalImg">
+                <div
+                    style="overflow: auto; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%;">
+                    <img class="modal-content" id="exp-modalImg" onclick="toggleZoomExp(event)">
+                </div>
             </div>
         </div>
     </div>
@@ -31359,7 +31373,7 @@
         function openModalExp(url) {
             exp_imageModal.style.display = 'flex';
             exp_modalImg.src = '';
-            exp_modalImg.classList.remove('loaded');
+            exp_modalImg.classList.remove('loaded', 'zoomed');
             exp_modalLoader.style.display = 'block';
 
             const img = new Image();
@@ -31371,8 +31385,14 @@
             img.src = url;
         }
 
+        function toggleZoomExp(event) {
+            event.stopPropagation();
+            exp_modalImg.classList.toggle('zoomed');
+        }
+
         function closeModalExp() {
             exp_imageModal.style.display = 'none';
+            exp_modalImg.classList.remove('zoomed');
         }
 
         // 상단 메뉴 고정 상태 감지
