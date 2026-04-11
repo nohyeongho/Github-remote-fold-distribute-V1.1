@@ -13309,7 +13309,7 @@
             } else if (mode === 'power') {
                 headerIcon.textContent = "history_toggle_off";
                 headerTitle.textContent = "Power Off History";
-                headerDesc.textContent = "코드명을 입력하여 발생 원인을 진단하세요.";
+                headerDesc.innerHTML = '코드명을 입력하여 발생 원인을 진단하세요.<br><span style="color: #A50034; font-weight: bold; font-size: 0.85em; display: block; margin-top: 4px;">0A,0B,0C,0D,0E,0F,0G등 앞에는 숫자"0" 을 입력하세요</span>';
                 searchInput.placeholder = "코드명 입력 (예: OFF_BY_ABN, RESET)";
             } else if (mode === 'purifier') {
                 headerIcon.textContent = "water_drop";
