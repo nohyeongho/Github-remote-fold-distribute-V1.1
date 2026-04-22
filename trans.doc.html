@@ -1,4 +1,3 @@
-<!DOCTYPE html>
 <html lang="ko">
 
 <head>
@@ -6,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>영호의 tras.doc</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap"
+        rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -334,7 +334,7 @@
         .translate-btn-wrap {
             padding: 12px 24px;
             background: var(--bg-white);
-            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: center;
             gap: 12px;
@@ -377,6 +377,83 @@
 
         .btn-clear:hover {
             background: var(--border);
+        }
+
+        /* Literal Translation Box */
+        .result-scroll-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            background: var(--bg-white);
+        }
+
+        .literal-box {
+            margin: 0 16px 16px 16px;
+            padding: 12px 16px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            display: none;
+            animation: slideUp 0.3s ease;
+        }
+
+        .literal-box.active {
+            display: block;
+        }
+
+        .literal-label {
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .literal-content {
+            font-size: 14px;
+            line-height: 1.5;
+            color: var(--text-muted);
+            font-style: italic;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .text-output {
+            padding: 16px;
+            font-size: 18px;
+            /* 번역 결과는 조금 더 크게 */
+            line-height: 1.6;
+            color: var(--text);
+            white-space: pre-wrap;
+            word-break: break-word;
+            cursor: pointer;
+            /* 클릭 가능함 표시 */
+            transition: background 0.2s;
+        }
+
+        .text-output:hover:not(.placeholder) {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .text-output.placeholder {
+            color: var(--text-light);
+            font-style: italic;
+            cursor: default;
         }
 
         /* ===== Sidebar ===== */
@@ -857,7 +934,7 @@
                         <select class="lang-select" id="sourceLang">
                             <option value="auto">자동 감지</option>
                             <option value="ko">한국어</option>
-                            <option value="en" selected>영어</option>
+                            <option value="en" selected="">영어</option>
                             <option value="zh">중국어(간체)</option>
                             <option value="zh-TW">중국어(번체)</option>
                             <option value="ja">일본어</option>
@@ -886,7 +963,7 @@
                     <div class="lang-select-wrap">
                         <label>번역 언어</label>
                         <select class="lang-select" id="targetLang">
-                            <option value="ko" selected>한국어</option>
+                            <option value="ko" selected="">한국어</option>
                             <option value="en">영어</option>
                             <option value="zh">중국어(간체)</option>
                             <option value="zh-TW">중국어(번체)</option>
@@ -914,6 +991,12 @@
                     </div>
                 </div>
 
+                <!-- Action Buttons -->
+                <div class="translate-btn-wrap">
+                    <button class="btn-clear" onclick="clearAll()">초기화</button>
+                    <button class="btn-translate" id="btnTranslate" onclick="translateText()">번역</button>
+                </div>
+
                 <!-- Translation Area -->
                 <div class="trans-area">
                     <!-- Source -->
@@ -938,15 +1021,17 @@
                                 <button class="icon-btn" onclick="copyResult()" title="복사">📋</button>
                             </div>
                         </div>
-                        <div class="text-output placeholder" id="resultText">번역 결과가 여기에 표시됩니다.</div>
+                        <div class="result-scroll-wrapper">
+                            <div class="text-output placeholder" id="resultText" onclick="showLiteralTranslation()">번역
+                                결과가 여기에 표시됩니다.</div>
+                            <div class="literal-box" id="literalBox">
+                                <div class="literal-label">🔍 직역 (역번역)</div>
+                                <div class="literal-content" id="literalContent"></div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Action Buttons -->
-                <div class="translate-btn-wrap">
-                    <button class="btn-clear" onclick="clearAll()">초기화</button>
-                    <button class="btn-translate" id="btnTranslate" onclick="translateText()">번역</button>
-                </div>
             </div>
 
             <!-- File Panel -->
@@ -955,7 +1040,7 @@
                     <div class="lang-select-wrap">
                         <label>원문 언어</label>
                         <select class="lang-select" id="fileSourceLang">
-                            <option value="auto" selected>자동 감지</option>
+                            <option value="auto" selected="">자동 감지</option>
                             <option value="ko">한국어</option>
                             <option value="en">영어</option>
                             <option value="zh">중국어(간체)</option>
@@ -972,7 +1057,7 @@
                     <div class="lang-select-wrap">
                         <label>번역 언어</label>
                         <select class="lang-select" id="fileTargetLang">
-                            <option value="ko" selected>한국어</option>
+                            <option value="ko" selected="">한국어</option>
                             <option value="en">영어</option>
                             <option value="zh">중국어(간체)</option>
                             <option value="zh-TW">중국어(번체)</option>
@@ -998,7 +1083,7 @@
                     <div class="file-size" id="fileSizeDisplay"></div>
                 </div>
 
-                <button class="file-translate-btn" id="btnFileTranslate" onclick="translateFile()" disabled>📄 파일 번역
+                <button class="file-translate-btn" id="btnFileTranslate" onclick="translateFile()" disabled="">📄 파일 번역
                     시작</button>
 
                 <div class="file-progress" id="fileProgress">
@@ -1034,7 +1119,53 @@
                 <button class="btn-clear-history" onclick="clearHistory()">전체 삭제</button>
             </div>
             <div class="history-list" id="historyList">
-                <div class="no-history" id="noHistory">번역 내역이 없습니다.</div>
+                <div class="history-item" onclick="loadHistory('1776855997070')">
+                    <div class="h-lang">한국어 → 영어</div>
+                    <div class="h-original">나의 살던고향은 꽃피는산골</div>
+                    <div class="h-trans">My hometown is a flowering mountain valley</div>
+                    <div class="h-time">2026. 4. 22. 오후 8:06:37</div>
+                    <div class="h-actions">
+                        <button onclick="event.stopPropagation(); copyHistoryTrans('1776855997070')">복사</button>
+                        <button class="delete"
+                            onclick="event.stopPropagation(); deleteHistory('1776855997070')">삭제</button>
+                    </div>
+                </div>
+
+                <div class="history-item" onclick="loadHistory('1776855973564')">
+                    <div class="h-lang">한국어 → 영어</div>
+                    <div class="h-original">나의 살던고향은</div>
+                    <div class="h-trans">My hometown is</div>
+                    <div class="h-time">2026. 4. 22. 오후 8:06:13</div>
+                    <div class="h-actions">
+                        <button onclick="event.stopPropagation(); copyHistoryTrans('1776855973564')">복사</button>
+                        <button class="delete"
+                            onclick="event.stopPropagation(); deleteHistory('1776855973564')">삭제</button>
+                    </div>
+                </div>
+
+                <div class="history-item" onclick="loadHistory('1776855965546')">
+                    <div class="h-lang">한국어 → 한국어</div>
+                    <div class="h-original">나의 살던고향은</div>
+                    <div class="h-trans">나의 살던고향은</div>
+                    <div class="h-time">2026. 4. 22. 오후 8:06:05</div>
+                    <div class="h-actions">
+                        <button onclick="event.stopPropagation(); copyHistoryTrans('1776855965546')">복사</button>
+                        <button class="delete"
+                            onclick="event.stopPropagation(); deleteHistory('1776855965546')">삭제</button>
+                    </div>
+                </div>
+
+                <div class="history-item" onclick="loadHistory('1776855960208')">
+                    <div class="h-lang">영어 → 한국어</div>
+                    <div class="h-original">sk</div>
+                    <div class="h-trans">sk</div>
+                    <div class="h-time">2026. 4. 22. 오후 8:06:00</div>
+                    <div class="h-actions">
+                        <button onclick="event.stopPropagation(); copyHistoryTrans('1776855960208')">복사</button>
+                        <button class="delete"
+                            onclick="event.stopPropagation(); deleteHistory('1776855960208')">삭제</button>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1049,6 +1180,8 @@
         let translatedWorkbook = null;
         let translatedFileName = '';
         let autoTransTimer = null;
+        let lastDetectedLang = '';
+        let isLiteralTranslating = false;
 
         const LANG_NAMES = {
             'auto': '자동 감지', 'ko': '한국어', 'en': '영어', 'zh': '중국어(간체)',
@@ -1213,10 +1346,12 @@
         }
 
         // Batch translate
-        const SEPARATOR = '\n🔸\n';
+        const SEPARATOR = ' \n◈\n '; // 앞뒤 공백을 주어 Google이 문장으로 오해하지 않게 함
         async function callTranslateBatchAPI(texts, source, target, retries = 3) {
             const sl = source === 'auto' ? 'auto' : source;
-            const combined = texts.join(SEPARATOR);
+            // 빈 문자열이 있으면 구분자가 겹쳐 오류가 날 수 있으므로 공백 하나로 치환
+            const sanitizedTexts = texts.map(t => t.trim() || ' ');
+            const combined = sanitizedTexts.join(SEPARATOR);
             const encoded = encodeURIComponent(combined);
             const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=${sl}&tl=${target}&dt=t&q=${encoded}`;
 
@@ -1225,13 +1360,23 @@
                     const res = await fetch(url);
                     if (!res.ok) throw new Error(`HTTP ${res.status}`);
                     const data = await res.json();
+
+                    // 각 번역 조각들을 다시 합침 (Google이 문장을 쪼개서 반환할 수 있음)
                     const fullTranslated = data[0].map(s => s[0]).join('');
+
+                    // 구분자로 다시 쪼갬
+                    const parts = fullTranslated.split(/\s*◈\s*/);
                     const detectedLang = data[2] || source;
-                    const parts = fullTranslated.split(/\s*🔸\s*/);
-                    return texts.map((orig, i) => ({
-                        translated: (parts[i] || orig).trim(),
-                        lang: detectedLang
-                    }));
+
+                    return texts.map((orig, i) => {
+                        let trans = (parts[i] || '').trim();
+                        // Google이 번역하지 못했거나 누락된 경우 원본 유지
+                        if (!trans || trans === ' ') trans = orig;
+                        return {
+                            translated: trans,
+                            lang: detectedLang
+                        };
+                    });
                 } catch (e) {
                     if (attempt < retries - 1) await sleep(800 * (attempt + 1));
                     else return texts.map(t => ({ translated: t, lang: 'error' }));
@@ -1264,11 +1409,13 @@
             btnTranslate.innerHTML = '<span class="spinner"></span>번역 중...';
             resultText.textContent = '번역 중...';
             resultText.classList.add('placeholder');
+            $('literalBox').classList.remove('active'); // 이전 직역 결과 숨김
 
             try {
                 const result = await callTranslateAPI(text, source, target);
                 resultText.textContent = result.translated;
                 resultText.classList.remove('placeholder');
+                lastDetectedLang = result.lang; // 역번역을 위해 감지된 언어 저장
 
                 // Show detected language
                 if (source === 'auto' && result.lang && result.lang !== 'error') {
@@ -1288,6 +1435,42 @@
                 isTranslating = false;
                 btnTranslate.disabled = false;
                 btnTranslate.textContent = '번역';
+            }
+        }
+
+        // ===== Literal Translation (Back-translation) =====
+        async function showLiteralTranslation() {
+            const text = resultText.textContent.trim();
+            if (resultText.classList.contains('placeholder') || !text || isTranslating || isLiteralTranslating) return;
+
+            // 이미 직역 결과가 표시 중이면 토글 (닫기)
+            if ($('literalBox').classList.contains('active')) {
+                $('literalBox').classList.remove('active');
+                return;
+            }
+
+            const source = $('sourceLang').value === 'auto' ? lastDetectedLang : $('sourceLang').value;
+            const target = $('targetLang').value;
+
+            if (!source || source === 'error') {
+                showToast('원문 언어를 알 수 없어 직역이 불가합니다.', 'warning');
+                return;
+            }
+
+            isLiteralTranslating = true;
+            $('literalContent').innerHTML = '<span class="spinner" style="border-top-color: var(--primary); width:12px; height:12px;"></span> 직역 중...';
+            $('literalBox').classList.add('active');
+
+            try {
+                // 역번역 수행 (Target -> Source)
+                const result = await callTranslateAPI(text, target, source);
+                $('literalContent').textContent = result.translated;
+                showToast('직역(역번역) 결과가 추가되었습니다.', 'info');
+            } catch (e) {
+                $('literalContent').textContent = '직역을 가져오지 못했습니다.';
+                showToast('직역 실패: ' + e.message, 'error');
+            } finally {
+                isLiteralTranslating = false;
             }
         }
 
@@ -1479,12 +1662,12 @@
 
         async function translateTxtFile(source, target) {
             const text = await currentFile.text();
-            const lines = text.split('\n');
+            let lines = text.split('\n');
             const result = [];
             const total = lines.length;
 
-            const BATCH = 20;
-            const PARALLEL = 3;
+            const BATCH = 30; // 텍스트 파일은 조금 더 큰 배치 가능
+            const PARALLEL = 2;
             const batches = [];
             for (let i = 0; i < lines.length; i += BATCH) batches.push(lines.slice(i, i + BATCH));
 
@@ -1492,9 +1675,14 @@
             for (let i = 0; i < batches.length; i += PARALLEL) {
                 const pBatches = batches.slice(i, i + PARALLEL);
                 const allRes = await Promise.all(pBatches.map(b => callTranslateBatchAPI(b, source, target)));
-                allRes.forEach(res => { res.forEach(r => result.push(r.translated)); done += res.length; });
+
+                allRes.forEach(batchResult => {
+                    batchResult.forEach(r => result.push(r.translated));
+                    done += batchResult.length;
+                });
+
                 updateFileProgress(done, total);
-                if (i + PARALLEL < batches.length) await sleep(200);
+                if (i + PARALLEL < batches.length) await sleep(500);
             }
 
             translatedFileName = currentFile.name.replace(/\.txt$/, '_translated.txt');
@@ -1511,12 +1699,14 @@
 
             wb.SheetNames.forEach(name => {
                 const ws = wb.Sheets[name];
-                const range = XLSX.utils.decode_range(ws['!ref'] || 'A1');
+                if (!ws['!ref']) return;
+                const range = XLSX.utils.decode_range(ws['!ref']);
                 for (let r = range.s.r; r <= range.e.r; r++) {
                     for (let c = range.s.c; c <= range.e.c; c++) {
                         const addr = XLSX.utils.encode_cell({ r, c });
                         const cell = ws[addr];
-                        if (cell && cell.t === 's' && cell.v && cellNeedsTranslation(cell.v)) {
+                        // 텍스트(s) 타입이고 값이 존재하며 번역이 필요한 경우에만 추가
+                        if (cell && cell.t === 's' && cell.v && cellNeedsTranslation(cell.v, target)) {
                             tasks.push({ sheet: name, addr, text: String(cell.v).trim() });
                             totalCells++;
                         }
@@ -1557,14 +1747,32 @@
             translatedWorkbook = wb;
         }
 
-        function cellNeedsTranslation(val) {
+        /**
+         * 셀의 내용이 번역이 필요한지 판단합니다.
+         * @param {any} val - 셀 값
+         * @param {string} targetLang - 대상 언어 코드
+         */
+        function cellNeedsTranslation(val, targetLang) {
             if (val === null || val === undefined) return false;
             const str = String(val).trim();
             if (!str) return false;
-            if (/^[\d\s.,\-\/:;%+$€¥£()]+$/.test(str)) return false;
-            // Check if already Korean
-            const koreanRatio = (str.match(/[\uAC00-\uD7AF]/g) || []).length / str.length;
-            if (koreanRatio > 0.3) return false;
+
+            // 1. 숫자로만 구성되었거나 기호만 있는 셀은 제외 (성능 최적화)
+            // [\d\s.,\-\/:;%+$€¥£()₩\*#@&!]+
+            if (/^[\d\s.,\-\/:;%+$€¥£()₩\*#@&!?]+$/.test(str)) return false;
+
+            // 2. 이미 대상 언어인 경우 중복 번역 방지를 위해 건너뜀
+            if (targetLang === 'ko') {
+                // 한글 유니코드 범위 체크 (비중이 20% 이상이면 한국어로 간주)
+                const koreanCharCount = (str.match(/[\uAC00-\uD7AF\u1100-\u11FF\u3130-\u318F]/g) || []).length;
+                if (koreanCharCount / str.length > 0.2) return false;
+            } else if (targetLang === 'en') {
+                // 영문/숫자/공백 위주인 경우 영어로 간주 (80% 이상)
+                const englishCharCount = (str.match(/[a-zA-Z0-9\s.,!?-]/g) || []).length;
+                if (englishCharCount / str.length > 0.7) return false;
+            }
+
+            // 나머지 경우는 모두 번역 시도
             return true;
         }
 
@@ -1624,6 +1832,9 @@
         // Focus on input
         sourceText.focus();
     </script>
+
+
+
 </body>
 
 </html>
