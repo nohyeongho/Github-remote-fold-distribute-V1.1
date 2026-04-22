@@ -1005,6 +1005,8 @@
                             <span class="col-title">원문 <span id="detectedLangBadge"></span></span>
                             <div class="col-actions">
                                 <button class="icon-btn" onclick="listenSource()" title="듣기">🔊</button>
+                                <!-- 사용자의 요청에 따라, 긴 원문이 실수로 재생되었을 때 조작하기 편하도록 듣기 버튼 옆에 중지 버튼을 배치했습니다. -->
+                                <button class="icon-btn" onclick="stopAudio()" title="듣기 중지">x</button>
                                 <button class="icon-btn" onclick="clearSource()" title="지우기">✕</button>
                             </div>
                         </div>
@@ -1018,6 +1020,8 @@
                             <span class="col-title">번역 결과</span>
                             <div class="col-actions">
                                 <button class="icon-btn" onclick="listenTarget()" title="듣기">🔊</button>
+                                <!-- 번역 결과 패널에서도 재생을 즉시 멈출 수 있도록 중지 버튼을 배치했습니다. -->
+                                <button class="icon-btn" onclick="stopAudio()" title="듣기 중지">x</button>
                                 <button class="icon-btn" onclick="copyResult()" title="복사">📋</button>
                             </div>
                         </div>
@@ -1519,6 +1523,16 @@
             const text = resultText.classList.contains('placeholder') ? '' : resultText.textContent;
             if (!text) { showToast('읽을 내용이 없습니다.', 'warning'); return; }
             speakText(text, $('targetLang').value);
+        }
+
+        /**
+         * [음성 재생 중지 기능 구현]
+         * - 목적 (의도): 사용자가 실수로 재생을 누르거나 내용이 너무 길어 중간에 그만 듣고 싶을 때, 강제로 끌 수 있는 기능이 필요합니다.
+         * - 동작 원리: 브라우저 내장 Web Speech API의 speechSynthesis 인스턴스에서 cancel() 메서드를 호출하면,
+         *             현재 말하고 있는 음성과 재생을 위해 대기 중인 큐(Queue)를 모두 즉시 지워서 재생이 멈춥니다.
+         */
+        function stopAudio() {
+            speechSynthesis.cancel();
         }
 
         // ===== History =====
